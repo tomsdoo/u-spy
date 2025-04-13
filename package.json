@@ -1,5 +1,5 @@
 {
-  "name": "@tomsd/easy-spy",
+  "name": "u-spy",
   "version": "0.1.0",
   "main": "dist/index.global.js",
   "scripts": {

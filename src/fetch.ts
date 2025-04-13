@@ -1,9 +1,19 @@
 import { ControlElement } from "@/components/control-element";
 
-export function interceptFetch(id: string) {
+export type MockFetchHandler = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response | null | undefined>;
+
+export function interceptFetch(id: string, mockHandlers?: MockFetchHandler[]) {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const response = await originalFetch(input, init);
+    const response = await (async () => {
+      for(const mockHandler of mockHandlers ?? []) {
+        const response = await mockHandler(input, init);
+        if (response != null) {
+          return response;
+        }
+      }
+      return await originalFetch(input, init);
+    })();
     const alternativeResponse = response.clone();
     ControlElement.ensure(id).dispatchFetch({
       input,
