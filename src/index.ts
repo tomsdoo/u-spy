@@ -1,6 +1,6 @@
 import { ControlElement } from "@/components/control-element";
 import { appendEntryPoint } from "@/components/entry-point";
-import { interceptXMLHttpRequest } from "@/xml-http-request";
+import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 
 declare global {
@@ -9,6 +9,7 @@ declare global {
 
 interface InterceptionOptions {
   fetchHandlers?: MockFetchHandler[];
+  xhrHandlers?: MockXHRHandler[];
 }
 
 appendEntryPoint();
@@ -16,7 +17,7 @@ appendEntryPoint();
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
     const receiver = ControlElement.ensure(id);
-    const { restoreXMLHttpRequest } = interceptXMLHttpRequest(id);
+    const { restoreXMLHttpRequest } = interceptXMLHttpRequest(id, options?.xhrHandlers);
     const { restoreFetch } = interceptFetch(id, options?.fetchHandlers);
     function restore() {
       restoreXMLHttpRequest();
