@@ -1,6 +1,6 @@
 import { template } from "./template";
 
-const TAG_NAME = "easy-spy-entry-point";
+const TAG_NAME = "u-spy-entry-point";
 
 export class EntryPointElement extends HTMLElement {
   connectedCallback() {
