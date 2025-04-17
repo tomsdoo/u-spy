@@ -31,4 +31,26 @@ void _spy.intercept('mock-fetch', {
   ],
 });
 </pre>
+
+<pre>
+void _spy.intercept('control-id', {
+  xhrHandlers: [
+    async function ({ url }) {
+      if (!/somedomain/i.test(url)) { return; }
+      const responseBody = {
+        message: 'hello from xhr handler',
+      };
+      return {
+        response: JSON.stringify(responseBody),
+        responseText: JSON.stringify(responseBody),
+        responseHeaders: {
+          'Content-Type': 'application/json',
+        },
+        responseURL: 'https://somedomain',
+        responseXML: null,
+      };
+    }
+  ],
+});
+</pre>
 `;
