@@ -16,21 +16,56 @@ export type MockXHRHandler = (p: {
   responseXML: Document | null;
 } | null>;
 
+class SpiedXMLHttpRequestBase extends XMLHttpRequest {
+  static isUSpy = true;
+  requestMethod: string = "";
+  requestUrl: string = "";
+  requestUser: string | null | undefined = null;
+  requestPassword: string | null | undefined = null;
+  requestBody: Document | XMLHttpRequestBodyInit | null = null;
+  requestHeaders: Record<string, string> = {};
+  responseHeaders: Record<string, string> = {};
+  eventListeners: Map<any, any> = new Map();
+  open(method: string, url: string, async?: boolean, user?: string, password?: string): void {
+    this.requestMethod = method;
+    this.requestUrl = url;
+    this.requestUser = user;
+    this.requestPassword = password;
+    super.open(method, url, async ?? true, user, password);
+    super.addEventListener("readystatechange", (e) => {
+      if (this.readyState !== this.HEADERS_RECEIVED) {
+        return;
+      }
+      this.responseHeaders = Object.fromEntries(
+        this.getAllResponseHeaders()
+          .trim()
+          .split(/[\r\n]+/)
+          .map((line) => line.split(": "))
+          .map(([Header, ...valueArr]) => [Header, valueArr.join(": ")])
+      );
+    });
+  }
+  setRequestHeader(name: string, value: string): void {
+    this.requestHeaders[name] = value;
+    super.setRequestHeader(name, value);
+  }
+  addEventListener(type: any, listener: any) {
+    const listeners = this.eventListeners.get(type) ?? [];
+    this.eventListeners.set(type, [
+      ...listeners,
+      listener,
+    ]);
+    super.addEventListener(type, listener);
+  }
+  send(body?: Document | XMLHttpRequestBodyInit | null): void {
+    this.requestBody = body ?? null;
+    super.send(body);
+  }
+}
+
 function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[]) {
-  return class extends XMLHttpRequest {
-    requestMethod: string = "";
-    requestUrl: string = "";
-    requestUser: string | null | undefined = null;
-    requestPassword: string | null | undefined = null;
-    requestBody: Document | XMLHttpRequestBodyInit | null = null;
-    requestHeaders: Record<string, string> = {};
-    responseHeaders: Record<string, string> = {};
-    eventListeners: Map<any, any> = new Map();
+  return class SpiedXMLHttpRequest extends SpiedXMLHttpRequestBase {
     open(method: string, url: string, async?: boolean, user?: string, password?: string): void {
-      this.requestMethod = method;
-      this.requestUrl = url;
-      this.requestUser = user;
-      this.requestPassword = password;
       super.open(method, url, async ?? true, user, password);
       super.addEventListener("load", (e) => {
         if (e.target == null) {
@@ -51,33 +86,8 @@ function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[
           responseXML: this.responseXML,
         });
       });
-      super.addEventListener("readystatechange", (e) => {
-        if (this.readyState !== this.HEADERS_RECEIVED) {
-          return;
-        }
-        this.responseHeaders = Object.fromEntries(
-          this.getAllResponseHeaders()
-            .trim()
-            .split(/[\r\n]+/)
-            .map((line) => line.split(": "))
-            .map(([Header, ...valueArr]) => [Header, valueArr.join(": ")])  
-        );
-      });
     }
-    setRequestHeader(name: string, value: string): void {
-      this.requestHeaders[name] = value;
-      super.setRequestHeader(name, value);
-    }
-  addEventListener(type: any, listener: any) {
-    const listeners = this.eventListeners.get(type) ?? [];
-    this.eventListeners.set(type, [
-      ...listeners,
-      listener,
-    ]);
-    super.addEventListener(type, listener);
-  }
-   send(body?: Document | XMLHttpRequestBodyInit | null): void {
-      this.requestBody = body ?? null;
+    send(body?: Document | XMLHttpRequestBodyInit | null): void {
       const params = {
         method: this.requestMethod,
         url: this.requestUrl,
@@ -94,7 +104,7 @@ function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[
         .then(results => {
           const result = results.find(result => result != null);
           if (result == null) {
-            originalSend(body);
+            originalSend.call(that, body);
             return;
           }
           Object.defineProperty(that, "readyState", { value: 4, writable: false });
@@ -107,15 +117,24 @@ function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[
 
           ["load", "readystatechange"].forEach((type) => {
             for(const listener of that.eventListeners.get(type) ?? []) {
-              listener.call(that);
+              listener.call(that, {
+                ...that,
+                target: that,
+              });
             }
           });
 
           if (typeof that.onload === "function") {
-            that.onload();
+            that.onload({
+              ...that,
+              target: that,
+            });
           }
           if (typeof that.onreadystatechange === "function") {
-            that.onreadystatechange();
+            that.onreadystatechange({
+              ...that,
+              target: that,
+            });
           }
         });
     }

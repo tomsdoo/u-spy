@@ -33,7 +33,7 @@ void _spy.intercept('mock-fetch', {
 </pre>
 
 <pre>
-void _spy.intercept('mock-xhr', {
+void _spy.intercept('control-id', {
   xhrHandlers: [
     async function ({ url }) {
       if (!/somedomain/i.test(url)) { return; }
