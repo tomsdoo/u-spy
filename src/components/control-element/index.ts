@@ -1,8 +1,8 @@
 import { template } from "./template";
 
-const TAG_NAME = "easy-spy-control-element";
+const TAG_NAME = "u-spy-control-element";
 
-export const CONTROL_EVENT = 'easy-spy-control';
+export const CONTROL_EVENT = 'u-spy-control';
 
 export enum ControlEvents {
   XHR_LOAD = 'xhr_load',
