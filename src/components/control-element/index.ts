@@ -63,6 +63,13 @@ type Handler =
 export class ControlElement extends HTMLElement {
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
   events = ControlEvents;
+  logStore: {
+    [ControlEvents.FETCH]: { time: Date; data: FetchEventData; }[];
+    [ControlEvents.XHR_LOAD]: { time: Date; data: XhrLoadEventData; }[];
+  } = {
+    [ControlEvents.FETCH]: [],
+    [ControlEvents.XHR_LOAD]: [],
+  };
   constructor() {
     super();
     this.eventHandlerMap = new Map();
@@ -122,6 +129,10 @@ export class ControlElement extends HTMLElement {
     this.removeEventListener(CONTROL_EVENT, exists.wrapper as () => void);
   }
   dispatchXhrLoad(data: XhrLoadEventData) {
+    this.logStore[ControlEvents.XHR_LOAD].push({
+      data,
+      time: new Date(),
+    });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,
       detail: {
@@ -131,6 +142,13 @@ export class ControlElement extends HTMLElement {
     }));
   }
   dispatchFetch(data: FetchEventData) {
+    this.logStore[ControlEvents.FETCH].push({
+      data: {
+        ...data,
+        response: data.response.clone(),
+      },
+      time: new Date(),
+    });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,
       detail: {
