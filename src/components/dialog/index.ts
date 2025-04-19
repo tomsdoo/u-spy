@@ -1,4 +1,5 @@
 import { template } from "./template";
+import { ControlElement } from "@/components/control-element";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -9,7 +10,7 @@ export class DialogElement extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: "open" });
     const title = shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, title))
+      document.createRange().createContextualFragment(template(id, title, ControlElement.list()))
     );
     shadowRoot.querySelector(`#${id}`)?.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -18,6 +19,16 @@ export class DialogElement extends HTMLElement {
     shadowRoot.querySelector(`#${id} > div`)?.addEventListener("click", (e) => {
       e.stopPropagation();
     });
+    function removalKeyHandler(e: KeyboardEvent) {
+      if (e.key !== "Escape") {
+        return;
+      }
+      try {
+        window.removeEventListener("keydown", removalKeyHandler);
+        that.remove();
+      } catch {}
+    }
+    window.addEventListener("keydown", removalKeyHandler);
   }
 }
 

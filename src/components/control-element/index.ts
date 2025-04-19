@@ -171,6 +171,9 @@ export class ControlElement extends HTMLElement {
     } 
     return this.create(id);
   }
+  static list() {
+    return  Array.from(document.querySelectorAll(TAG_NAME));
+  }
 }
 
 

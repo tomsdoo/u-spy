@@ -1,8 +1,15 @@
-export function template(id: string, title: string) {
+import type { ControlElement } from "@/components/control-element";
+
+export function template(id: string, title: string, controlElements: ControlElement[]) {
   return `
     <div id="${id}">
       <div>
         <h1>${title}</h1>
+        <ul>
+          ${
+            controlElements.map(controlElement => `<li>${controlElement.id}</li>`)
+          }
+        </ul>
       </div>
     </div>
     <style>
