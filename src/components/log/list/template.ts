@@ -71,8 +71,13 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
     </div>
     <style>
     #${id} {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      max-height: 100%;
+
       ul {
         color: #eeeeee;
+        overflow: auto;
 
         li.hidden {
           display: none;
