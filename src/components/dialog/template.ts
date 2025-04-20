@@ -7,9 +7,10 @@ export function template(id: string, title: string, controlElements: ControlElem
         <h1>${title}</h1>
         <ul>
           ${
-            controlElements.map(controlElement => `<li>${controlElement.id}</li>`)
+            controlElements.map(controlElement => `<li data-control-id="${controlElement.id}">${controlElement.id}</li>`)
           }
         </ul>
+        <div id="content"></div>
       </div>
     </div>
     <style>
@@ -28,7 +29,14 @@ export function template(id: string, title: string, controlElements: ControlElem
 
       > div {
         display: grid;
+        grid-template-rows: auto auto 1fr;
         background: rgb(0 0 0 / 90%);
+        max-width: 90vw;
+        max-height: 90vh;
+
+        #content {
+          overflow: auto;
+        }
       }
     }
     </style>

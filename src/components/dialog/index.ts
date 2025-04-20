@@ -1,5 +1,6 @@
 import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
+import { LogListElement } from "@/components/log/list";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -29,6 +30,23 @@ export class DialogElement extends HTMLElement {
       } catch {}
     }
     window.addEventListener("keydown", removalKeyHandler);
+
+    shadowRoot.querySelectorAll(`#${id} > div > ul > li`).forEach(li => {
+      li.addEventListener("click", (e) => {
+        if (e.target == null) {
+          return;
+        }
+        if (e.target instanceof HTMLElement === false) {
+          return;
+        }
+        if (e.target.dataset.controlId == null) {
+          return;
+        }
+        const ele = LogListElement.create();
+        ele.setAttribute("control-id", e.target.dataset.controlId);
+        shadowRoot.querySelector(`#${id} #content`)?.appendChild(ele);
+      });
+    });
   }
 }
 
