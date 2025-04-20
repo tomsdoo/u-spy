@@ -65,7 +65,7 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
                     : ""
               }
             </li>
-          `)
+          `).join("")
         }
       </ul>
     </div>
@@ -75,7 +75,16 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
       grid-template-rows: auto 1fr;
       max-height: 100%;
 
-      ul {
+      > form {
+       display: grid;
+       justify-content: end;
+      }
+
+      > ul {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-inline-start: 0;
+        list-style-type: none;
         color: #eeeeee;
         overflow: auto;
 

@@ -12,6 +12,10 @@ export class LogListElement extends HTMLElement {
     shadowRoot.appendChild(
       document.createRange().createContextualFragment(template(id, controlElement.logStore))
     );
+    shadowRoot.querySelector(`#${id} > form`)?.addEventListener("submit", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
     shadowRoot.querySelector(`#${id} > form > input`)?.addEventListener("change", (e) => {
       if (e.target == null) {
         return;
