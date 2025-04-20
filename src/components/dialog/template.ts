@@ -7,7 +7,10 @@ export function template(id: string, title: string, controlElements: ControlElem
         <h1>${title}</h1>
         <ul>
           ${
-            controlElements.map(controlElement => `<li data-control-id="${controlElement.id}">${controlElement.id}</li>`)
+            controlElements.map(
+              controlElement =>
+                `<li data-control-id="${controlElement.id}">${controlElement.id}</li>`
+            ).join("")
           }
         </ul>
         <div id="content"></div>
@@ -52,6 +55,12 @@ export function template(id: string, title: string, controlElements: ControlElem
           margin-block-end: 0;
           padding-inline-start: 0;
           list-style-type: none;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+
+          > li {
+            cursor: pointer;
+          }
         }
 
         #content {
