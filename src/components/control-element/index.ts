@@ -64,8 +64,8 @@ export class ControlElement extends HTMLElement {
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
   events = ControlEvents;
   logStore: {
-    [ControlEvents.FETCH]: { time: Date; data: FetchEventData; }[];
-    [ControlEvents.XHR_LOAD]: { time: Date; data: XhrLoadEventData; }[];
+    [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData; }[];
+    [ControlEvents.XHR_LOAD]: { id: string; time: Date; data: XhrLoadEventData; }[];
   } = {
     [ControlEvents.FETCH]: [],
     [ControlEvents.XHR_LOAD]: [],
@@ -132,6 +132,7 @@ export class ControlElement extends HTMLElement {
     this.logStore[ControlEvents.XHR_LOAD].push({
       data,
       time: new Date(),
+      id: `log-item-xhr-${crypto.randomUUID()}`,
     });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,
@@ -148,6 +149,7 @@ export class ControlElement extends HTMLElement {
         response: data.response.clone(),
       },
       time: new Date(),
+      id: `log-item-fetch-${crypto.randomUUID()}`,
     });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,

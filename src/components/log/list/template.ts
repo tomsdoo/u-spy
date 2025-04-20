@@ -28,7 +28,7 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
       <ul>
         ${
           logItems.map(logItem => `
-            <li>
+            <li id="${logItem.id}">
               <div>${logItem.time}</div>
               <div>${logItem.type}</div>
               ${
@@ -73,6 +73,10 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
     #${id} {
       ul {
         color: #eeeeee;
+
+        li.hidden {
+          display: none;
+        }
       }
     }
     </style>
