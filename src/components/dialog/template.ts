@@ -33,12 +33,13 @@ export function template(id: string, title: string, controlElements: ControlElem
       > div {
         display: grid;
         grid-template-rows: auto auto 1fr;
+        gap: 16px;
         background: rgb(0 0 0 / 90%);
         width: 90vw;
         height: 90vh;
         max-width: 90vw;
         max-height: 90vh;
-        padding: 16px;
+        padding: 16px 32px;
         border-radius: 8px;
         box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
 
@@ -57,8 +58,15 @@ export function template(id: string, title: string, controlElements: ControlElem
           list-style-type: none;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 16px;
 
           > li {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: inset 0 0 1px;
+            padding: 4px 8px;
             cursor: pointer;
           }
         }
