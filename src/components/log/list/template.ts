@@ -98,11 +98,20 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
     #${id} {
       display: grid;
       grid-template-rows: auto 1fr;
+      gap: 16px;
       max-height: 100%;
 
       > form {
        display: grid;
        justify-content: end;
+
+       > input {
+         padding: 4px 8px;
+         background: transparent;
+         color: inherit;
+         box-shadow: inset 0 0 1px;
+         border: 0;
+       }
       }
 
       > ul {
@@ -138,6 +147,7 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
           }
           > .method {
             grid-area: method;
+            color: darkkhaki;
           }
           > .host {
             grid-area: host;
@@ -185,9 +195,12 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
           }
           > .type {
             grid-area: type;
+            text-transform: uppercase;
+            color: darkgoldenrod;
           }
           > .method {
             grid-area: method;
+            color: darkkhaki;
           }
           > .host {
             grid-area: host;
