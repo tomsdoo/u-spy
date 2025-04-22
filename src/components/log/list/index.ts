@@ -10,11 +10,21 @@ export class LogListElement extends HTMLElement {
     const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
     const controlElement = ControlElement.ensure(controlId);
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, controlElement.logStore))
+      document.createRange().createContextualFragment(template(id, controlElement.logItems))
     );
     shadowRoot.querySelector(`#${id} > form`)?.addEventListener("submit", (e) => {
       e.stopPropagation();
       e.preventDefault();
+    });
+    shadowRoot.querySelectorAll(`#${id} > ul > li > [data-foldable]`).forEach((el)  => {
+      el.addEventListener("click", () => {
+        el.classList.toggle("folded");
+      });
+    });
+    shadowRoot.querySelectorAll(`#${id} > ul > li > .host`).forEach((el) => {
+      el.addEventListener("click", () => {
+        el.classList.toggle("detailed");
+      });
     });
     shadowRoot.querySelector(`#${id} > form > input`)?.addEventListener("change", (e) => {
       if (e.target == null) {
@@ -27,19 +37,11 @@ export class LogListElement extends HTMLElement {
       const keyword = e.target.value;
       const regExps = keyword.split(/\s+/).map(s => new RegExp(s, "i"));
 
-      const logItems = [
-        ...controlElement.logStore[ControlEvents.FETCH].map(fetchLog => ({
-          ...fetchLog,
-          type: "fetch",
-        })),
-        ...controlElement.logStore[ControlEvents.XHR_LOAD].map(xhrLog => ({
-          ...xhrLog,
-          type: "xhr",
-        }))
-      ];
-
-      for(const logItem of logItems) {
-        const text = Array.from(Object.values(logItem.data)).join(" ");
+      for(const logItem of controlElement.logItems) {
+        const text = [
+          ...Array.from(Object.values(logItem.data)),
+          logItem.type,
+        ].join(" ");
         const isHit = regExps.every(regExp => regExp.test(text));
         const li = shadowRoot.querySelector(`#${id} #${logItem.id}`);
         if (li instanceof HTMLLIElement === false) {

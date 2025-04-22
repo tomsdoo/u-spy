@@ -3,17 +3,31 @@ import { ControlElement, ControlEvents } from "@/components/control-element";
 type FetchLog = ControlElement["logStore"][ControlEvents.FETCH] extends (infer T)[] ? T : never;
 type XhrLog = ControlElement["logStore"][ControlEvents.XHR_LOAD] extends (infer T)[] ? T : never;
 
-export function template(id: string, logStore: ControlElement["logStore"]) {
-  const logItems = [
-    ...logStore[ControlEvents.FETCH].map(fetchLog => ({
-      ...fetchLog,
-      type: "fetch",
-    })),
-    ...logStore[ControlEvents.XHR_LOAD].map(xhrLog => ({
-      ...xhrLog,
-      type: "xhr",
-    }))
-  ].toSorted((a,b) => a.time.getTime() - b.time.getTime());
+const formatter = new Intl.DateTimeFormat("en-US", {
+  hour12: false,
+  hour:   '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  fractionalSecondDigits: 3,
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+});
+
+function formatTime(dateValue: Date) {
+  return formatter.format(dateValue);
+}
+
+function getHost(url: RequestInfo | URL) {
+  try {
+    if (typeof url === "string") {
+      return new URL(url).host;
+    }
+    return url;
+  } catch(_) {
+    return url;
+  }
+}
+
+export function template(id: string, logItems: ControlElement["logItems"]) {
   function validateFetchLog(logItem: typeof logItems extends (infer T)[] ? T : never): logItem is FetchLog & { type: "fetch" } {
     return logItem.type === "fetch";
   }
@@ -27,45 +41,56 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
       </form>
       <ul>
         ${
-          logItems.map(logItem => `
-            <li id="${logItem.id}">
-              <div>${logItem.time}</div>
-              <div>${logItem.type}</div>
-              ${
-                validateFetchLog(logItem)
-                  ? `
-                      <div>
-                        ${logItem.data.init?.method ?? "GET"}
-                      </div>
-                      <div>
-                        ${logItem.data.input}
-                      </div>
-                      <div>
-                        ${logItem.data.init?.body ?? ""}
-                      </div>
-                      <div>
-                        ${logItem.data.response}
-                      </div>
-                    `
-                  : validateXhrLog(logItem)
-                    ? `
-                        <div>
-                          ${logItem.data.method}
-                        </div>
-                        <div>
-                          ${logItem.data.url}
-                        </div>
-                        <div>
-                          ${logItem.data.requestBody ?? ""}
-                        </div>
-                        <div>
-                          ${logItem.data.responseText}
-                        </div>
-                      `
-                    : ""
-              }
+          logItems.map(logItem => {
+            const isFetchLog = validateFetchLog(logItem);
+            const isXhrLog = validateXhrLog(logItem);
+            const liClassNames = [
+              isFetchLog ? "fetch-log" : "",
+              isXhrLog ? "xhr-log" : "",
+            ].join(" ");
+            const fetchLogHtml = isFetchLog
+              ? `
+                <div class="method">
+                  ${logItem.data.init?.method ?? "GET"}
+                </div>
+                <div class="host">
+                  <abbr title="${logItem.data.input}">${getHost(logItem.data.input)}</abbr>
+                  <a href="${logItem.data.input}" target="_blank">${logItem.data.input}</a>
+                </div>
+                <div data-foldable class="body folded">
+                  ${logItem.data.init?.body ?? ""}
+                </div>
+                <div data-foldable class="response folded">
+                  ${logItem.data.response}
+                </div>
+              `
+              : "";
+            const xhrLogHtml = isXhrLog
+              ? `
+                <div class="method">
+                  ${logItem.data.method}
+                </div>
+                <div class="host">
+                  <abbr title="${logItem.data.url}">${getHost(logItem.data.url)}</abbr>
+                  <a href="${logItem.data.input}" target="_blank">${logItem.data.input}</a>
+                </div>
+                <div data-foldable class="body folded">
+                  ${logItem.data.requestBody ?? ""}
+                </div>
+                <div data-foldable class="response folded">
+                  ${logItem.data.responseText}
+                </div>
+              `
+              : "";
+            return `
+            <li id="${logItem.id}" class="${liClassNames}">
+              <div class="time">${formatTime(logItem.time)}</div>
+              <div class="type">${logItem.type}</div>
+              ${ fetchLogHtml }
+               ${ xhrLogHtml }
             </li>
-          `).join("")
+            `;
+          }).join("")
         }
       </ul>
     </div>
@@ -87,8 +112,112 @@ export function template(id: string, logStore: ControlElement["logStore"]) {
         list-style-type: none;
         color: #eeeeee;
         overflow: auto;
+        display: grid;
+        gap: 1em;
 
-        li.hidden {
+        > li.fetch-log {
+          display: grid;
+          grid-template:
+            "time type method host" auto
+            "body body body body" auto
+            "response response response response" auto / auto auto auto 1fr;
+          gap: 0.2em 0.6em;
+
+          > div {
+           word-break: break-all;
+           line-height: 1.4;
+          }
+
+          > .time {
+            grid-area: time;
+          }
+          > .type {
+            grid-area: type;
+            text-transform: uppercase;
+            color: darkgoldenrod;
+          }
+          > .method {
+            grid-area: method;
+          }
+          > .host {
+            grid-area: host;
+            > a {
+              display: none;
+            }
+          }
+          > .host.detailed {
+            > abbr {
+              display: none;
+            }
+            > a {
+              display: inline;
+              color: darkcyan;
+            }
+          }
+          > .body {
+            grid-area: body;
+          }
+          > .response {
+            grid-area: response;
+          }
+          > .body.folded,
+          > .response.folded {
+            overflow: hidden;
+            max-height: calc(1.5em * 2);
+          }
+        }
+
+        > li.xhr-log {
+           display: grid;
+           grid-template:
+             "time type method host" auto
+             "body body body body" auto
+             "response response response response" auto / auto auto auto 1fr;
+          gap: 0.2em 0.6em;
+
+          > div {
+           word-break: break-all;
+           line-height: 1.4;
+          }
+
+          > .time {
+            grid-area: time;
+          }
+          > .type {
+            grid-area: type;
+          }
+          > .method {
+            grid-area: method;
+          }
+          > .host {
+            grid-area: host;
+            > a {
+              display: none;
+            }
+          }
+          > .host.detailed {
+            > abbr {
+              display: none;
+            }
+            > a {
+              display: inline;
+              color: darkcyan;
+            }
+          }
+          > .body {
+            grid-area: body;
+          }
+          > .response {
+            grid-area: response;
+          }
+          > .body.folded,
+          > .response.folded {
+            overflow: hidden;
+            max-height: calc(1.5em * 2);
+          }
+        }
+
+        > li.hidden {
           display: none;
         }
       }

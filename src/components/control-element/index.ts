@@ -159,6 +159,21 @@ export class ControlElement extends HTMLElement {
       },
     }));
   }
+  get logItems() {
+    return [
+      ...this.logStore[ControlEvents.FETCH]
+        .map(fetchLog => ({
+          ...fetchLog,
+          type: "fetch",
+        })),
+      ...this.logStore[ControlEvents.XHR_LOAD]
+        .map(xhrLog => ({
+          ...xhrLog,
+          type: "xhr",
+        })),
+    ]
+      .toSorted((a,b) => a.time.getTime() - b.time.getTime());
+  }
   static create(id: string) {
     const ele = document.createElement(TAG_NAME);
     ele.setAttribute("id", id);
