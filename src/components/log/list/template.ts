@@ -72,7 +72,7 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
                 </div>
                 <div class="host">
                   <abbr title="${logItem.data.url}">${getHost(logItem.data.url)}</abbr>
-                  <a href="${logItem.data.input}" target="_blank">${logItem.data.input}</a>
+                  <a href="${logItem.data.url}" target="_blank">${logItem.data.url}</a>
                 </div>
                 <div data-foldable class="body folded">
                   ${logItem.data.requestBody ?? ""}
