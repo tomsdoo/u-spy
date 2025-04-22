@@ -114,6 +114,14 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
        }
       }
 
+      > * {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      > *::-webkit-scrollbar{
+        display:none;
+      }
+
       > ul {
         margin-block-start: 0;
         margin-block-end: 0;
