@@ -1,0 +1,83 @@
+import { template } from "./template";
+import { ControlElement, ControlEvents } from "@/components/control-element";
+
+const TAG_NAME = "u-spy-log-list";
+
+export class LogListElement extends HTMLElement {
+  connectedCallback() {
+    const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
+    const shadowRoot = this.attachShadow({ mode: "open" });
+    const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
+    const controlElement = ControlElement.ensure(controlId);
+    shadowRoot.appendChild(
+      document.createRange().createContextualFragment(template(id, controlElement.logItems))
+    );
+    shadowRoot.querySelector(`#${id} > form`)?.addEventListener("submit", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    shadowRoot.querySelectorAll(`#${id} > ul > li > [data-foldable]`).forEach((el)  => {
+      el.addEventListener("click", () => {
+        el.classList.toggle("folded");
+      });
+    });
+    shadowRoot.querySelectorAll(`#${id} > ul > li > .host`).forEach((el) => {
+      el.addEventListener("click", () => {
+        el.classList.toggle("detailed");
+      });
+    });
+    shadowRoot.querySelectorAll(`#${id} > ul > li.fetch-log > .response`).forEach((el) => {
+      el.addEventListener("click", async (e) => {
+        if (el.classList.contains("response-expanded")) {
+          return;
+        }
+        const liTag = el.closest("li");
+        if (liTag == null) {
+          return;
+        }
+        const logItem = controlElement.logItems.find(({ id }) => id === liTag.id);
+        if (logItem == null) {
+          return;
+        }
+        const responseObj = await logItem.data.response.clone().text();
+        el.textContent = responseObj;
+        el.classList.add("response-expanded");
+      });
+    });
+    shadowRoot.querySelector(`#${id} > form > input`)?.addEventListener("change", (e) => {
+      if (e.target == null) {
+        return;
+      }
+      if (e.target instanceof HTMLInputElement === false) {
+        return;
+      }
+
+      const keyword = e.target.value;
+      const regExps = keyword.split(/\s+/).map(s => new RegExp(s, "i"));
+
+      for(const logItem of controlElement.logItems) {
+        const text = [
+          ...Array.from(Object.values(logItem.data)),
+          logItem.type,
+        ].join(" ");
+        const isHit = regExps.every(regExp => regExp.test(text));
+        const li = shadowRoot.querySelector(`#${id} #${logItem.id}`);
+        if (li instanceof HTMLLIElement === false) {
+          continue;
+        }
+        if (isHit) {
+          li.classList.remove("hidden");
+        } else {
+          li.classList.add("hidden");
+        }
+      }
+    });
+  }
+  static create() {
+    return document.createElement(TAG_NAME);
+  }
+}
+
+try {
+  globalThis.customElements.define(TAG_NAME, LogListElement);
+} catch {}

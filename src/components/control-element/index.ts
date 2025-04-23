@@ -64,8 +64,8 @@ export class ControlElement extends HTMLElement {
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
   events = ControlEvents;
   logStore: {
-    [ControlEvents.FETCH]: { time: Date; data: FetchEventData; }[];
-    [ControlEvents.XHR_LOAD]: { time: Date; data: XhrLoadEventData; }[];
+    [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData; }[];
+    [ControlEvents.XHR_LOAD]: { id: string; time: Date; data: XhrLoadEventData; }[];
   } = {
     [ControlEvents.FETCH]: [],
     [ControlEvents.XHR_LOAD]: [],
@@ -132,6 +132,7 @@ export class ControlElement extends HTMLElement {
     this.logStore[ControlEvents.XHR_LOAD].push({
       data,
       time: new Date(),
+      id: `log-item-xhr-${crypto.randomUUID()}`,
     });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,
@@ -148,6 +149,7 @@ export class ControlElement extends HTMLElement {
         response: data.response.clone(),
       },
       time: new Date(),
+      id: `log-item-fetch-${crypto.randomUUID()}`,
     });
     this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
       bubbles: false,
@@ -156,6 +158,21 @@ export class ControlElement extends HTMLElement {
         data,
       },
     }));
+  }
+  get logItems() {
+    return [
+      ...this.logStore[ControlEvents.FETCH]
+        .map(fetchLog => ({
+          ...fetchLog,
+          type: "fetch",
+        })),
+      ...this.logStore[ControlEvents.XHR_LOAD]
+        .map(xhrLog => ({
+          ...xhrLog,
+          type: "xhr",
+        })),
+    ]
+      .toSorted((a,b) => a.time.getTime() - b.time.getTime());
   }
   static create(id: string) {
     const ele = document.createElement(TAG_NAME);
@@ -170,6 +187,9 @@ export class ControlElement extends HTMLElement {
       return existing as ControlElement;
     } 
     return this.create(id);
+  }
+  static list() {
+    return  Array.from(document.querySelectorAll(TAG_NAME));
   }
 }
 
