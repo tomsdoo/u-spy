@@ -127,10 +127,10 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
         margin-block-end: 0;
         padding-inline-start: 0;
         list-style-type: none;
-        color: #eeeeee;
+        color: #cccccc;
         overflow: auto;
         display: grid;
-        gap: 1em;
+        gap: 2em;
 
         > li.fetch-log {
           display: grid;
