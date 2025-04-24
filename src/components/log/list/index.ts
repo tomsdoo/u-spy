@@ -26,6 +26,25 @@ export class LogListElement extends HTMLElement {
         el.classList.toggle("detailed");
       });
     });
+    shadowRoot.querySelectorAll(`#${id} > ul > li.beacon-log > .body`).forEach((el) => {
+      el.addEventListener("click", async (e) => {
+        if (el.classList.contains("body-expanded")) {
+          return;
+        }
+        const liTag = el.closest("li");
+        if (liTag == null) {
+          return;
+        }
+        const logItem = controlElement.logItems.find(({ id }) => id === liTag.id);
+        if (logItem == null) {
+          return;
+        }
+        if (logItem.data.data instanceof Blob) {
+          el.textContent = await new Response(logItem.data.data).text();
+          el.classList.add("body-expanded");
+        }
+      });
+    });
     shadowRoot.querySelectorAll(`#${id} > ul > li.fetch-log > .response`).forEach((el) => {
       el.addEventListener("click", async (e) => {
         if (el.classList.contains("response-expanded")) {

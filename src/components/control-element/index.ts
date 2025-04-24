@@ -7,6 +7,7 @@ export const CONTROL_EVENT = 'u-spy-control';
 export enum ControlEvents {
   XHR_LOAD = 'xhr_load',
   FETCH = 'fetch',
+  BEACON = 'beacon',
 }
 
 type XhrLoadEventData = {
@@ -40,9 +41,20 @@ type FetchEvent = {
   data: FetchEventData;
 };
 
+type BeaconEventData = {
+  url: string | URL;
+  data?: BodyInit | null;
+};
+
+type BeaconEvent = {
+  type: ControlEvents.BEACON;
+  data: BeaconEventData;
+};
+
 export type ControlEventDetail =
   | XhrLoadEvent
-  | FetchEvent;
+  | FetchEvent
+  | BeaconEvent;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -56,9 +68,11 @@ declare global {
 
 type FetchHandler = (data: FetchEventData) => void;
 type XhrLoadHandler = (data: XhrLoadEventData) => void;
+type BeaconHandler = (data: BeaconEventData) => void;
 type Handler =
   | FetchHandler
-  | XhrLoadHandler;
+  | XhrLoadHandler
+  | BeaconHandler;
 
 export class ControlElement extends HTMLElement {
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
@@ -66,9 +80,11 @@ export class ControlElement extends HTMLElement {
   logStore: {
     [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData; }[];
     [ControlEvents.XHR_LOAD]: { id: string; time: Date; data: XhrLoadEventData; }[];
+    [ControlEvents.BEACON]: { id: string; time: Date; data: BeaconEventData; }[];
   } = {
     [ControlEvents.FETCH]: [],
     [ControlEvents.XHR_LOAD]: [],
+    [ControlEvents.BEACON]: [],
   };
   constructor() {
     super();
@@ -87,6 +103,7 @@ export class ControlElement extends HTMLElement {
   }
   on(event: ControlEvents.FETCH, handler: FetchHandler): void;
   on(event: ControlEvents.XHR_LOAD, handler: XhrLoadHandler): void;
+  on(event: ControlEvents.BEACON, handler: BeaconHandler): void;
   on(event: ControlEvents, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
     const exists = existingHandlers.find(({ handler: existingHandler}) => existingHandler === handler) != null;
@@ -103,6 +120,9 @@ export class ControlElement extends HTMLElement {
           return;
         case ControlEvents.XHR_LOAD:
           (handler as XhrLoadHandler)(e.detail.data as XhrLoadEventData);
+          return;
+        case ControlEvents.BEACON:
+          (handler as BeaconHandler)(e.detail.data as BeaconEventData);
           return;
         default:
           return;
@@ -159,6 +179,20 @@ export class ControlElement extends HTMLElement {
       },
     }));
   }
+  dispatchBeacon(data: BeaconEventData) {
+    this.logStore[ControlEvents.BEACON].push({
+      data,
+      time: new Date(),
+      id: `log-item-beacon-${crypto.randomUUID()}`,
+    });
+    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
+      bubbles: false,
+      detail: {
+        type: ControlEvents.BEACON,
+        data,
+      },
+    }));
+  }
   get logItems() {
     return [
       ...this.logStore[ControlEvents.FETCH]
@@ -170,6 +204,11 @@ export class ControlElement extends HTMLElement {
         .map(xhrLog => ({
           ...xhrLog,
           type: "xhr",
+        })),
+      ...this.logStore[ControlEvents.BEACON]
+        .map(beaconLog => ({
+          ...beaconLog,
+          type: "beacon",
         })),
     ]
       .toSorted((a,b) => a.time.getTime() - b.time.getTime());
