@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import { styleMinify } from "./style-minify";
 
 export default defineConfig({
   entry: ["src/index.ts"],
@@ -8,4 +9,5 @@ export default defineConfig({
   minify: true,
   format: "iife",
   outDir: "dist",
+  esbuildPlugins: [styleMinify()],
 });
