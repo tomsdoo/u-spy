@@ -152,118 +152,14 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
         display: grid;
         gap: 2em;
 
-        > li.fetch-log {
+        > li.fetch-log,
+        > li.xhr-log,
+        > li.beacon-log {
           display: grid;
           grid-template:
             "time type method host" auto
             "body body body body" auto
             "response response response response" auto / auto auto auto 1fr;
-          gap: 0.2em 0.6em;
-
-          > div {
-           word-break: break-all;
-           line-height: 1.4;
-          }
-
-          > .time {
-            grid-area: time;
-          }
-          > .type {
-            grid-area: type;
-            text-transform: uppercase;
-            color: darkgoldenrod;
-          }
-          > .method {
-            grid-area: method;
-            color: darkkhaki;
-          }
-          > .host {
-            grid-area: host;
-            > a {
-              display: none;
-            }
-          }
-          > .host.detailed {
-            > abbr {
-              display: none;
-            }
-            > a {
-              display: inline;
-              color: darkcyan;
-            }
-          }
-          > .body {
-            grid-area: body;
-          }
-          > .response {
-            grid-area: response;
-          }
-          > .body.folded,
-          > .response.folded {
-            overflow: hidden;
-            max-height: calc(1.5em * 2);
-          }
-        }
-
-        > li.xhr-log {
-           display: grid;
-           grid-template:
-             "time type method host" auto
-             "body body body body" auto
-             "response response response response" auto / auto auto auto 1fr;
-          gap: 0.2em 0.6em;
-
-          > div {
-           word-break: break-all;
-           line-height: 1.4;
-          }
-
-          > .time {
-            grid-area: time;
-          }
-          > .type {
-            grid-area: type;
-            text-transform: uppercase;
-            color: darkgoldenrod;
-          }
-          > .method {
-            grid-area: method;
-            color: darkkhaki;
-          }
-          > .host {
-            grid-area: host;
-            > a {
-              display: none;
-            }
-          }
-          > .host.detailed {
-            > abbr {
-              display: none;
-            }
-            > a {
-              display: inline;
-              color: darkcyan;
-            }
-          }
-          > .body {
-            grid-area: body;
-          }
-          > .response {
-            grid-area: response;
-          }
-          > .body.folded,
-          > .response.folded {
-            overflow: hidden;
-            max-height: calc(1.5em * 2);
-          }
-        }
-
-        > li.beacon-log {
-           display: grid;
-           grid-template:
-             "time type method host" auto
-             "body body body body" auto
-             "response response response response" auto / auto auto auto 1fr;
           gap: 0.2em 0.6em;
 
           > div {
