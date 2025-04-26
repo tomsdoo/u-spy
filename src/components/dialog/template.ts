@@ -7,16 +7,18 @@ export function template(
   {
     articleId,
     dialogId,
+    controlListId,
   }: {
     articleId: string;
     dialogId: string;
+    controlListId: string;
   },
 ) {
   return `
     <div id="${id}">
       <div id="${articleId}">
         <h1>${title}</h1>
-        <ul>
+        <ul id="${controlListId}">
           ${
             controlElements.map(
               controlElement =>
@@ -94,7 +96,7 @@ export function template(
           line-height: 1;
          }
 
-         > ul {
+         > #${controlListId} {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
           gap: 16px;

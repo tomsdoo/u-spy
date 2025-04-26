@@ -23,13 +23,16 @@ export class DialogElement extends HTMLElement {
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
     const articleId = `usa-${crypto.randomUUID().replace(/-/g, "")}`;
     const dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
+    const controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
     const ids = {
       articleId,
       dialogId,
+      controlListId,
     };
     const Selectors = {
       ARTICLE: `#${articleId}`,
       DIALOG: `#${dialogId}`,
+      CONTROL_LIST: `#${controlListId}`,
     };
     const shadowRoot = this.attachShadow({ mode: "open" });
     const title = shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
@@ -101,7 +104,7 @@ export class DialogElement extends HTMLElement {
     }
     window.addEventListener("keydown", removalKeyHandler);
 
-    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${id} > div > ul > li > button`).forEach((button, buttonIndex) => {
+    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${controlListId} > li > button`).forEach((button, buttonIndex) => {
       button.addEventListener("click", (e) => {
         if (e.target == null) {
           return;
