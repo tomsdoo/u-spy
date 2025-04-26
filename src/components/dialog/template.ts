@@ -6,10 +6,12 @@ export function template(
   controlElements: ControlElement[],
   {
     articleId,
+    contentId,
     dialogId,
     controlListId,
   }: {
     articleId: string;
+    contentId: string;
     dialogId: string;
     controlListId: string;
   },
@@ -28,7 +30,7 @@ export function template(
             ).join("")
           }
         </ul>
-        <div id="content"></div>
+        <div id="${contentId}"></div>
       </div>
       <div id="${dialogId}" class="hidden" tabindex="-1">
         <div>keys</div>
@@ -127,7 +129,7 @@ export function template(
           }
         }
 
-        #content {
+        #${contentId} {
           overflow: auto;
         }
       }
