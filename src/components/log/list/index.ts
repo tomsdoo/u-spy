@@ -42,8 +42,17 @@ export class LogListElement extends HTMLElement {
         if (logItem == null) {
           return;
         }
+        if ("data" in logItem.data === false) {
+          return;
+        }
+        if (logItem.data.data == null) {
+          return;
+        }
         if (logItem.data.data instanceof Blob) {
           el.textContent = await new Response(logItem.data.data).text();
+          el.classList.add("body-expanded");
+        } else if (logItem.data.data instanceof FormData) {
+          el.textContent = JSON.stringify(Object.fromEntries(logItem.data.data.entries()));
           el.classList.add("body-expanded");
         }
       });
@@ -59,6 +68,12 @@ export class LogListElement extends HTMLElement {
         }
         const logItem = controlElement.logItems.find(({ id }) => id === liTag.id);
         if (logItem == null) {
+          return;
+        }
+        if ("response" in logItem.data === false) {
+          return;
+        }
+        if (logItem.data.response instanceof Response === false) {
           return;
         }
         const responseObj = await logItem.data.response.clone().text();
