@@ -1,5 +1,6 @@
 import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
+import { EventType } from "@/constants/event-type";
 
 const TAG_NAME = "u-spy-log-list";
 
@@ -34,18 +35,18 @@ export class LogListElement extends HTMLElement {
       e.preventDefault();
     });
     shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > [data-foldable]`).forEach((el)  => {
-      el.addEventListener("click", () => {
+      el.addEventListener(EventType.CLICK, () => {
         el.classList.toggle("folded");
       });
     });
     shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .host`).forEach((el) => {
-      el.addEventListener("click", () => {
+      el.addEventListener(EventType.CLICK, () => {
         el.classList.toggle("detailed");
       });
     });
     shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.beacon-log > .body`).forEach((el) => {
       const BODY_EXPANDED_CLASS_NAME = "body-expanded";
-      el.addEventListener("click", async (e) => {
+      el.addEventListener(EventType.CLICK, async (e) => {
         if (el.classList.contains(BODY_EXPANDED_CLASS_NAME)) {
           return;
         }
@@ -74,7 +75,7 @@ export class LogListElement extends HTMLElement {
     });
     shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.fetch-log > .response`).forEach((el) => {
       const RESPONSE_EXPANDED_CLASS_NAME = "response-expanded";
-      el.addEventListener("click", async (e) => {
+      el.addEventListener(EventType.CLICK, async (e) => {
         if (el.classList.contains(RESPONSE_EXPANDED_CLASS_NAME)) {
           return;
         }
