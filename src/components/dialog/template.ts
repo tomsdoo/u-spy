@@ -3,7 +3,7 @@ import type { ControlElement } from "@/components/control-element";
 export function template(id: string, title: string, controlElements: ControlElement[]) {
   return `
     <div id="${id}">
-      <div>
+      <div class="article">
         <h1>${title}</h1>
         <ul>
           ${
@@ -16,6 +16,24 @@ export function template(id: string, title: string, controlElements: ControlElem
           }
         </ul>
         <div id="content"></div>
+      </div>
+      <div class="dialog hidden" tabindex="-1">
+        <div>keys</div>
+        <ul>
+          ${
+            [
+              {
+                key: "?",
+                description: "show help",
+              },
+            ].map(({ key, description }) => `
+              <li>
+                <div>${key}</div>
+                <div> ${description}</div>
+              </li>
+            `)
+          }
+        </ul>
       </div>
     </div>
     <style>
@@ -32,7 +50,15 @@ export function template(id: string, title: string, controlElements: ControlElem
       background: rgb(0 0 0 / 80%);
       z-index: calc(infinity);
 
-      > div {
+      ul,
+      ol {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-inline-start: 0;
+        list-style-type: none;
+      }
+
+      > .article {
         display: grid;
         grid-template-rows: auto auto 1fr;
         gap: 16px;
@@ -54,10 +80,6 @@ export function template(id: string, title: string, controlElements: ControlElem
          }
 
          > ul {
-          margin-block-start: 0;
-          margin-block-end: 0;
-          padding-inline-start: 0;
-          list-style-type: none;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
           gap: 16px;
@@ -90,6 +112,42 @@ export function template(id: string, title: string, controlElements: ControlElem
 
         #content {
           overflow: auto;
+        }
+      }
+
+      > .dialog {
+        &.hidden {
+          display: none;
+        }
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: grid;
+        grid-template:
+          "title" auto
+          "content" 1fr;
+        gap: 16px;
+        min-width: 10rem;
+        min-height: 10rem;
+        max-width: 80%;
+        max-height: 80%;
+        padding: 16px 32px;
+        border-radius: 8px;
+        backdrop-filter: blur(1em);
+        box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
+        transform: translate(-50%, -50%);
+        > div {
+          grid-area: title;
+          text-align: center;
+        }
+        > ul {
+          grid-area: content;
+          > li {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 16px;
+          }
         }
       }
     }
