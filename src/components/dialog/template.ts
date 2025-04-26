@@ -9,7 +9,9 @@ export function template(id: string, title: string, controlElements: ControlElem
           ${
             controlElements.map(
               controlElement =>
-                `<li data-control-id="${controlElement.id}">${controlElement.id}</li>`
+                `<li data-control-id="${controlElement.id}">
+                  <button type="button">${controlElement.id}</button>
+                </li>`
             ).join("")
           }
         </ul>
@@ -61,13 +63,28 @@ export function template(id: string, title: string, controlElements: ControlElem
           gap: 16px;
 
           > li {
-            display: grid;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-            box-shadow: inset 0 0 1px;
-            padding: 4px 8px;
-            cursor: pointer;
+            &.active {
+              color: darkgoldenrod;
+            }
+
+            > button {
+              display: grid;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              box-shadow: inset 0 0 1px;
+              padding: 4px 8px;
+              border-radius: 8px;
+              width: 100%;
+              height: 100%;
+              background: transparent;
+              color: inherit;
+              border: 0;
+
+              &:hover {
+                box-shadow: inset 0 0 2px;
+              }
+            }
           }
         }
 
