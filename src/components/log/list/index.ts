@@ -4,9 +4,12 @@ import { ControlElement, ControlEvents } from "@/components/control-element";
 const TAG_NAME = "u-spy-log-list";
 
 export class LogListElement extends HTMLElement {
+  shadowRoot: ShadowRoot | null = null;
+  keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   connectedCallback() {
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
+    this.shadowRoot = shadowRoot;
     const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
     const controlElement = ControlElement.ensure(controlId);
     shadowRoot.appendChild(
@@ -91,6 +94,19 @@ export class LogListElement extends HTMLElement {
         }
       }
     });
+    this.keyEventHandler = (e: KeyboardEvent) => {
+      if (e.key !== "s") {
+        return;
+      }
+      shadowRoot.querySelector<HTMLInputElement>(`#${id} > form > input`)?.focus();
+    };
+    window.addEventListener("keyup", this.keyEventHandler);
+  }
+  disconnectedCallback() {
+    if (this.keyEventHandler == null) {
+      return;
+    }
+    window.removeEventListener("keyup", this.keyEventHandler);
   }
   static create() {
     return document.createElement(TAG_NAME);
