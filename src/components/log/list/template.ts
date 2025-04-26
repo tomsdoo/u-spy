@@ -28,7 +28,19 @@ function getHost(url: RequestInfo | URL) {
   }
 }
 
-export function template(id: string, logItems: ControlElement["logItems"]) {
+export function template(
+  id: string,
+  logItems: ControlElement["logItems"],
+  {
+    formId,
+    keyBoxId,
+    logListId,
+  }: {
+    formId: string;
+    keyBoxId: string;
+    logListId: string;
+  },
+) {
   function validateFetchLog(logItem: typeof logItems extends (infer T)[] ? T : never): logItem is FetchLog & { type: "fetch" } {
     return logItem.type === "fetch";
   }
@@ -40,10 +52,10 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
   }
   return `
     <div id="${id}">
-      <form>
-        <input placeholder="keyword.." />
+      <form id="${formId}">
+        <input id="${keyBoxId}" placeholder="keyword.." />
       </form>
-      <ul>
+      <ul id="${logListId}">
         ${
           logItems.map(logItem => {
             const isFetchLog = validateFetchLog(logItem);
@@ -121,6 +133,14 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
       gap: 16px;
       max-height: 100%;
 
+      ul,
+      ol {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-inline-start: 0;
+        list-style-type: none;
+      }
+
       > form {
        display: grid;
        justify-content: end;
@@ -143,10 +163,6 @@ export function template(id: string, logItems: ControlElement["logItems"]) {
       }
 
       > ul {
-        margin-block-start: 0;
-        margin-block-end: 0;
-        padding-inline-start: 0;
-        list-style-type: none;
         color: #cccccc;
         overflow: auto;
         display: grid;

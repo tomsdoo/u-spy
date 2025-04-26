@@ -1,5 +1,5 @@
 import { template } from "./template";
-import { ControlElement, ControlEvents } from "@/components/control-element";
+import { ControlElement } from "@/components/control-element";
 
 const TAG_NAME = "u-spy-log-list";
 
@@ -8,30 +8,45 @@ export class LogListElement extends HTMLElement {
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   connectedCallback() {
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
+    const formId = `usf-${crypto.randomUUID().replace(/-/g, "")}`;
+    const keyBoxId = `uskb-${crypto.randomUUID().replace(/-/g, "")}`;
+    const logListId = `usl-${crypto.randomUUID().replace(/-/g, "")}`;
+    const ids = {
+      formId,
+      keyBoxId,
+      logListId,
+    };
+    const Selectors = {
+      SEARCH_FORM: `#${formId}`,
+      SEARCH_KEY_BOX: `#${keyBoxId}`,
+      LOG_LIST: `#${logListId}`,
+      LOG_LIST_ITEM: `#${logListId} > li`,
+    };
     const shadowRoot = this.attachShadow({ mode: "open" });
     this.shadowRoot = shadowRoot;
     const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
     const controlElement = ControlElement.ensure(controlId);
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, controlElement.logItems))
+      document.createRange().createContextualFragment(template(id, controlElement.logItems, ids))
     );
-    shadowRoot.querySelector(`#${id} > form`)?.addEventListener("submit", (e) => {
+    shadowRoot.querySelector(Selectors.SEARCH_FORM)?.addEventListener("submit", (e) => {
       e.stopPropagation();
       e.preventDefault();
     });
-    shadowRoot.querySelectorAll(`#${id} > ul > li > [data-foldable]`).forEach((el)  => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > [data-foldable]`).forEach((el)  => {
       el.addEventListener("click", () => {
         el.classList.toggle("folded");
       });
     });
-    shadowRoot.querySelectorAll(`#${id} > ul > li > .host`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .host`).forEach((el) => {
       el.addEventListener("click", () => {
         el.classList.toggle("detailed");
       });
     });
-    shadowRoot.querySelectorAll(`#${id} > ul > li.beacon-log > .body`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.beacon-log > .body`).forEach((el) => {
+      const BODY_EXPANDED_CLASS_NAME = "body-expanded";
       el.addEventListener("click", async (e) => {
-        if (el.classList.contains("body-expanded")) {
+        if (el.classList.contains(BODY_EXPANDED_CLASS_NAME)) {
           return;
         }
         const liTag = el.closest("li");
@@ -50,16 +65,17 @@ export class LogListElement extends HTMLElement {
         }
         if (logItem.data.data instanceof Blob) {
           el.textContent = await new Response(logItem.data.data).text();
-          el.classList.add("body-expanded");
+          el.classList.add(BODY_EXPANDED_CLASS_NAME);
         } else if (logItem.data.data instanceof FormData) {
           el.textContent = JSON.stringify(Object.fromEntries(logItem.data.data.entries()));
-          el.classList.add("body-expanded");
+          el.classList.add(BODY_EXPANDED_CLASS_NAME);
         }
       });
     });
-    shadowRoot.querySelectorAll(`#${id} > ul > li.fetch-log > .response`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.fetch-log > .response`).forEach((el) => {
+      const RESPONSE_EXPANDED_CLASS_NAME = "response-expanded";
       el.addEventListener("click", async (e) => {
-        if (el.classList.contains("response-expanded")) {
+        if (el.classList.contains(RESPONSE_EXPANDED_CLASS_NAME)) {
           return;
         }
         const liTag = el.closest("li");
@@ -78,10 +94,10 @@ export class LogListElement extends HTMLElement {
         }
         const responseObj = await logItem.data.response.clone().text();
         el.textContent = responseObj;
-        el.classList.add("response-expanded");
+        el.classList.add(RESPONSE_EXPANDED_CLASS_NAME);
       });
     });
-    shadowRoot.querySelector(`#${id} > form > input`)?.addEventListener("change", (e) => {
+    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener("change", (e) => {
       if (e.target == null) {
         return;
       }
@@ -93,6 +109,7 @@ export class LogListElement extends HTMLElement {
       const regExps = keyword.split(/\s+/).map(s => new RegExp(s, "i"));
 
       for(const logItem of controlElement.logItems) {
+        const HIDDEN_CLASS_NAME = "hidden";
         const text = [
           ...Array.from(Object.values(logItem.data)),
           logItem.type,
@@ -103,9 +120,9 @@ export class LogListElement extends HTMLElement {
           continue;
         }
         if (isHit) {
-          li.classList.remove("hidden");
+          li.classList.remove(HIDDEN_CLASS_NAME);
         } else {
-          li.classList.add("hidden");
+          li.classList.add(HIDDEN_CLASS_NAME);
         }
       }
     });
@@ -113,7 +130,7 @@ export class LogListElement extends HTMLElement {
       if (e.key !== "s") {
         return;
       }
-      shadowRoot.querySelector<HTMLInputElement>(`#${id} > form > input`)?.focus();
+      shadowRoot.querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)?.focus();
     };
     window.addEventListener("keyup", this.keyEventHandler);
   }
