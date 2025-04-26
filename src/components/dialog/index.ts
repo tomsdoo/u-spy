@@ -4,6 +4,19 @@ import { LogListElement } from "@/components/log/list";
 
 const TAG_NAME = "u-spy-dialog";
 
+function ref<T = unknown>(initialValue: T) {
+  return new Proxy({
+    value: initialValue,
+  }, {
+    set(target, prop, value) {
+      if (prop === "value") {
+        target[prop] = value;
+      }
+      return true;
+    },
+  });
+}
+
 export class DialogElement extends HTMLElement {
   connectedCallback() {
     const that = this;
@@ -17,15 +30,58 @@ export class DialogElement extends HTMLElement {
       e.stopPropagation();
       that.remove();
     });
-    shadowRoot.querySelector(`#${id} > div`)?.addEventListener("click", (e) => {
-      e.stopPropagation();
+    shadowRoot.querySelectorAll(`#${id} > div`).forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
     });
+    shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`)?.addEventListener("blur", (e) => {
+      if (e.target instanceof HTMLDivElement === false) {
+        return;
+      }
+      e.target.classList.add("hidden");
+    });
+    const isDialogOpen = ref(false);
+    function showDialog() {
+      try {
+        const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`);
+        if (dialogDiv == null) {
+          return;
+        }
+        dialogDiv.classList.remove("hidden");
+        dialogDiv.focus();
+        isDialogOpen.value = true;
+      } catch {}
+    }
+    function hideDialog() {
+      try {
+        const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`);
+        if (dialogDiv == null) {
+          return;
+        }
+        dialogDiv.classList.add("hidden");
+        isDialogOpen.value = false;
+      } catch {}
+    }
+    function helpHandler(e: KeyboardEvent) {
+      if (e.key !== "?") {
+        return;
+      }
+      showDialog();
+    }
+    window.addEventListener("keydown", helpHandler);
     function removalKeyHandler(e: KeyboardEvent) {
       if (e.key !== "Escape") {
         return;
       }
+      if (isDialogOpen.value) {
+        hideDialog();
+        return;
+      }
+
       try {
         window.removeEventListener("keydown", removalKeyHandler);
+        window.removeEventListener("keydown", helpHandler);
         that.remove();
       } catch {}
     }
