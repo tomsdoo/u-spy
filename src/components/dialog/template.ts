@@ -42,6 +42,10 @@ export function template(
                 description: "show help",
               },
               {
+                key: "r",
+                description: "refresh logs",
+              },
+              {
                 key: "s",
                 description: "focus search box",
               },

@@ -19,6 +19,7 @@ function ref<T = unknown>(initialValue: T) {
 }
 
 export class DialogElement extends HTMLElement {
+  keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   connectedCallback() {
     const that = this;
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
@@ -146,6 +147,19 @@ export class DialogElement extends HTMLElement {
         }, 1);
       }
     });
+    this.keyEventHandler = (e: KeyboardEvent) => {
+      if (e.key !== "r") {
+        return;
+      }
+      shadowRoot.querySelector<HTMLButtonElement>(`#${controlListId} > li.active > button`)?.click();
+    };
+    window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
+  }
+  disconnectedCallback() {
+    if (this.keyEventHandler == null) {
+      return;
+    }
+    window.removeEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
 }
 
