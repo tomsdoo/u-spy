@@ -21,48 +21,65 @@ export class DialogElement extends HTMLElement {
   connectedCallback() {
     const that = this;
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
+    const articleId = `usa-${crypto.randomUUID().replace(/-/g, "")}`;
+    const dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
+    const controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
+    const ids = {
+      articleId,
+      dialogId,
+      controlListId,
+    };
+    const Selectors = {
+      ARTICLE: `#${articleId}`,
+      DIALOG: `#${dialogId}`,
+      CONTROL_LIST: `#${controlListId}`,
+    };
     const shadowRoot = this.attachShadow({ mode: "open" });
     const title = shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, title, ControlElement.list()))
+      document.createRange().createContextualFragment(template(id, title, ControlElement.list(), ids))
     );
     shadowRoot.querySelector(`#${id}`)?.addEventListener("click", (e) => {
       e.stopPropagation();
       that.remove();
     });
-    shadowRoot.querySelectorAll(`#${id} > div`).forEach((el) => {
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-      });
-    });
-    shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`)?.addEventListener("blur", (e) => {
+    for(const selector of [
+      Selectors.ARTICLE,
+      Selectors.DIALOG,
+    ]) {
+      shadowRoot.querySelector(selector)
+        ?.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+    }
+    const HIDDEN_CLASS_NAME = "hidden";
+    shadowRoot.querySelector<HTMLDivElement>(Selectors.DIALOG)?.addEventListener("blur", (e) => {
       if (e.target instanceof HTMLDivElement === false) {
         return;
       }
-      e.target.classList.add("hidden");
+      e.target.classList.add(HIDDEN_CLASS_NAME);
     });
     const isDialogOpen = ref(false);
-    function showDialog() {
-      try {
-        const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`);
-        if (dialogDiv == null) {
-          return;
-        }
-        dialogDiv.classList.remove("hidden");
-        dialogDiv.focus();
-        isDialogOpen.value = true;
-      } catch {}
+    function workWithDialog(callback: (target: HTMLDivElement) => void) {
+      return function() {
+        try {
+          const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(Selectors.DIALOG);
+          if (dialogDiv == null) {
+            return;
+          }
+          callback(dialogDiv);
+        } catch {}
+      };
     }
-    function hideDialog() {
-      try {
-        const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(`#${id} > div.dialog`);
-        if (dialogDiv == null) {
-          return;
-        }
-        dialogDiv.classList.add("hidden");
-        isDialogOpen.value = false;
-      } catch {}
-    }
+    const showDialog = workWithDialog((dialogDiv) => {
+      dialogDiv.classList.remove(HIDDEN_CLASS_NAME);
+      dialogDiv.focus();
+      isDialogOpen.value = true;
+    });
+    const hideDialog = workWithDialog((dialogDiv) => {
+      dialogDiv.classList.add(HIDDEN_CLASS_NAME);
+      isDialogOpen.value = false;
+    });
     function helpHandler(e: KeyboardEvent) {
       if (e.key !== "?") {
         return;
@@ -87,7 +104,7 @@ export class DialogElement extends HTMLElement {
     }
     window.addEventListener("keydown", removalKeyHandler);
 
-    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${id} > div > ul > li > button`).forEach((button, buttonIndex) => {
+    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${controlListId} > li > button`).forEach((button, buttonIndex) => {
       button.addEventListener("click", (e) => {
         if (e.target == null) {
           return;

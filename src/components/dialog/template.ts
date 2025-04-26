@@ -1,11 +1,24 @@
 import type { ControlElement } from "@/components/control-element";
 
-export function template(id: string, title: string, controlElements: ControlElement[]) {
+export function template(
+  id: string,
+  title: string,
+  controlElements: ControlElement[],
+  {
+    articleId,
+    dialogId,
+    controlListId,
+  }: {
+    articleId: string;
+    dialogId: string;
+    controlListId: string;
+  },
+) {
   return `
     <div id="${id}">
-      <div class="article">
+      <div id="${articleId}">
         <h1>${title}</h1>
-        <ul>
+        <ul id="${controlListId}">
           ${
             controlElements.map(
               controlElement =>
@@ -17,7 +30,7 @@ export function template(id: string, title: string, controlElements: ControlElem
         </ul>
         <div id="content"></div>
       </div>
-      <div class="dialog hidden" tabindex="-1">
+      <div id="${dialogId}" class="hidden" tabindex="-1">
         <div>keys</div>
         <ul>
           ${
@@ -62,7 +75,7 @@ export function template(id: string, title: string, controlElements: ControlElem
         list-style-type: none;
       }
 
-      > .article {
+      > #${articleId} {
         display: grid;
         grid-template-rows: auto auto 1fr;
         gap: 16px;
@@ -83,7 +96,7 @@ export function template(id: string, title: string, controlElements: ControlElem
           line-height: 1;
          }
 
-         > ul {
+         > #${controlListId} {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
           gap: 16px;
@@ -119,7 +132,7 @@ export function template(id: string, title: string, controlElements: ControlElem
         }
       }
 
-      > .dialog {
+      > #${dialogId} {
         &.hidden {
           display: none;
         }
