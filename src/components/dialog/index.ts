@@ -153,13 +153,13 @@ export class DialogElement extends HTMLElement {
       }
       shadowRoot.querySelector<HTMLButtonElement>(`#${controlListId} > li.active > button`)?.click();
     };
-    window.addEventListener("keydown", this.keyEventHandler);
+    window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
       return;
     }
-    window.removeEventListener("keydown", this.keyEventHandler);
+    window.removeEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
 }
 
