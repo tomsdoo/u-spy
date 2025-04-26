@@ -22,15 +22,18 @@ export class DialogElement extends HTMLElement {
     const that = this;
     const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
     const articleId = `usa-${crypto.randomUUID().replace(/-/g, "")}`;
+    const contentId = `usc-${crypto.randomUUID().replace(/-/g, "")}`;
     const dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
     const controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
     const ids = {
       articleId,
+      contentId,
       dialogId,
       controlListId,
     };
     const Selectors = {
       ARTICLE: `#${articleId}`,
+      CONTENT: `#${contentId}`,
       DIALOG: `#${dialogId}`,
       CONTROL_LIST: `#${controlListId}`,
     };
@@ -86,7 +89,8 @@ export class DialogElement extends HTMLElement {
       }
       showDialog();
     }
-    window.addEventListener("keydown", helpHandler);
+    const EVENT_TYPE_KEYDOWN = "keydown";
+    window.addEventListener(EVENT_TYPE_KEYDOWN, helpHandler);
     function removalKeyHandler(e: KeyboardEvent) {
       if (e.key !== "Escape") {
         return;
@@ -97,12 +101,12 @@ export class DialogElement extends HTMLElement {
       }
 
       try {
-        window.removeEventListener("keydown", removalKeyHandler);
-        window.removeEventListener("keydown", helpHandler);
+        window.removeEventListener(EVENT_TYPE_KEYDOWN, removalKeyHandler);
+        window.removeEventListener(EVENT_TYPE_KEYDOWN, helpHandler);
         that.remove();
       } catch {}
     }
-    window.addEventListener("keydown", removalKeyHandler);
+    window.addEventListener(EVENT_TYPE_KEYDOWN, removalKeyHandler);
 
     shadowRoot.querySelectorAll<HTMLButtonElement>(`#${controlListId} > li > button`).forEach((button, buttonIndex) => {
       button.addEventListener("click", (e) => {
@@ -122,16 +126,17 @@ export class DialogElement extends HTMLElement {
         const controlId = li.dataset.controlId;
         const ele = LogListElement.create();
         ele.setAttribute("control-id", li.dataset.controlId);
-        const contentArea = shadowRoot.querySelector(`#${id} #content`);
+        const contentArea = shadowRoot.querySelector(Selectors.CONTENT);
         if (contentArea != null) {
           contentArea.innerHTML = "";
           contentArea.appendChild(ele);
         }
-        shadowRoot.querySelectorAll<HTMLLIElement>(`#${id} > div > ul > li`).forEach(li => {
+        shadowRoot.querySelectorAll<HTMLLIElement>(`#${controlListId} > li`).forEach(li => {
+          const ACTIVE_CLASS_NAME = "active";
           if(li.dataset.controlId === controlId) {
-            li.classList.add("active");
+            li.classList.add(ACTIVE_CLASS_NAME);
           } else {
-            li.classList.remove("active");
+            li.classList.remove(ACTIVE_CLASS_NAME);
           }
         });
       });
