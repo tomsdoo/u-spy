@@ -1,6 +1,7 @@
 import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
+import { EventType } from "@/constants/event-type";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -42,7 +43,7 @@ export class DialogElement extends HTMLElement {
     shadowRoot.appendChild(
       document.createRange().createContextualFragment(template(id, title, ControlElement.list(), ids))
     );
-    shadowRoot.querySelector(`#${id}`)?.addEventListener("click", (e) => {
+    shadowRoot.querySelector(`#${id}`)?.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
       that.remove();
     });
@@ -51,7 +52,7 @@ export class DialogElement extends HTMLElement {
       Selectors.DIALOG,
     ]) {
       shadowRoot.querySelector(selector)
-        ?.addEventListener("click", (e) => {
+        ?.addEventListener(EventType.CLICK, (e) => {
           e.stopPropagation();
         });
     }
@@ -89,8 +90,7 @@ export class DialogElement extends HTMLElement {
       }
       showDialog();
     }
-    const EVENT_TYPE_KEYDOWN = "keydown";
-    window.addEventListener(EVENT_TYPE_KEYDOWN, helpHandler);
+    window.addEventListener(EventType.KEYDOWN, helpHandler);
     function removalKeyHandler(e: KeyboardEvent) {
       if (e.key !== "Escape") {
         return;
@@ -101,15 +101,15 @@ export class DialogElement extends HTMLElement {
       }
 
       try {
-        window.removeEventListener(EVENT_TYPE_KEYDOWN, removalKeyHandler);
-        window.removeEventListener(EVENT_TYPE_KEYDOWN, helpHandler);
+        window.removeEventListener(EventType.KEYDOWN, removalKeyHandler);
+        window.removeEventListener(EventType.KEYDOWN, helpHandler);
         that.remove();
       } catch {}
     }
-    window.addEventListener(EVENT_TYPE_KEYDOWN, removalKeyHandler);
+    window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
 
     shadowRoot.querySelectorAll<HTMLButtonElement>(`#${controlListId} > li > button`).forEach((button, buttonIndex) => {
-      button.addEventListener("click", (e) => {
+      button.addEventListener(EventType.CLICK, (e) => {
         if (e.target == null) {
           return;
         }

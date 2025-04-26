@@ -1,3 +1,5 @@
+import { EventType } from "@/constants/event-type";
+
 class KeyWaiter {
   wantedText: string;
   currentIndex: number;
@@ -35,9 +37,9 @@ export function registerHotStroke(wantedText: string, handler: () => void) {
       void handler();
     }
   }
-  window.addEventListener("keydown", keyHandler);
+  window.addEventListener(EventType.KEYDOWN, keyHandler);
   function unregisterHotStroke() {
-    window.removeEventListener("keydown", keyHandler);
+    window.removeEventListener(EventType.KEYDOWN, keyHandler);
   }
   const readonlyWaiter = new Proxy({
     currentIndex: keyWaiter.currentIndex,
