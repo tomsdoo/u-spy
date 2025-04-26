@@ -26,12 +26,16 @@ export function template(id: string, title: string, controlElements: ControlElem
                 key: "?",
                 description: "show help",
               },
+              {
+                key: "s",
+                description: "focus search box",
+              },
             ].map(({ key, description }) => `
               <li>
                 <div>${key}</div>
                 <div> ${description}</div>
               </li>
-            `)
+            `).join("")
           }
         </ul>
       </div>
