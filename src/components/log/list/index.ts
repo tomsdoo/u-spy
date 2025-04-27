@@ -1,6 +1,7 @@
 import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
 import { EventType } from "@/constants/event-type";
+import { transformLogItem } from "@/components/log/list/util";
 
 const TAG_NAME = "u-spy-log-list";
 
@@ -44,7 +45,7 @@ export class LogListElement extends HTMLElement {
         el.classList.toggle("detailed");
       });
     });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.beacon-log > .body`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .body`).forEach((el) => {
       const BODY_EXPANDED_CLASS_NAME = "body-expanded";
       el.addEventListener(EventType.CLICK, async (e) => {
         if (el.classList.contains(BODY_EXPANDED_CLASS_NAME)) {
@@ -58,22 +59,18 @@ export class LogListElement extends HTMLElement {
         if (logItem == null) {
           return;
         }
-        if ("data" in logItem.data === false) {
-          return;
+        const {
+          body,
+        } = transformLogItem(logItem);
+        if (body instanceof Blob) {
+          el.textContent = await new Response(body).text();
+        } else if (body instanceof FormData) {
+          el.textContent = JSON.stringify(Object.fromEntries(body.entries()));
         }
-        if (logItem.data.data == null) {
-          return;
-        }
-        if (logItem.data.data instanceof Blob) {
-          el.textContent = await new Response(logItem.data.data).text();
-          el.classList.add(BODY_EXPANDED_CLASS_NAME);
-        } else if (logItem.data.data instanceof FormData) {
-          el.textContent = JSON.stringify(Object.fromEntries(logItem.data.data.entries()));
-          el.classList.add(BODY_EXPANDED_CLASS_NAME);
-        }
+        el.classList.add(BODY_EXPANDED_CLASS_NAME);
       });
     });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM}.fetch-log > .response`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .response`).forEach((el) => {
       const RESPONSE_EXPANDED_CLASS_NAME = "response-expanded";
       el.addEventListener(EventType.CLICK, async (e) => {
         if (el.classList.contains(RESPONSE_EXPANDED_CLASS_NAME)) {
@@ -87,14 +84,11 @@ export class LogListElement extends HTMLElement {
         if (logItem == null) {
           return;
         }
-        if ("response" in logItem.data === false) {
-          return;
+        const { response } = transformLogItem(logItem);
+        if (response instanceof Response) {
+          const responseObj = await response.clone().text();
+          el.textContent = responseObj;
         }
-        if (logItem.data.response instanceof Response === false) {
-          return;
-        }
-        const responseObj = await logItem.data.response.clone().text();
-        el.textContent = responseObj;
         el.classList.add(RESPONSE_EXPANDED_CLASS_NAME);
       });
     });
