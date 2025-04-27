@@ -49,12 +49,16 @@ export function template(
             } = transformLogItem(logItem);
             return `
             <li id="${logItem.id}">
-              <div class="time">${formatTime(logItem.time)}</div>
-              <div class="type">${logItem.type}</div>
-               <div class="method">${method}</div>
-               <div class="host">
-                <abbr title="${url}">${host}</abbr>
-                <a href="${url}" target="_blank">${url}</a>
+              <div>
+                <div>
+                  <div class="time">${formatTime(logItem.time)}</div>
+                  <div class="type">${logItem.type}</div>
+                  <div class="method">${method}</div>
+                </div>
+                <div class="host">
+                  <abbr title="${url}">${host}</abbr>
+                  <a href="${url}" target="_blank">${url}</a>
+                </div>
                </div>
                <div data-foldable class="body folded">${body == null ? "" : body}</div>
                <div data-foldable class="response folded">${response == null ? "" : response}</div>
@@ -108,56 +112,55 @@ export function template(
 
         > li {
           display: grid;
-          grid-template:
-            "time type method host" auto
-            "body body body body" auto
-            "response response response response" auto / auto auto auto 1fr;
           gap: 0.2em 0.6em;
           color: steelblue;
 
-          > div {
+          div {
            word-break: break-all;
            line-height: 1.4;
           }
+          > div:nth-of-type(1) {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.6em;
+            > div:nth-of-type(1) {
+              display: flex;
+              flex-direction: row;
+              gap: 0.6em;
+              > .type {
+                text-transform: uppercase;
+                color: lightskyblue;
+              }
+              > .method {
+                color: darkkhaki;
+                &:empty {
+                  display: none;
+                }
+              }
+            }
+            > .host {
+              > a {
+                display: none;
+                color: cornflowerblue;
+              }
+            }
+            > .host.detailed {
+              > abbr {
+                display: none;
+              }
+              > a {
+                display: inline;
+                color: cornflowerblue;
+              }
+            }
+          }
 
-          > .time {
-            grid-area: time;
-          }
-          > .type {
-            grid-area: type;
-            text-transform: uppercase;
-            color: lightskyblue;
-          }
-          > .method {
-            grid-area: method;
-            color: darkkhaki;
-          }
-          > .host {
-            grid-area: host;
-            > a {
-              display: none;
-              color: cornflowerblue;
-            }
-          }
-          > .host.detailed {
-            > abbr {
-              display: none;
-            }
-            > a {
-              display: inline;
-              color: cornflowerblue;
-            }
-          }
           > .body {
-            grid-area: body;
-
             &:empty {
               display: none;
             }
           }
           > .response {
-            grid-area: response;
-
             &:empty {
               display: none;
             }
