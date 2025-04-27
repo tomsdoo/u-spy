@@ -56,10 +56,8 @@ export function template(
                 <abbr title="${url}">${host}</abbr>
                 <a href="${url}" target="_blank">${url}</a>
                </div>
-               <div data-foldable class="body folded">
-                 ${body}
-               </div>
-               <div data-foldable class="response folded">${response}</div>
+               <div data-foldable class="body folded">${body == null ? "" : body}</div>
+               <div data-foldable class="response folded">${response == null ? "" : response}</div>
             </li>
             `;
           }).join("")
@@ -152,9 +150,17 @@ export function template(
           }
           > .body {
             grid-area: body;
+
+            &:empty {
+              display: none;
+            }
           }
           > .response {
             grid-area: response;
+
+            &:empty {
+              display: none;
+            }
           }
           > .folded {
             overflow: hidden;
