@@ -109,6 +109,7 @@ export function template(
         overflow: auto;
         display: grid;
         gap: 2em;
+        scroll-behavior: smooth;
 
         > li {
           display: grid;
