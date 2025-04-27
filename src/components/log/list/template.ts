@@ -1,8 +1,10 @@
-import { ControlElement, ControlEvents } from "@/components/control-element";
-
-type FetchLog = ControlElement["logStore"][ControlEvents.FETCH] extends (infer T)[] ? T : never;
-type XhrLog = ControlElement["logStore"][ControlEvents.XHR_LOAD] extends (infer T)[] ? T : never;
-type BeaconLog = ControlElement["logStore"][ControlEvents.BEACON] extends (infer T)[] ? T : never;
+import { ControlElement } from "@/components/control-element";
+import {
+  validateFetchLog,
+  validateXhrLog,
+  validateBeaconLog,
+  transformLogItem,
+} from "@/components/log/list/util";
 
 const formatter = new Intl.DateTimeFormat("en-US", {
   hour12: false,
@@ -15,17 +17,6 @@ const formatter = new Intl.DateTimeFormat("en-US", {
 
 function formatTime(dateValue: Date) {
   return formatter.format(dateValue);
-}
-
-function getHost(url: RequestInfo | URL) {
-  try {
-    if (typeof url === "string") {
-      return new URL(url).host;
-    }
-    return url;
-  } catch(_) {
-    return url;
-  }
 }
 
 export function template(
@@ -41,15 +32,6 @@ export function template(
     logListId: string;
   },
 ) {
-  function validateFetchLog(logItem: typeof logItems extends (infer T)[] ? T : never): logItem is FetchLog & { type: "fetch" } {
-    return logItem.type === "fetch";
-  }
-  function validateXhrLog(logItem: typeof logItems extends (infer T)[] ? T : never): logItem is XhrLog & { type: "xhr" } {
-    return logItem.type === "xhr";
-  }
-  function validateBeaconLog(logItem: typeof logItems extends (infer T)[] ? T : never): logItem is BeaconLog & { type: "beacon" } {
-    return logItem.type === "beacon";
-  }
   return `
     <div id="${id}">
       <form id="${formId}">
@@ -66,60 +48,26 @@ export function template(
               isXhrLog ? "xhr-log" : "",
               isBeaconLog ? "beacon-log" : "",
             ].join(" ");
-            const fetchLogHtml = isFetchLog
-              ? `
-                <div class="method">
-                  ${logItem.data.init?.method ?? "GET"}
-                </div>
-                <div class="host">
-                  <abbr title="${logItem.data.input}">${getHost(logItem.data.input)}</abbr>
-                  <a href="${logItem.data.input}" target="_blank">${logItem.data.input}</a>
-                </div>
-                <div data-foldable class="body folded">
-                  ${logItem.data.init?.body ?? ""}
-                </div>
-                <div data-foldable class="response folded">
-                  ${logItem.data.response}
-                </div>
-              `
-              : "";
-            const xhrLogHtml = isXhrLog
-              ? `
-                <div class="method">
-                  ${logItem.data.method}
-                </div>
-                <div class="host">
-                  <abbr title="${logItem.data.url}">${getHost(logItem.data.url)}</abbr>
-                  <a href="${logItem.data.url}" target="_blank">${logItem.data.url}</a>
-                </div>
-                <div data-foldable class="body folded">
-                  ${logItem.data.requestBody ?? ""}
-                </div>
-                <div data-foldable class="response folded">
-                  ${logItem.data.responseText}
-                </div>
-              `
-              : "";
-            const beaconLogHtml = isBeaconLog
-              ? `
-                <div class="method"></div>
-                <div class="host">
-                  <abbr title="${logItem.data.url}">${getHost(logItem.data.url)}</abbr>
-                  <a href="${logItem.data.url}" target="_blank">${logItem.data.url}</a>
-                </div>
-                <div data-foldable class="body folded">
-                  ${logItem.data.data ?? ""}
-                </div>
-                <div class="response"></div>
-              `
-              : "";
+            const {
+              method,
+              url,
+              host,
+              body,
+              response,
+            } = transformLogItem(logItem);
             return `
             <li id="${logItem.id}" class="${liClassNames}">
               <div class="time">${formatTime(logItem.time)}</div>
               <div class="type">${logItem.type}</div>
-              ${ fetchLogHtml }
-              ${ xhrLogHtml }
-              ${ beaconLogHtml }
+               <div class="method">${method}</div>
+               <div class="host">
+                <abbr title="${url}">${host}</abbr>
+                <a href="${url}" target="_blank">${url}</a>
+               </div>
+               <div data-foldable class="body folded">
+                 ${body}
+               </div>
+               <div data-foldable class="response folded">${response}</div>
             </li>
             `;
           }).join("")
