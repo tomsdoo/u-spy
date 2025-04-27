@@ -40,7 +40,7 @@ export class LogListElement extends HTMLElement {
         el.classList.toggle("folded");
       });
     });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .host`).forEach((el) => {
+    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} .host`).forEach((el) => {
       el.addEventListener(EventType.CLICK, () => {
         el.classList.toggle("detailed");
       });
