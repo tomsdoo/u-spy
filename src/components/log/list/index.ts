@@ -108,10 +108,14 @@ export class LogListElement extends HTMLElement {
 
       for(const logItem of controlElement.logItems) {
         const HIDDEN_CLASS_NAME = "hidden";
+        const transformedLogItem = transformLogItem(logItem);
         const text = [
-          ...Array.from(Object.values(logItem.data)),
+          ...Array.from(Object.values(transformedLogItem)),
           logItem.type,
-        ].join(" ");
+        ]
+          .filter(v => v != null)
+          .map(v => typeof v === "string" ? v : v.toString())
+          .join(" ");
         const isHit = regExps.every(regExp => regExp.test(text));
         const li = shadowRoot.querySelector(`#${id} #${logItem.id}`);
         if (li instanceof HTMLLIElement === false) {
