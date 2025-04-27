@@ -98,6 +98,9 @@ export class LogListElement extends HTMLElement {
         el.classList.add(RESPONSE_EXPANDED_CLASS_NAME);
       });
     });
+    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener(EventType.KEYDOWN, (e) => {
+      e.stopPropagation();
+    });
     shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener("change", (e) => {
       if (e.target == null) {
         return;
