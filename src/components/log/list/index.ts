@@ -135,6 +135,13 @@ export class LogListElement extends HTMLElement {
       shadowRoot.querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)?.focus();
     };
     window.addEventListener("keyup", this.keyEventHandler);
+    setTimeout(() => {
+      const logListUl = shadowRoot.querySelector<HTMLUListElement>(Selectors.LOG_LIST);
+      if (logListUl == null) {
+        return;
+      }
+      logListUl.scrollTo(0, controlElement.logItems.length * 120);
+    }, 1);
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
