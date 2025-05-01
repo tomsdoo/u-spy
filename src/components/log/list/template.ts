@@ -1,8 +1,5 @@
 import { ControlElement } from "@/components/control-element";
 import {
-  validateFetchLog,
-  validateXhrLog,
-  validateBeaconLog,
   transformLogItem,
 } from "@/components/log/list/util";
 
