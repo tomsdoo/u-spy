@@ -1,4 +1,5 @@
 import type { ControlElement } from "@/components/control-element";
+import { KeyHelpElement } from "@/components/key-help";
 
 export function template(
   id: string,
@@ -7,12 +8,10 @@ export function template(
   {
     articleId,
     contentId,
-    dialogId,
     controlListId,
   }: {
     articleId: string;
     contentId: string;
-    dialogId: string;
     controlListId: string;
   },
 ) {
@@ -32,32 +31,7 @@ export function template(
         </ul>
         <div id="${contentId}"></div>
       </div>
-      <div id="${dialogId}" class="hidden" tabindex="-1">
-        <div>keys</div>
-        <ul>
-          ${
-            [
-              {
-                key: "?",
-                description: "show help",
-              },
-              {
-                key: "r",
-                description: "refresh logs",
-              },
-              {
-                key: "s",
-                description: "focus search box",
-              },
-            ].map(({ key, description }) => `
-              <li>
-                <div>${key}</div>
-                <div> ${description}</div>
-              </li>
-            `).join("")
-          }
-        </ul>
-      </div>
+      <${KeyHelpElement.TAG_NAME} visible="false" tabindex="-1"></${KeyHelpElement.TAG_NAME}>
     </div>
     <style>
     #${id} {
@@ -135,42 +109,6 @@ export function template(
 
         #${contentId} {
           overflow: auto;
-        }
-      }
-
-      > #${dialogId} {
-        &.hidden {
-          display: none;
-        }
-
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: grid;
-        grid-template:
-          "title" auto
-          "content" 1fr;
-        gap: 16px;
-        min-width: 10rem;
-        min-height: 10rem;
-        max-width: 80%;
-        max-height: 80%;
-        padding: 16px 32px;
-        border-radius: 8px;
-        backdrop-filter: blur(1em);
-        box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
-        transform: translate(-50%, -50%);
-        > div {
-          grid-area: title;
-          text-align: center;
-        }
-        > ul {
-          grid-area: content;
-          > li {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 16px;
-          }
         }
       }
     }
