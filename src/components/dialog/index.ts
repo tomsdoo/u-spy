@@ -84,7 +84,7 @@ export class DialogElement extends HTMLElement {
           description: "refresh logs",
         },
         {
-          key: "saa",
+          key: "s",
           description: "focus search box",
         },
       ]));
