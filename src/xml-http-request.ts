@@ -1,13 +1,16 @@
 import { ControlElement } from "@/components/control-element";
 
-export type MockXHRHandler = (p: {
-  method: string;
-  url: string;
-  requestHeaders: Record<string, string>;
-  user?: string | null;
-  password?: string | null;
-  body?: Document | XMLHttpRequestBodyInit | null;
-}) => Promise<{
+export type MockXHRHandler = (
+  p: {
+    method: string;
+    url: string;
+    requestHeaders: Record<string, string>;
+    user?: string | null;
+    password?: string | null;
+    body?: Document | XMLHttpRequestBodyInit | null;
+  },
+  originalXMLHttpRequest: typeof global["XMLHttpRequest"]
+) => Promise<{
   response: any;
   status: number;
   responseHeaders: Record<string, string>;
@@ -63,7 +66,7 @@ class SpiedXMLHttpRequestBase extends XMLHttpRequest {
   }
 }
 
-function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[]) {
+function getXMLHttpRequestClassDefinition(id: string, handlers: MockXHRHandler[], originalXmlHttpRequest: typeof global["XMLHttpRequest"]) {
   return class SpiedXMLHttpRequest extends SpiedXMLHttpRequestBase {
     open(method: string, url: string, async?: boolean, user?: string, password?: string): void {
       super.open(method, url, async ?? true, user, password);
@@ -99,7 +102,7 @@ function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[
       const that = this;
       const originalSend = super.send;
       Promise.all(
-        (handlers ?? []).map(mockHandler => mockHandler(params))
+        (handlers ?? []).map(mockHandler => mockHandler(params, originalXmlHttpRequest))
       )
         .then(results => {
           const result = results.find(result => result != null);
@@ -143,7 +146,7 @@ function getXMLHttpRequestClassDefinition(id: string, handlers?: MockXHRHandler[
 
 export function interceptXMLHttpRequest(id: string, handlers?: MockXHRHandler[]) {
   const originalXMLHttpRequest = globalThis.XMLHttpRequest;
-  globalThis.XMLHttpRequest = getXMLHttpRequestClassDefinition(id, handlers);
+  globalThis.XMLHttpRequest = getXMLHttpRequestClassDefinition(id, handlers ?? [], originalXMLHttpRequest);
   return {
     restoreXMLHttpRequest() {
       globalThis.XMLHttpRequest = originalXMLHttpRequest;
