@@ -35,7 +35,7 @@ receiver.on(
 ``` js
 void _spy.intercept('control-id', {
   fetchHandlers: [
-    async function(url) {
+    async function(url, init, originalFetch) {
       if (!/somedomain/i.test(url)) {
         return;
       }
@@ -50,7 +50,7 @@ void _spy.intercept('control-id', {
 ``` js
 void _spy.intercept('control-id', {
   xhrHandlers: [
-    async function ({ url }) {
+    async function ({ url }, originalXmlHttpRequest) {
       if (!/somedomain/i.test(url)) {
         return;
       }
