@@ -2,6 +2,7 @@ import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
 import { EventType } from "@/constants/event-type";
+import { KeyHelpElement } from "@/components/key-help";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -30,13 +31,12 @@ export class DialogElement extends HTMLElement {
     const ids = {
       articleId,
       contentId,
-      dialogId,
       controlListId,
     };
     const Selectors = {
       ARTICLE: `#${articleId}`,
       CONTENT: `#${contentId}`,
-      DIALOG: `#${dialogId}`,
+      DIALOG: `${KeyHelpElement.TAG_NAME}`,
       CONTROL_LIST: `#${controlListId}`,
     };
     const shadowRoot = this.attachShadow({ mode: "open" });
@@ -65,26 +65,42 @@ export class DialogElement extends HTMLElement {
       e.target.classList.add(HIDDEN_CLASS_NAME);
     });
     const isDialogOpen = ref(false);
-    function workWithDialog(callback: (target: HTMLDivElement) => void) {
-      return function() {
-        try {
-          const dialogDiv = shadowRoot.querySelector<HTMLDivElement>(Selectors.DIALOG);
-          if (dialogDiv == null) {
-            return;
-          }
-          callback(dialogDiv);
-        } catch {}
-      };
-    }
-    const showDialog = workWithDialog((dialogDiv) => {
-      dialogDiv.classList.remove(HIDDEN_CLASS_NAME);
-      dialogDiv.focus();
+    function showDialog() {
+      const keyHelpElement = shadowRoot.querySelector<KeyHelpElement>(KeyHelpElement.TAG_NAME);
+      if (keyHelpElement == null) {
+        return;
+      }
+      keyHelpElement.addEventListener("blur", () => {
+        hideDialog();
+      });
+      keyHelpElement.setAttribute("visible", "true");
+      keyHelpElement.setAttribute("key-definitions", JSON.stringify([
+        {
+          key: "?",
+          description: "show help",
+        },
+        {
+          key: "r",
+          description: "refresh logs",
+        },
+        {
+          key: "saa",
+          description: "focus search box",
+        },
+      ]));
+      keyHelpElement.focus();
       isDialogOpen.value = true;
-    });
-    const hideDialog = workWithDialog((dialogDiv) => {
-      dialogDiv.classList.add(HIDDEN_CLASS_NAME);
+    }
+
+    function hideDialog() {
+      const keyHelpElement = shadowRoot.querySelector<KeyHelpElement>(KeyHelpElement.TAG_NAME);
+      if (keyHelpElement == null) {
+        return;
+      }
+      keyHelpElement.setAttribute("visible", "false");
       isDialogOpen.value = false;
-    });
+    }
+
     function helpHandler(e: KeyboardEvent) {
       if (e.key !== "?") {
         return;
