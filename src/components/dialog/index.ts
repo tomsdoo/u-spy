@@ -3,6 +3,7 @@ import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
 import { EventType } from "@/constants/event-type";
 import { KeyHelpElement } from "@/components/key-help";
+import { StoreElement } from "@/components/store";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -20,6 +21,7 @@ function ref<T = unknown>(initialValue: T) {
 }
 
 export class DialogElement extends HTMLElement {
+  store: StoreElement = StoreElement.ensure();
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   connectedCallback() {
     const that = this;
@@ -74,20 +76,7 @@ export class DialogElement extends HTMLElement {
         hideDialog();
       });
       keyHelpElement.setAttribute("visible", "true");
-      keyHelpElement.setAttribute("key-definitions", JSON.stringify([
-        {
-          key: "?",
-          description: "show help",
-        },
-        {
-          key: "r",
-          description: "refresh logs",
-        },
-        {
-          key: "s",
-          description: "focus search box",
-        },
-      ]));
+      keyHelpElement.setAttribute("key-definitions", JSON.stringify(that.store.keyDefinitions));
       keyHelpElement.focus();
       isDialogOpen.value = true;
     }
@@ -170,6 +159,20 @@ export class DialogElement extends HTMLElement {
       shadowRoot.querySelector<HTMLButtonElement>(`#${controlListId} > li.active > button`)?.click();
     };
     window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
+    this.store.keyDefinitions = [
+      {
+        key: "?",
+        description: "show help",
+      },
+      {
+        key: "r",
+        description: "refresh logs",
+      },
+      {
+        key: "s",
+        description: "focus search box",
+      },
+  ];
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
