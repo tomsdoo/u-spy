@@ -168,11 +168,7 @@ export class DialogElement extends HTMLElement {
         key: "r",
         description: "refresh logs",
       },
-      {
-        key: "s",
-        description: "focus search box",
-      },
-  ];
+    ];
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
