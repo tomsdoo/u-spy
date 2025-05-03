@@ -1,4 +1,5 @@
 import { ControlElement } from "@/components/control-element";
+import { StoreElement } from "@/components/store";
 import { appendEntryPoint } from "@/components/entry-point";
 import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
@@ -16,6 +17,7 @@ interface InterceptionOptions {
 }
 
 appendEntryPoint();
+StoreElement.ensure();
 
 const {
   unregisterHotStroke,
