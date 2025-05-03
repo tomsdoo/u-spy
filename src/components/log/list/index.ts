@@ -2,10 +2,12 @@ import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
 import { EventType } from "@/constants/event-type";
 import { transformLogItem } from "@/components/log/list/util";
+import { StoreElement } from "@/components/store";
 
 const TAG_NAME = "u-spy-log-list";
 
 export class LogListElement extends HTMLElement {
+  store: StoreElement = StoreElement.ensure();
   shadowRoot: ShadowRoot | null = null;
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   connectedCallback() {
@@ -135,6 +137,7 @@ export class LogListElement extends HTMLElement {
       shadowRoot.querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)?.focus();
     };
     window.addEventListener("keyup", this.keyEventHandler);
+    this.store.addKeyDefinition({ key: "s", description: "focus search box" });
     setTimeout(() => {
       const logListUl = shadowRoot.querySelector<HTMLUListElement>(Selectors.LOG_LIST);
       if (logListUl == null) {
@@ -147,6 +150,7 @@ export class LogListElement extends HTMLElement {
     if (this.keyEventHandler == null) {
       return;
     }
+    this.store.removeKeyDefinition("s");
     window.removeEventListener("keyup", this.keyEventHandler);
   }
   static create() {
