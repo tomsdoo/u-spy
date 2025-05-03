@@ -33,7 +33,13 @@ export class StoreElement extends HTMLElement {
     this._keyDefinitions = [];
   }
   get keyDefinitions() {
-    return this._keyDefinitions.slice();
+    return this._keyDefinitions.slice()
+      .toSorted((a,b) => {
+        if (a.key === b.key) {
+          return 0;
+        }
+        return a.key > b.key ? 1 : -1;
+      });
   }
   set keyDefinitions(value: { key: string; description: string; }[]) {
     const eventDetail = {
@@ -45,6 +51,15 @@ export class StoreElement extends HTMLElement {
       bubbles: false,
       detail: eventDetail,
     }));
+  }
+  addKeyDefinition(keyDefinition: { key: string; description: string; }) {
+    this.keyDefinitions = this.keyDefinitions
+      .filter(({ key }) => keyDefinition.key !== key)
+      .concat([keyDefinition]);
+  }
+  removeKeyDefinition(key: string) {
+    this.keyDefinitions = this.keyDefinitions
+      .filter((keyDefinition) => keyDefinition.key !== key);
   }
   on(event: StoreEvent.CHANGE_KEY_DEFINITIONS, handler: ChangeKeyDefinitionHandler): void;
   on(event: StoreEvent, handler: Handler) {
