@@ -2,6 +2,7 @@ import { ControlElement } from "@/components/control-element";
 import {
   transformLogItem,
 } from "@/components/log/list/util";
+import { LogItemHostElement } from "@/components/log/item/host";
 
 const formatter = new Intl.DateTimeFormat("en-US", {
   hour12: false,
@@ -52,10 +53,10 @@ export function template(
                   <div class="type">${logItem.type}</div>
                   <div class="method">${method}</div>
                 </div>
-                <div class="host">
-                  <abbr title="${url}">${host}</abbr>
-                  <a href="${url}" target="_blank">${url}</a>
-                </div>
+                <${LogItemHostElement.TAG_NAME}
+                  host="${host}"
+                  url="${url}"
+                ></${LogItemHostElement.TAG_NAME}>
                </div>
                <div data-foldable class="body folded">${body == null ? "" : body}</div>
                <div data-foldable class="response folded">${response == null ? "" : response}</div>
@@ -136,22 +137,6 @@ export function template(
                 }
               }
             }
-            > .host {
-              > a {
-                display: none;
-                color: cornflowerblue;
-              }
-            }
-            > .host.detailed {
-              > abbr {
-                display: none;
-              }
-              > a {
-                display: inline;
-                color: cornflowerblue;
-              }
-            }
-          }
 
           > .body {
             &:empty {
