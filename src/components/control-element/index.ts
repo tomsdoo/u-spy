@@ -1,3 +1,4 @@
+import { EntryPointElement } from "@/components/entry-point";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-control-element";
@@ -217,7 +218,7 @@ export class ControlElement extends HTMLElement {
     const ele = document.createElement(TAG_NAME);
     ele.setAttribute("id", id);
     ele.style.display = "none";
-    document.body.appendChild(ele);
+    EntryPointElement.ensure().appendChild(ele);
     return ele;
   }
   static ensure(id: string) {
