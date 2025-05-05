@@ -1,3 +1,5 @@
+import { EntryPointElement } from "@/components/entry-point";
+
 const TAG_NAME = "u-spy-message-bus";
 
 export enum MessageBusEvent {
@@ -71,7 +73,7 @@ export class MessageBusElement extends HTMLElement {
     if (id != null) {
       ele.id = id;
     }
-    document.body.appendChild(ele);
+    EntryPointElement.ensure().appendChild(ele);
     return ele as MessageBusElement;
   }
   static ensure(id?: string) {

@@ -1,3 +1,5 @@
+import { EntryPointElement } from "@/components/entry-point";
+
 const TAG_NAME = "u-spy-store";
 
 export enum StoreEvent {
@@ -102,7 +104,7 @@ export class StoreElement extends HTMLElement {
   static create() {
     const ele = document.createElement(StoreElement.TAG_NAME);
     ele.style.display = "none";
-    document.body.appendChild(ele);
+    EntryPointElement.ensure().appendChild(ele);
     return ele as StoreElement;
   }
   static ensure() {
