@@ -77,7 +77,7 @@ export class StoreElement extends HTMLElement {
           event,
           existingHandlers
             .filter(({handler: existingHandler}) => existingHandler !== handler)
-            .concat(({ handler, wrapper })),
+            .concat([{ handler, wrapper }]),
         );
         this.addEventListener(event, wrapper);
         return;
