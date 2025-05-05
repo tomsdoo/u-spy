@@ -1,11 +1,12 @@
 import { ControlElement } from "@/components/control-element";
 import { StoreElement } from "@/components/store";
-import { appendEntryPoint } from "@/components/entry-point";
+import { EntryPointElement } from "@/components/entry-point";
 import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { interceptSendBeacon } from "@/beacon";
 import { displayDialog } from "@/components/dialog";
 import { registerHotStroke } from "@/key-event";
+import { MessageBusElement } from "@/components/message-bus";
 
 declare global {
   var _spy: {};
@@ -16,8 +17,9 @@ interface InterceptionOptions {
   xhrHandlers?: MockXHRHandler[];
 }
 
-appendEntryPoint();
+EntryPointElement.ensure();
 StoreElement.ensure();
+MessageBusElement.ensure();
 
 const {
   unregisterHotStroke,
