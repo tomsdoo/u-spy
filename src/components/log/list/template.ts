@@ -1,24 +1,9 @@
 import { ControlElement } from "@/components/control-element";
-import {
-  transformLogItem,
-} from "@/components/log/list/util";
-import { LogItemHostElement } from "@/components/log/item/host";
-
-const formatter = new Intl.DateTimeFormat("en-US", {
-  hour12: false,
-  hour:   '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  fractionalSecondDigits: 3,
-  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-});
-
-function formatTime(dateValue: Date) {
-  return formatter.format(dateValue);
-}
+import { LogItemElement } from "@/components/log/item";
 
 export function template(
   id: string,
+  controlId: string,
   logItems: ControlElement["logItems"],
   {
     formId,
@@ -37,32 +22,12 @@ export function template(
       </form>
       <ul id="${logListId}">
         ${
-          logItems.map(logItem => {
-            const {
-              method,
-              url,
-              host,
-              body,
-              response,
-            } = transformLogItem(logItem);
-            return `
-            <li id="${logItem.id}">
-              <div>
-                <div>
-                  <div class="time">${formatTime(logItem.time)}</div>
-                  <div class="type">${logItem.type}</div>
-                  <div class="method">${method}</div>
-                </div>
-                <${LogItemHostElement.TAG_NAME}
-                  host="${host}"
-                  url="${url}"
-                ></${LogItemHostElement.TAG_NAME}>
-               </div>
-               <div data-foldable class="body folded">${body == null ? "" : body}</div>
-               <div data-foldable class="response folded">${response == null ? "" : response}</div>
-            </li>
-            `;
-          }).join("")
+          logItems.map(logItem => `
+            <${LogItemElement.TAG_NAME}
+              :control-id=${JSON.stringify(controlId)}
+              :log-id=${JSON.stringify(logItem.id)}
+            ></${LogItemElement.TAG_NAME}>
+          `).join("")
         }
       </ul>
     </div>
@@ -109,52 +74,7 @@ export function template(
         gap: 2em;
         scroll-behavior: smooth;
 
-        > li {
-          display: grid;
-          gap: 0.2em 0.6em;
-          color: steelblue;
-
-          div {
-           word-break: break-all;
-           line-height: 1.4;
-          }
-          > div:nth-of-type(1) {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 0.6em;
-            > div:nth-of-type(1) {
-              display: flex;
-              flex-direction: row;
-              gap: 0.6em;
-              > .type {
-                text-transform: uppercase;
-                color: lightskyblue;
-              }
-              > .method {
-                color: darkkhaki;
-                &:empty {
-                  display: none;
-                }
-              }
-            }
-
-          > .body {
-            &:empty {
-              display: none;
-            }
-          }
-          > .response {
-            &:empty {
-              display: none;
-            }
-          }
-          > .folded {
-            overflow: hidden;
-            max-height: calc(1.5em * 2);
-          }
-        }
-
-        > li.hidden {
+        > ${LogItemElement.TAG_NAME}.hidden {
           display: none;
         }
       }

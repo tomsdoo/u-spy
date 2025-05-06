@@ -3,6 +3,7 @@ import { ControlElement } from "@/components/control-element";
 import { EventType } from "@/constants/event-type";
 import { transformLogItem } from "@/components/log/list/util";
 import { StoreElement } from "@/components/store";
+import { LogItemElement } from "@/components/log/item";
 
 const TAG_NAME = "u-spy-log-list";
 
@@ -24,70 +25,17 @@ export class LogListElement extends HTMLElement {
       SEARCH_FORM: `#${formId}`,
       SEARCH_KEY_BOX: `#${keyBoxId}`,
       LOG_LIST: `#${logListId}`,
-      LOG_LIST_ITEM: `#${logListId} > li`,
     };
     const shadowRoot = this.attachShadow({ mode: "open" });
     this.shadowRoot = shadowRoot;
     const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
     const controlElement = ControlElement.ensure(controlId);
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, controlElement.logItems, ids))
+      document.createRange().createContextualFragment(template(id, controlId, controlElement.logItems, ids))
     );
     shadowRoot.querySelector(Selectors.SEARCH_FORM)?.addEventListener("submit", (e) => {
       e.stopPropagation();
       e.preventDefault();
-    });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > [data-foldable]`).forEach((el)  => {
-      el.addEventListener(EventType.CLICK, () => {
-        el.classList.toggle("folded");
-      });
-    });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .body`).forEach((el) => {
-      const BODY_EXPANDED_CLASS_NAME = "body-expanded";
-      el.addEventListener(EventType.CLICK, async (e) => {
-        if (el.classList.contains(BODY_EXPANDED_CLASS_NAME)) {
-          return;
-        }
-        const liTag = el.closest("li");
-        if (liTag == null) {
-          return;
-        }
-        const logItem = controlElement.logItems.find(({ id }) => id === liTag.id);
-        if (logItem == null) {
-          return;
-        }
-        const {
-          body,
-        } = transformLogItem(logItem);
-        if (body instanceof Blob) {
-          el.textContent = await new Response(body).text();
-        } else if (body instanceof FormData) {
-          el.textContent = JSON.stringify(Object.fromEntries(body.entries()));
-        }
-        el.classList.add(BODY_EXPANDED_CLASS_NAME);
-      });
-    });
-    shadowRoot.querySelectorAll(`${Selectors.LOG_LIST_ITEM} > .response`).forEach((el) => {
-      const RESPONSE_EXPANDED_CLASS_NAME = "response-expanded";
-      el.addEventListener(EventType.CLICK, async (e) => {
-        if (el.classList.contains(RESPONSE_EXPANDED_CLASS_NAME)) {
-          return;
-        }
-        const liTag = el.closest("li");
-        if (liTag == null) {
-          return;
-        }
-        const logItem = controlElement.logItems.find(({ id }) => id === liTag.id);
-        if (logItem == null) {
-          return;
-        }
-        const { response } = transformLogItem(logItem);
-        if (response instanceof Response) {
-          const responseObj = await response.clone().text();
-          el.textContent = responseObj;
-        }
-        el.classList.add(RESPONSE_EXPANDED_CLASS_NAME);
-      });
     });
     shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener(EventType.KEYDOWN, (e) => {
       e.stopPropagation();
@@ -101,29 +49,9 @@ export class LogListElement extends HTMLElement {
       }
 
       const keyword = e.target.value;
-      const regExps = keyword.split(/\s+/).map(s => new RegExp(s, "i"));
-
-      for(const logItem of controlElement.logItems) {
-        const HIDDEN_CLASS_NAME = "hidden";
-        const transformedLogItem = transformLogItem(logItem);
-        const text = [
-          ...Array.from(Object.values(transformedLogItem)),
-          logItem.type,
-        ]
-          .filter(v => v != null)
-          .map(v => typeof v === "string" ? v : v.toString())
-          .join(" ");
-        const isHit = regExps.every(regExp => regExp.test(text));
-        const li = shadowRoot.querySelector(`#${id} #${logItem.id}`);
-        if (li instanceof HTMLLIElement === false) {
-          continue;
-        }
-        if (isHit) {
-          li.classList.remove(HIDDEN_CLASS_NAME);
-        } else {
-          li.classList.add(HIDDEN_CLASS_NAME);
-        }
-      }
+      shadowRoot.querySelectorAll<LogItemElement>(LogItemElement.TAG_NAME).forEach((logItemElement) => {
+        logItemElement.feedKeyword(keyword);
+      });
     });
     this.keyEventHandler = (e: KeyboardEvent) => {
       if (e.key !== "s") {
