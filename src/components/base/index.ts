@@ -1,82 +1,32 @@
-function startToObserve<T extends HTMLElement = HTMLElement>(instance: T, callback: () => void) {
-  const observer = new MutationObserver(mutationList => {
-    for (const mutation of mutationList) {
-      if (mutation.type !== "attributes") {
-        continue;
-      }
-      if (mutation.attributeName == null) {
-        continue;
-      }
-      if (mutation.attributeName.startsWith(":") === false) {
-        continue;
-      }
-      const propName = mutation.attributeName
-        .replace(/^:/, "")
-        .replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
-      if (propName in instance === false) {
-        continue;
-      }
-      const isPropValid = ((instance: T, propName: string): instance is T & { [propName: string]: string } => {
-        return true;
-      })(instance, propName);
-      if (isPropValid === false) {
-        continue;
-      }
-      // @ts-expect-error writing instance property
-      instance[propName] = (() => {
-        try {
-          return JSON.parse((mutation.target as Element)
-            .attributes
-            .getNamedItem(mutation.attributeName)?.value ?? "");
-        } catch {
-          return null;
-        }
-      })();
-      callback();
-    }
-  });
-  observer.observe(instance, { attributes: true });
-  return observer;
-}
-
 export class BaseElement extends HTMLElement {
-  observer: MutationObserver | null = null;
   template: string | ((instance: typeof this) => Promise<string>) = "";
-  connectedCallback() {
-    this.observer = startToObserve(this, () => {
-      this.reflectContent();
-    });
-    const attrs = Array.from(
-      { length: this.attributes.length },
-      (v,i) => i
-    )
-      .map(i => this.attributes.item(i))
-      .filter(v => v != null);
-    for(const { name, value } of attrs) {
-      if (name.startsWith(":") === false) {
-        continue;
-      }
-      const propName = name
-        .replace(/^:/, "")
-        .replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
-      if (propName in this === false) {
-        continue;
-      }
-      const isPropValid = ((instance: typeof this, propName: string): instance is typeof this & { [propName: string]: string } => {
-        return true;
-      })(this, propName);
-      if (isPropValid === false) {
-        continue;
-      }
-      // @ts-expect-error writing instance property
-      this[propName] = (() => {
-        try {
-          return JSON.parse(value);
-        } catch {
-          return value;
-        }
-      })();
+  static get observedAttributes() {
+    return [] as string[];
+  }
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (/:/.test(name) === false) {
+      return;
     }
+    const propName = name
+      .replace(/^[s|o]?:/i, "")
+      .replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    const isPropValid = ((instance: typeof this, propName: string): instance is typeof this & { [propName: string]: string } => {
+      return propName in instance;
+    })(this, propName);
+    if (isPropValid === false) {
+      return;
+    }
+    // @ts-expect-error writing instance property
+    this[propName] = (() => {
+      const isObject = name.startsWith("o:");
+      try {
+        return isObject
+          ? JSON.parse(newValue)
+          : newValue;
+      } catch {
+        return newValue;
+      }
+    })();
     this.reflectContent();
   }
   async reflectContent() {
@@ -90,10 +40,4 @@ export class BaseElement extends HTMLElement {
     this.onRendered();
   }
   onRendered() {}
-  disconnectedCallback() {
-    if (this.observer == null) {
-      return;
-    }
-    this.observer.disconnect();
-  }
 }
