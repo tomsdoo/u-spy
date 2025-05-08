@@ -9,6 +9,14 @@ export class LogItemElement extends BaseElement {
   id: string = "";
   controlId: string = "";
   logId: string = "";
+  static get observedAttributes() {
+    return [":control-id", ":log-id"];
+  }
+  constructor() {
+    super();
+    this.template = (instance) => template(instance);
+    this.id = `usli-${crypto.randomUUID().replace(/-/g, "")}`;
+  }
   get logItem() {
     return ControlElement.ensure(this.controlId)
       .logItems.find(({ id }) => id === this.logId) ?? null;
@@ -23,15 +31,8 @@ export class LogItemElement extends BaseElement {
       this.classList.add("hidden");
     }
   }
-  connectedCallback() {
-    const that = this;
-    this.template = (instance) => template(instance);
-    this.id = `usli-${crypto.randomUUID().replace(/-/g, "")}`;
-    super.connectedCallback();
-  }
   onRendered() {
     this.querySelectorAll(`[data-foldable]`).forEach((el) => {
-      console.log(el);
       el.addEventListener(EventType.CLICK, () => {
         el.classList.toggle("folded");
       });
