@@ -4,7 +4,6 @@ import {
 } from "@/components/log/list/util";
 import { LogItemHostElement } from "@/components/log/item/host";
 import { UtilsElement } from "@/components/utils";
-import { CopyableTextElement } from "@/components/copyable-text";
 
 export async function template(
   {
