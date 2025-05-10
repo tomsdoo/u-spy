@@ -4,6 +4,7 @@ import {
 } from "@/components/log/list/util";
 import { LogItemHostElement } from "@/components/log/item/host";
 import { UtilsElement } from "@/components/utils";
+import { CopyableTextElement } from "@/components/copyable-text";
 
 export async function template(
   {
@@ -71,8 +72,18 @@ export async function template(
         url=${JSON.stringify(url)}
       ></${LogItemHostElement.TAG_NAME}>
     </div>
-    <div data-foldable class="body folded">${body == null ? "" : body}</div>
-    <div data-foldable class="response folded">${response == null ? "" : response}</div>
+    <div data-foldable class="body folded">
+      <div class="copyable">
+        ${body == null ? '' : body}
+      </div>
+      <button>expand</button>
+    </div>
+    <div data-foldable class="response folded">
+      <div class="copyable">
+        ${response == null ? '' : response}
+      </div>
+      <button>expand</button>
+    </div>
     <div data-item-text>${itemText}</div>
   </li>
   <style>
@@ -118,12 +129,47 @@ export async function template(
         display: none;
       }
     }
+    > [data-foldable] {
+      position: relative;
+
+      > button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+        display: grid;
+        padding: 0.2em 0.5em;
+        font-size: 12px;
+        backdrop-filter: blur(1em);
+        background: rgb(0 0 0 / 10%);
+        color: darkkhaki;
+        border: 0;
+        border-radius: 1em;
+      }
+    }
     > .folded {
       overflow: hidden;
       max-height: calc(1.5em * 2);
     }
     > [data-item-text] {
       display: none;
+    }
+    .copyable {
+      position: relative;
+      &.copied {
+        &::before {
+          content: "copied!";
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0.2em 0.5em;
+          color: darkkhaki;
+          font-size: 12px;
+          border-radius: 1em;
+          background: rgb(0 0 0 / 10%);
+          backdrop-filter: blur(1em);
+        }
+      }
     }
   }
   </style>

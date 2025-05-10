@@ -33,8 +33,28 @@ export class LogItemElement extends BaseElement {
   }
   onRendered() {
     this.querySelectorAll(`[data-foldable]`).forEach((el) => {
-      el.addEventListener(EventType.CLICK, () => {
+      const div = el.querySelector("div");
+      const button = el.querySelector("button");
+      if (div == null || button == null) {
+        return;
+      }
+      button.addEventListener(EventType.CLICK, () => {
         el.classList.toggle("folded");
+        button.textContent = el.classList.contains("folded")
+          ? "expand"
+          : "fold";
+      });
+    });
+    this.querySelectorAll(".copyable").forEach(el => {
+      el.addEventListener(EventType.CLICK, async () => {
+        if (el.textContent == null) {
+          return;
+        }
+        await navigator.clipboard.writeText(el.textContent);
+        el.classList.add("copied");
+        setTimeout(() => {
+          el.classList.remove("copied");
+        }, 1000);
       });
     });
   }
