@@ -35,7 +35,7 @@ export class LogItemElement extends BaseElement {
     this.querySelectorAll(`[data-foldable]`).forEach((el) => {
       const div = el.querySelector("div");
       const button = el.querySelector("button");
-      if (div == null || button == null) {
+      if (button == null) {
         return;
       }
       button.addEventListener(EventType.CLICK, () => {
@@ -43,18 +43,6 @@ export class LogItemElement extends BaseElement {
         button.textContent = el.classList.contains("folded")
           ? "expand"
           : "fold";
-      });
-    });
-    this.querySelectorAll(".copyable").forEach(el => {
-      el.addEventListener(EventType.CLICK, async () => {
-        if (el.textContent == null) {
-          return;
-        }
-        await navigator.clipboard.writeText(el.textContent);
-        el.classList.add("copied");
-        setTimeout(() => {
-          el.classList.remove("copied");
-        }, 1000);
       });
     });
   }

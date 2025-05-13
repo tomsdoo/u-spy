@@ -29,10 +29,12 @@ export class StoreElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
   eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function; }[]>;
   _keyDefinitions: { key: string; description: string; }[];
+  _temporaryDataMap: Map<string, unknown>;
   constructor() {
     super();
     this.eventHandlerMap = new Map();
     this._keyDefinitions = [];
+    this._temporaryDataMap = new Map();
   }
   get keyDefinitions() {
     return this._keyDefinitions.slice()
@@ -62,6 +64,20 @@ export class StoreElement extends HTMLElement {
   removeKeyDefinition(key: string) {
     this.keyDefinitions = this.keyDefinitions
       .filter((keyDefinition) => keyDefinition.key !== key);
+  }
+  getTemporaryData(key: string) {
+    return this._temporaryDataMap.get(key) ?? "";
+  }
+  addTemporaryData(data: unknown, key?: string) {
+    const dataKey = key ?? crypto.randomUUID();
+    this._temporaryDataMap.set(
+      dataKey,
+      data,
+    );
+    return dataKey;
+  }
+  removeTemporaryData(key: string) {
+    this._temporaryDataMap.delete(key);
   }
   on(event: StoreEvent.CHANGE_KEY_DEFINITIONS, handler: ChangeKeyDefinitionHandler): void;
   on(event: StoreEvent, handler: Handler) {

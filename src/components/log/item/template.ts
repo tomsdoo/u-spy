@@ -4,6 +4,7 @@ import {
 } from "@/components/log/list/util";
 import { LogItemHostElement } from "@/components/log/item/host";
 import { UtilsElement } from "@/components/utils";
+import { CopyableTextElement } from "@/components/copyable-text";
 
 export async function template(
   {
@@ -72,15 +73,15 @@ export async function template(
       ></${LogItemHostElement.TAG_NAME}>
     </div>
     <div data-foldable class="body folded">
-      <div class="copyable">
-        ${body == null ? '' : body}
-      </div>
+      <${CopyableTextElement.TAG_NAME}
+        :text-id="${CopyableTextElement.store(body == null ? '' : body)}"
+      ></${CopyableTextElement.TAG_NAME}>
       <button>expand</button>
     </div>
     <div data-foldable class="response folded">
-      <div class="copyable">
-        ${response == null ? '' : response}
-      </div>
+      <${CopyableTextElement.TAG_NAME}
+        :text-id="${CopyableTextElement.store(response == null ? '' : response)}"
+      ></${CopyableTextElement.TAG_NAME}>
       <button>expand</button>
     </div>
     <div data-item-text>${itemText}</div>
@@ -152,23 +153,6 @@ export async function template(
     }
     > [data-item-text] {
       display: none;
-    }
-    .copyable {
-      position: relative;
-      &.copied {
-        &::before {
-          content: "copied!";
-          position: absolute;
-          top: 0;
-          right: 0;
-          padding: 0.2em 0.5em;
-          color: darkkhaki;
-          font-size: 12px;
-          border-radius: 1em;
-          background: rgb(0 0 0 / 10%);
-          backdrop-filter: blur(1em);
-        }
-      }
     }
   }
   </style>
