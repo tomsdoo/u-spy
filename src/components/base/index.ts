@@ -39,5 +39,7 @@ export class BaseElement extends HTMLElement {
     );
     this.onRendered();
   }
+  connectedCallback() {}
+  disconnectedCallback() {}
   onRendered() {}
 }
