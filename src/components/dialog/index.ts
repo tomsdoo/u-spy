@@ -36,31 +36,35 @@ export class DialogElement extends HTMLElement {
     this.dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
     this.controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
   }
-  connectedCallback() {
-    const that = this;
-    const ids = {
+  get ids() {
+    return {
       articleId: this.articleId,
       contentId: this.contentId,
       controlListId: this.controlListId,
     };
-    const Selectors = {
+  }
+  get Selectors() {
+    return {
       ARTICLE: `#${this.articleId}`,
       CONTENT: `#${this.contentId}`,
       DIALOG: `${KeyHelpElement.TAG_NAME}`,
       CONTROL_LIST: `#${this.controlListId}`,
     };
+  }
+  connectedCallback() {
+    const that = this;
     const shadowRoot = this.attachShadow({ mode: "open" });
     const title = shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(this.id, title, ControlElement.list(), ids))
+      document.createRange().createContextualFragment(template(this.id, title, ControlElement.list(), this.ids))
     );
     shadowRoot.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
       that.remove();
     });
     for(const selector of [
-      Selectors.ARTICLE,
-      Selectors.DIALOG,
+      this.Selectors.ARTICLE,
+      this.Selectors.DIALOG,
     ]) {
       shadowRoot.querySelector(selector)
         ?.addEventListener(EventType.CLICK, (e) => {
@@ -68,7 +72,7 @@ export class DialogElement extends HTMLElement {
         });
     }
     const HIDDEN_CLASS_NAME = "hidden";
-    shadowRoot.querySelector<HTMLDivElement>(Selectors.DIALOG)?.addEventListener("blur", (e) => {
+    shadowRoot.querySelector<HTMLDivElement>(this.Selectors.DIALOG)?.addEventListener("blur", (e) => {
       if (e.target instanceof HTMLDivElement === false) {
         return;
       }
@@ -140,7 +144,7 @@ export class DialogElement extends HTMLElement {
         const controlId = li.dataset.controlId;
         const ele = LogListElement.create();
         ele.setAttribute("control-id", li.dataset.controlId);
-        const contentArea = shadowRoot.querySelector(Selectors.CONTENT);
+        const contentArea = shadowRoot.querySelector(this.Selectors.CONTENT);
         if (contentArea != null) {
           contentArea.innerHTML = "";
           contentArea.appendChild(ele);
