@@ -21,32 +21,40 @@ function ref<T = unknown>(initialValue: T) {
 }
 
 export class DialogElement extends HTMLElement {
+  id: string;
+  articleId: string;
+  contentId: string;
+  dialogId: string;
+  controlListId: string;
   store: StoreElement = StoreElement.ensure();
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
+  constructor() {
+    super();
+    this.id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
+    this.articleId = `usa-${crypto.randomUUID().replace(/-/g, "")}`;
+    this.contentId = `usc-${crypto.randomUUID().replace(/-/g, "")}`;
+    this.dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
+    this.controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
+  }
   connectedCallback() {
     const that = this;
-    const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
-    const articleId = `usa-${crypto.randomUUID().replace(/-/g, "")}`;
-    const contentId = `usc-${crypto.randomUUID().replace(/-/g, "")}`;
-    const dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
-    const controlListId = `uscl-${crypto.randomUUID().replace(/-/g, "")}`;
     const ids = {
-      articleId,
-      contentId,
-      controlListId,
+      articleId: this.articleId,
+      contentId: this.contentId,
+      controlListId: this.controlListId,
     };
     const Selectors = {
-      ARTICLE: `#${articleId}`,
-      CONTENT: `#${contentId}`,
+      ARTICLE: `#${this.articleId}`,
+      CONTENT: `#${this.contentId}`,
       DIALOG: `${KeyHelpElement.TAG_NAME}`,
-      CONTROL_LIST: `#${controlListId}`,
+      CONTROL_LIST: `#${this.controlListId}`,
     };
     const shadowRoot = this.attachShadow({ mode: "open" });
     const title = shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, title, ControlElement.list(), ids))
+      document.createRange().createContextualFragment(template(this.id, title, ControlElement.list(), ids))
     );
-    shadowRoot.querySelector(`#${id}`)?.addEventListener(EventType.CLICK, (e) => {
+    shadowRoot.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
       that.remove();
     });
@@ -114,7 +122,7 @@ export class DialogElement extends HTMLElement {
     }
     window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
 
-    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${controlListId} > li > button`).forEach((button, buttonIndex) => {
+    shadowRoot.querySelectorAll<HTMLButtonElement>(`#${this.controlListId} > li > button`).forEach((button, buttonIndex) => {
       button.addEventListener(EventType.CLICK, (e) => {
         if (e.target == null) {
           return;
@@ -137,7 +145,7 @@ export class DialogElement extends HTMLElement {
           contentArea.innerHTML = "";
           contentArea.appendChild(ele);
         }
-        shadowRoot.querySelectorAll<HTMLLIElement>(`#${controlListId} > li`).forEach(li => {
+        shadowRoot.querySelectorAll<HTMLLIElement>(`#${this.controlListId} > li`).forEach(li => {
           const ACTIVE_CLASS_NAME = "active";
           if(li.dataset.controlId === controlId) {
             li.classList.add(ACTIVE_CLASS_NAME);
@@ -156,7 +164,7 @@ export class DialogElement extends HTMLElement {
       if (e.key !== "r") {
         return;
       }
-      shadowRoot.querySelector<HTMLButtonElement>(`#${controlListId} > li.active > button`)?.click();
+      shadowRoot.querySelector<HTMLButtonElement>(`#${this.controlListId} > li.active > button`)?.click();
     };
     window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
     this.store.keyDefinitions = [
