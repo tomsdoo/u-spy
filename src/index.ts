@@ -22,8 +22,16 @@ StoreElement.ensure();
 MessageBusElement.ensure();
 
 const {
-  unregisterHotStroke,
-} = registerHotStroke("spy", displayDialog);
+  unregisterHotStroke: unregisterHotStrokeSpy,
+} = registerHotStroke("spy", () => {
+  displayDialog("spy");
+});
+
+const {
+  unregisterHotStroke: unregisterHotStrokeStyle,
+} = registerHotStroke("style", () => {
+  displayDialog("style");
+});
 
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
@@ -44,5 +52,8 @@ globalThis._spy = {
       restoreSendBeacon,
     };
   },
-  unregisterHotStroke,
+  unregisterHotStroke() {
+    unregisterHotStrokeSpy();
+    unregisterHotStrokeStyle();
+  },
 };
