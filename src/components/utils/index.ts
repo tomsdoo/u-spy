@@ -64,9 +64,30 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
     return prettier.format(text, { parser, plugins: prettierPlugins });
   } catch(_) {
     const formatted = text
-      .replace(/\s+{\s*/g, ` {\n`)
-      .replace(/\s*}\s*/g, `\n}\n`);
-    return formatted;
+      .replace(/;\s*/g, ";\n")
+      .replace(/\s+{\s*/g, " {\n")
+      .replace(/\s*}\s*/g, "\n}\n");
+    const lines = formatted.split(/\n/);
+    const nextLines: string[] = [];
+    const indentChars: string[] = [];
+    for(const line of lines) {
+      if (line.replace(/\s/g, "") === "") {
+        continue;
+      }
+      const isClose = /}/.test(line);
+      if (isClose) {
+        indentChars.splice(-2, 2);
+      }
+      const isOpen = /{/.test(line);
+      if (isOpen && nextLines.length > 0) {
+        nextLines.push("");
+      }
+      nextLines.push(`${indentChars.join("")}${line}`);
+      if (isOpen) {
+        indentChars.splice(-1, 0, " ", " ");
+      }
+    }
+    return nextLines.join("\n") + "\n";
   }
 }
 
