@@ -33,6 +33,43 @@ function download({ data, filename }: {data: string | object; filename: string;}
   anc.remove();
 }
 
+function loadScript(src: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const scriptTag = document.createElement("script");
+    scriptTag.src = src;
+    scriptTag.addEventListener("load", () => {
+      resolve(src);
+    });
+    scriptTag.addEventListener("error", (e) => {
+      reject(e);
+    });
+    document.head.appendChild(scriptTag);
+  });
+}
+
+async function loadPrettier() {
+  return Promise.all([
+    loadScript(
+      "https://unpkg.com/prettier@3.5.3/standalone.js",
+    ),
+    loadScript(
+      "https://unpkg.com/prettier@3.5.3/plugins/postcss.js",
+    ),
+  ]);
+}
+
+async function prettierFormat(text: string, parser: string): Promise<string> {
+  try {
+    await loadPrettier();
+    return prettier.format(text, { parser, plugins: prettierPlugins });
+  } catch(_) {
+    const formatted = text
+      .replace(/\s+{\s*/g, ` {\n`)
+      .replace(/\s*}\s*/g, `\n}\n`);
+    return formatted;
+  }
+}
+
 export class UtilsElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
 
@@ -42,6 +79,10 @@ export class UtilsElement extends HTMLElement {
 
   download({ data, filename }: {data: string | object; filename: string;}) {
     return download({ data, filename });
+  }
+
+  prettierFormat(text: string, parser: string) {
+    return prettierFormat(text, parser);
   }
 
   static create() {

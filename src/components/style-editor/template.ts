@@ -4,6 +4,9 @@ export async function template({ id }: { id: string }) {
       <h1>u-spy style</h1>
       <ul>
         <li>
+          <button class="format-button">format</button>
+        </li>
+        <li>
           <button class="copy-button">copy</button>
         </li>
         <li>
@@ -41,7 +44,7 @@ export async function template({ id }: { id: string }) {
         display: grid;
         justify-content: end;
         align-items: center;
-        grid-template-columns: repeat(2, max-content);
+        grid-template-columns: repeat(3, max-content);
         gap: 16px;
         > li {
           button {
@@ -52,6 +55,7 @@ export async function template({ id }: { id: string }) {
             box-shadow: inset 0 0 1px;
             background: transparent;
             cursor: pointer;
+            color: inherit;
             &:hover {
               box-shadow: inset 0 0 2px;
             }
@@ -68,6 +72,8 @@ export async function template({ id }: { id: string }) {
           overflow: auto;
           padding: 1em;
           box-sizing: border-box;
+          color: inherit;
+          background: transparent;
         }
       }
     }
