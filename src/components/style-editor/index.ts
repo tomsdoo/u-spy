@@ -1,6 +1,7 @@
 import { BaseElement } from "@/components/base";
 import { template } from "./template";
 import { EventType } from "@/constants/event-type";
+import { UtilsElement } from "@/components/utils";
 
 const TAG_NAME = "u-spy-style-editor";
 const STYLE_TAG_ID = "u-spy-style-edited";
@@ -64,6 +65,23 @@ export class StyleEditorElement extends BaseElement {
     setTimeout(() => {
       textarea.focus();
     }, 1);
+    const downloadButton = this.querySelector<HTMLButtonElement>(`#${this.id} .download-button`);
+    if (downloadButton == null) {
+      return;
+    }
+    downloadButton.addEventListener(EventType.CLICK, async () => {
+      UtilsElement.ensure().download({
+        data: this.styleText,
+        filename: "style.css",
+      });
+    });
+    const copyButton = this.querySelector<HTMLButtonElement>(`#${this.id} .copy-button`);
+    if (copyButton == null) {
+      return;
+    }
+    copyButton.addEventListener(EventType.CLICK, async () => {
+      await navigator.clipboard.writeText(this.styleText);
+    });
   }
   onStyleTextChange() {
     this.styleTag.innerHTML = this.styleText;
