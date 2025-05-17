@@ -82,6 +82,14 @@ export class StyleEditorElement extends BaseElement {
     copyButton.addEventListener(EventType.CLICK, async () => {
       await navigator.clipboard.writeText(this.styleText);
     });
+    const formatButton = this.querySelector<HTMLButtonElement>(`#${this.id} .format-button`);
+    if (formatButton == null) {
+      return;
+    }
+    formatButton.addEventListener(EventType.CLICK, async () => {
+      this.styleText = await UtilsElement.ensure().prettierFormat(this.styleText, "css");
+      textarea.value = this.styleText;
+    });
   }
   onStyleTextChange() {
     this.styleTag.innerHTML = this.styleText;
