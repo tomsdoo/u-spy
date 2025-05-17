@@ -2,6 +2,14 @@ export async function template({ id }: { id: string }) {
   return `
     <div id="${id}">
       <h1>u-spy style</h1>
+      <ul>
+        <li>
+          <button class="copy-button">copy</button>
+        </li>
+        <li>
+          <button class="download-button">download</button>
+        </li>
+      </ul>
       <form onsubmit="return false">
         <textarea></textarea>
       </form>
@@ -9,7 +17,7 @@ export async function template({ id }: { id: string }) {
     <style>
     #${id} {
       display: grid;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto auto 1fr;
       gap: 16px;
       background: rgb(0 0 0 / 90%);
       width: 90vw;
@@ -27,6 +35,28 @@ export async function template({ id }: { id: string }) {
         text-align: center;
         font-size: 1em;
         line-height: 1;
+      }
+
+      > ul {
+        display: grid;
+        justify-content: end;
+        align-items: center;
+        grid-template-columns: repeat(2, max-content);
+        gap: 16px;
+        > li {
+          button {
+            display: grid;
+            padding: 0.5em 1em;
+            border-radius: 0.5em;
+            border: 0;
+            box-shadow: inset 0 0 1px;
+            background: transparent;
+            cursor: pointer;
+            &:hover {
+              box-shadow: inset 0 0 2px;
+            }
+          }
+        }
       }
 
       > form {

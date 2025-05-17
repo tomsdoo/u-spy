@@ -11,11 +11,37 @@ const logTimeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 });
 
+function download({ data, filename }: {data: string | object; filename: string;}) {
+  const BOM = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const blob = typeof data === "string"
+    ? new Blob(
+      [BOM, data],
+      { type: "text/plain" },
+    )
+    : new Blob(
+      [BOM, JSON.stringify(data, null, 2)],
+      { type: "application/json" },
+    );
+  const url = URL.createObjectURL(blob);
+  const anc = document.body
+    .appendChild(
+      document.createElement("a")
+    );
+  anc.setAttribute("download", filename);
+  anc.setAttribute("href", url);
+  anc.click();
+  anc.remove();
+}
+
 export class UtilsElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
 
   formatTime(dateValue: Date) {
     return logTimeFormatter.format(dateValue);
+  }
+
+  download({ data, filename }: {data: string | object; filename: string;}) {
+    return download({ data, filename });
   }
 
   static create() {
