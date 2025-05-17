@@ -1,7 +1,9 @@
-import { template } from "./template";
+import { DialogType, template } from "./template";
 import { EventType } from "@/constants/event-type";
 import { KeyHelpElement } from "@/components/key-help";
 import { StoreElement } from "@/components/store";
+import { LogFormElement } from "@/components/log/form";
+import { StyleEditorElement } from "@/components/style-editor";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -21,6 +23,7 @@ function ref<T = unknown>(initialValue: T) {
 export class DialogElement extends HTMLElement {
   id: string;
   dialogId: string;
+  dialogType: DialogType;
   store: StoreElement = StoreElement.ensure();
   shadowRoot: ShadowRoot | null;
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
@@ -28,6 +31,7 @@ export class DialogElement extends HTMLElement {
     super();
     this.id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
     this.dialogId = `usd-${crypto.randomUUID().replace(/-/g, "")}`;
+    this.dialogType = DialogType.LOG_LIST;
     this.shadowRoot = null;
   }
   get Selectors() {
@@ -42,7 +46,7 @@ export class DialogElement extends HTMLElement {
     this.shadowRoot.innerHTML = "";
     const title = this.shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     this.shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(this.id))
+      document.createRange().createContextualFragment(template(this.id, this.dialogType))
     );
     this.shadowRoot.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
@@ -122,11 +126,46 @@ export class DialogElement extends HTMLElement {
       },
     ];
   }
+  changeType(dialogType: DialogType) {
+    if (this.shadowRoot == null) {
+      return;
+    }
+    const spyDiv = this.shadowRoot.querySelector(`#${this.id}`);
+    if (spyDiv == null) {
+      return;
+    }
+    for(const tagName of [
+      LogFormElement.TAG_NAME,
+      StyleEditorElement.TAG_NAME,
+    ]) {
+      spyDiv.querySelectorAll(`${tagName}`).forEach(el => {
+        el.remove();
+      });
+    }
+    switch(dialogType) {
+      case DialogType.STYLE_EDITOR: {
+        spyDiv.appendChild(document.createElement(StyleEditorElement.TAG_NAME));
+        break;
+      }
+      default: {
+        spyDiv.appendChild(document.createElement(LogFormElement.TAG_NAME));
+        break;
+      }
+    }
+  }
 }
 
-export function displayDialog() {
-  const dialogTag = document.createElement(TAG_NAME);
-  document.body.appendChild(dialogTag);
+export function displayDialog(dialogTypeName: string) {
+  const dialogTag = document.querySelector<DialogElement>(TAG_NAME)
+    ?? document.body.appendChild(document.createElement(TAG_NAME) as DialogElement);
+  switch(dialogTypeName) {
+    case "style":
+      dialogTag.changeType(DialogType.STYLE_EDITOR);
+      break;
+    default:
+      dialogTag.changeType(DialogType.LOG_LIST);
+      break;
+  }
 }
 
 try {
