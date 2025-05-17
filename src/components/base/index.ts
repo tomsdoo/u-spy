@@ -27,9 +27,9 @@ export class BaseElement extends HTMLElement {
         return newValue;
       }
     })();
-    this.reflectContent();
+    this.render();
   }
-  async reflectContent() {
+  async render() {
     this.innerHTML = "";
     const contentHtml = typeof this.template === "string"
       ? this.template
