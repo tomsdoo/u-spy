@@ -115,16 +115,10 @@ export class DialogElement extends HTMLElement {
     }
     window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
 
-    this.store.keyDefinitions = [
-      {
-        key: "?",
-        description: "show help",
-      },
-      {
-        key: "r",
-        description: "refresh logs",
-      },
-    ];
+    this.store.addKeyDefinition({
+      key: "?",
+      description: "show help",
+    });
   }
   changeType(dialogType: DialogType) {
     if (this.shadowRoot == null) {
@@ -152,6 +146,9 @@ export class DialogElement extends HTMLElement {
         break;
       }
     }
+  }
+  disconnectedCallback() {
+    this.store.removeKeyDefinition("?");
   }
 }
 
