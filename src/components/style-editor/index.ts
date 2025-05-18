@@ -47,6 +47,7 @@ export class StyleEditorElement extends BaseElement {
     this.render();
   }
   onRendered() {
+    const that = this;
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
@@ -57,7 +58,9 @@ export class StyleEditorElement extends BaseElement {
     textarea.value = this.styleText;
     textarea.addEventListener("keydown", (e) => {
       e.stopPropagation();
-      this.styleText = textarea.value;
+      setTimeout(() => {
+        that.styleText = textarea.value;
+      }, 1);
       if (e.key === "Escape") {
         textarea.blur();
       }
