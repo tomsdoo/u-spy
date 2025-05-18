@@ -12,6 +12,7 @@ export function template(id: string) {
     position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 1;
     display: grid;
     grid-template:
       "title" auto
@@ -24,6 +25,7 @@ export function template(id: string) {
     padding: 16px 32px;
     border-radius: 8px;
     backdrop-filter: blur(1em);
+    background: rgb(0 0 0 / 80%);
     box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
     transform: translate(-50%, -50%);
     > div {

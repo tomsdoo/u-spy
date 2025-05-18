@@ -3,6 +3,7 @@ import { BaseElement } from "@/components/base";
 import { template } from "./template";
 import { EventType } from "@/constants/event-type";
 import { LogListElement } from "@/components/log/list";
+import { StoreElement } from "@/components/store";
 
 const TAG_NAME = "u-spy-log-form";
 
@@ -11,6 +12,7 @@ export class LogFormElement extends BaseElement {
   contentId: string = "";
   controlListId: string = "";
   controlElements: ControlElement[] = ControlElement.list();
+  store: StoreElement = StoreElement.ensure();
   keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
   static TAG_NAME = TAG_NAME;
   static get observedAttributes() {
@@ -34,6 +36,10 @@ export class LogFormElement extends BaseElement {
       }
       that.querySelector<HTMLButtonElement>(`#${that.controlListId} > li.active > button`)?.click();
     };
+    this.store.addKeyDefinition({
+      key: "r",
+      description: "refresh logs",
+    });
     window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
     this.render();
   }
@@ -82,6 +88,7 @@ export class LogFormElement extends BaseElement {
     if (this.keyEventHandler == null) {
       return;
     }
+    this.store.removeKeyDefinition("r");
     window.removeEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
 }
