@@ -37,8 +37,14 @@ export class LogListElement extends HTMLElement {
       e.stopPropagation();
       e.preventDefault();
     });
-    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener(EventType.KEYDOWN, (e) => {
+    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener(EventType.KEYDOWN, (e: KeyboardEvent) => {
       e.stopPropagation();
+      if (e.key === "Escape") {
+        if (e.target instanceof HTMLInputElement === false) {
+          return;
+        }
+        e.target.blur();
+      }
     });
     shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener("change", (e) => {
       if (e.target == null) {
