@@ -52,6 +52,8 @@ globalThis._spy = {
       restoreSendBeacon,
     };
   },
+  registerHotStroke,
+  displayDialog,
   unregisterHotStroke() {
     unregisterHotStrokeSpy();
     unregisterHotStrokeStyle();

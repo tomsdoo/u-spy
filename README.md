@@ -71,3 +71,26 @@ void _spy.intercept('control-id', {
 });
 ```
 
+## hot stroke
+
+``` js
+const {
+  unregisterHotStroke,
+} = _spy.registerHotStroke("hello", () => {
+  console.log("world");
+  unregisterHotStroke();
+});
+```
+
+## displayDialog()
+
+``` js
+const {
+  unregisterHotStroke,
+} = _spy.registerHotStroke("hello", () => {
+  _spy.displayDialog(dialogElement => {
+    dialogElement.textContent = "world";
+  });
+  unregisterHotStroke();
+});
+```
