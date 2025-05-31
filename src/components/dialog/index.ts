@@ -4,6 +4,7 @@ import { KeyHelpElement } from "@/components/key-help";
 import { StoreElement } from "@/components/store";
 import { LogFormElement } from "@/components/log/form";
 import { StyleEditorElement } from "@/components/style-editor";
+import { CustomFormElement } from "@/components/custom-form";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -138,12 +139,13 @@ export class DialogElement extends HTMLElement {
     }
     switch(dialogType) {
       case DialogType.STYLE_EDITOR: {
-        spyDiv.appendChild(document.createElement(StyleEditorElement.TAG_NAME));
-        break;
+        return spyDiv.appendChild(document.createElement(StyleEditorElement.TAG_NAME));
+      }
+      case DialogType.CUSTOM_FORM: {
+        return spyDiv.appendChild(document.createElement(CustomFormElement.TAG_NAME));
       }
       default: {
-        spyDiv.appendChild(document.createElement(LogFormElement.TAG_NAME));
-        break;
+        return spyDiv.appendChild(document.createElement(LogFormElement.TAG_NAME));
       }
     }
   }
@@ -152,17 +154,27 @@ export class DialogElement extends HTMLElement {
   }
 }
 
-export function displayDialog(dialogTypeName: string) {
+export function displayDialog(dialogTypeName: string): void;
+export function displayDialog(callback: (element: HTMLElement) => void): void;
+export function displayDialog(params: string | ((element: HTMLElement) => void)) {
   const dialogTag = document.querySelector<DialogElement>(TAG_NAME)
     ?? document.body.appendChild(document.createElement(TAG_NAME) as DialogElement);
-  switch(dialogTypeName) {
-    case "style":
-      dialogTag.changeType(DialogType.STYLE_EDITOR);
-      break;
-    default:
-      dialogTag.changeType(DialogType.LOG_LIST);
-      break;
+  if (typeof params === "string") {
+    const dialogTypeName = params;
+    switch(dialogTypeName) {
+      case "style":
+        dialogTag.changeType(DialogType.STYLE_EDITOR);
+        break;
+      default:
+        dialogTag.changeType(DialogType.LOG_LIST);
+        break;
+    }
+    return;
   }
+  const callback = params;
+  dialogTag.changeType(DialogType.CUSTOM_FORM)?.addEventListener("load", (e) => {
+    callback(e.detail.element.querySelector("div > div"));
+  });
 }
 
 try {
