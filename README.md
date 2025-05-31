@@ -94,3 +94,18 @@ const {
   unregisterHotStroke();
 });
 ```
+
+## change hot strokes that've been set as default
+
+``` js
+// spy -> myspy
+_spy.changeHotStrokeSpy("myspy");
+// style -> mystyle
+_spy.changeHostStrokeStyle("mystyle");
+```
+
+## unregister hot strokes that've been set as default
+
+``` js
+_spy.unregisterHotStroke();
+```
