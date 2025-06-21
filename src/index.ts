@@ -7,6 +7,7 @@ import { interceptSendBeacon } from "@/beacon";
 import { displayDialog } from "@/components/dialog";
 import { registerHotStroke } from "@/key-event";
 import { MessageBusElement } from "@/components/message-bus";
+import { ensureCustomElement } from "@/components/dynamic-element";
 
 declare global {
   var _spy: {};
@@ -87,4 +88,5 @@ globalThis._spy = {
       unregisterAHotStroke();
     }
   },
+  ensureCustomElement,
 };

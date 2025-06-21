@@ -109,3 +109,35 @@ _spy.changeHostStrokeStyle("mystyle");
 ``` js
 _spy.unregisterHotStroke();
 ```
+
+## custom elements
+
+``` js
+_spy.ensureCustomElement("my-element", { templateHtml: `
+<div>
+  hi
+  <span data-value="name"></span>
+  <p data-value="message"></p>
+</div>
+<style>
+:host(.gray) {
+  div {
+    background: gray;
+  }
+}
+div {
+  background: yellow;
+  color: red;
+  span {
+    background: green;
+    color: blue;
+  }
+}
+</style>
+`});
+
+```
+``` html
+<my-element name="alice" message="this is a test"></my-element>
+<my-element name="bob" class="gray"></my-element>
+```
