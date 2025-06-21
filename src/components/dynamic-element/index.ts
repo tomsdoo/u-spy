@@ -1,13 +1,17 @@
 export function ensureCustomTemplate(templateId: string, templateHtml: string) {
-  document.body.appendChild(document.createRange().createContextualFragment(`<template id="${templateId}">
-    ${templateHtml}
-  </template>`));
+  document.body.appendChild(
+    document
+      .createRange()
+      .createContextualFragment(
+        `<template id="${templateId}">${templateHtml}</template>`
+      )
+  );
 }
 
 function getVariableNames(node: HTMLElement) {
   const variableNames: string[] = [];
-  for (const el of Array.from(node.querySelectorAll("[data-value]"))) {
-    const variableName = el.getAttribute("data-value");
+  for (const el of Array.from(node.querySelectorAll("[\\:value]"))) {
+    const variableName = el.getAttribute(":value");
     if (variableName == null) {
       continue;
     }
@@ -54,8 +58,8 @@ export function ensureCustomElement(
       this.shadowRoot = this.attachShadow({ mode: "closed" });
       const clonedNode = template?.content.cloneNode(true);
       if (clonedNode != null) {
-        for (const el of Array.from((clonedNode as HTMLElement).querySelectorAll("[data-value]"))) {
-          const dataName = el.getAttribute("data-value");
+        for (const el of Array.from((clonedNode as HTMLElement).querySelectorAll("[\\:value]"))) {
+          const dataName = el.getAttribute(":value");
           if (dataName == null) {
             continue;
           }
