@@ -116,8 +116,8 @@ _spy.unregisterHotStroke();
 _spy.ensureCustomElement("my-element", { templateHtml: `
 <div>
   hi
-  <span data-value="name"></span>
-  <p data-value="message"></p>
+  <span :value="name"></span>
+  <p :value="message"></p>
 </div>
 <style>
 :host(.gray) {

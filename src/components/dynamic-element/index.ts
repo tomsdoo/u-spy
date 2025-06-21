@@ -46,7 +46,10 @@ export function ensureCustomElement(
     return;
   }
   const variableNames = Array.from(template.content.children)
-    .reduce((variableNames, node) => [...variableNames, ...getVariableNames(node as HTMLElement)], [] as string[]);
+    .reduce((variableNames, node) => [
+      ...variableNames,
+      ...getVariableNames(node as HTMLElement)
+    ], [] as string[]);
   customElements.define(tagName, class extends HTMLElement {
     static get observedAttributes() {
       return variableNames;
@@ -58,13 +61,6 @@ export function ensureCustomElement(
       this.shadowRoot = this.attachShadow({ mode: "closed" });
       const clonedNode = template?.content.cloneNode(true);
       if (clonedNode != null) {
-        for (const el of Array.from((clonedNode as HTMLElement).querySelectorAll("[\\:value]"))) {
-          const dataName = el.getAttribute(":value");
-          if (dataName == null) {
-            continue;
-          }
-          el.setAttribute("data-name", dataName);
-        }
         this.shadowRoot.appendChild(clonedNode);
       }
       const data = Object.fromEntries(
@@ -91,7 +87,7 @@ export function ensureCustomElement(
       });
     }
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-      this.shadowRoot.querySelectorAll(`[data-name='${name}']`).forEach(el => {
+      this.shadowRoot.querySelectorAll(`[\\:value='${name}']`).forEach(el => {
         el.textContent = newValue;
       });
     }
