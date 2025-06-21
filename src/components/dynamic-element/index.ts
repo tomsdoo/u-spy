@@ -48,6 +48,7 @@ export function ensureCustomElement(
       return variableNames;
     }
     shadowRoot: ShadowRoot;
+    boundData: Record<string, any>;
     constructor() {
       super();
       this.shadowRoot = this.attachShadow({ mode: "closed" });
@@ -62,6 +63,28 @@ export function ensureCustomElement(
         }
         this.shadowRoot.appendChild(clonedNode);
       }
+      const data = Object.fromEntries(
+        variableNames.map(prop => [
+          prop,
+          this.shadowRoot.host.getAttribute(prop),
+        ])
+      );
+      const that = this;
+      this.boundData = new Proxy(data, {
+        get(target, prop, receiver) {
+          return typeof prop === "string"
+            ? that.shadowRoot.host.getAttribute(prop)
+            : Reflect.get(target, prop, receiver);
+        },
+        set(target, prop, value, receiver) {
+          if (typeof prop === "symbol") {
+            return true;
+          }
+          that.shadowRoot.host.setAttribute(prop, value);;
+          target[prop] = value;
+          return true;
+        },
+      });
     }
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
       this.shadowRoot.querySelectorAll(`[data-name='${name}']`).forEach(el => {
