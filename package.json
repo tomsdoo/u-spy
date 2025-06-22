@@ -4,7 +4,10 @@
   "main": "dist/index.global.js",
   "scripts": {
     "build": "tsup",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "keywords": [],
   "author": "tomsdoo",
@@ -14,6 +17,7 @@
     "@tsconfig/node22": "22.0.1",
     "@types/node": "22.15.2",
     "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitepress": "1.6.3"
   }
 }
