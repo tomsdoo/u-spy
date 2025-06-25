@@ -52,7 +52,10 @@ export function ensureCustomElement(
     ], [] as string[]);
   customElements.define(tagName, class extends HTMLElement {
     static get observedAttributes() {
-      return variableNames;
+      return [
+        "item",
+        ...variableNames,
+      ];
     }
     shadowRoot: ShadowRoot;
     boundData: Record<string, any>;
@@ -86,7 +89,32 @@ export function ensureCustomElement(
         },
       });
     }
+    get item() {
+      return this.boundData;
+    }
+    set item(value) {
+      for(const variableName of variableNames) {
+        if (variableName in value === false) {
+          continue;
+        }
+        this.boundData[variableName] = value[variableName];
+      }
+    }
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+      if (name === "item") {
+        const item = (() => {
+          try {
+            return JSON.parse(newValue);
+          } catch {
+            return null;
+          }
+        })();
+        if (item == null) {
+          return;
+        }
+        this.item = item;
+        return;
+      }
       this.shadowRoot.querySelectorAll(`[\\:value='${name}']`).forEach(el => {
         el.textContent = newValue;
       });
