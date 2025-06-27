@@ -5,13 +5,13 @@ export function ensureCustomIterator(tagName?: string) {
     }
     shadowRoot: ShadowRoot;
     isTemplateReady: boolean;
-    contentTag: Node | null;
+    contentTags: Node[];
     constructor() {
       super();
       this.shadowRoot = this.attachShadow({ mode: "closed" });
       this.shadowRoot.appendChild(document.createRange().createContextualFragment(`<slot></slot>`));
       this.isTemplateReady = false;
-      this.contentTag = null;
+      this.contentTags = [];
     }
     get items() {
       try {
@@ -34,11 +34,8 @@ export function ensureCustomIterator(tagName?: string) {
       if (this.isTemplateReady) {
         return;
       }
-      const contentTag = this.querySelector("*");
-      if (contentTag == null) {
-        return;
-      }
-      this.contentTag = contentTag.cloneNode(true);
+      this.contentTags = Array.from(this.querySelectorAll("*"))
+        .map(contentTag => contentTag.cloneNode(true));
       this.isTemplateReady = true;
     }
     connectedCallback() {
@@ -63,8 +60,9 @@ export function ensureCustomIterator(tagName?: string) {
         child.remove();
       }
       for(const item of this.items) {
-        if (this.contentTag) {
-          (this.appendChild(this.contentTag?.cloneNode(true)) as HTMLElement).setAttribute("item", JSON.stringify(item));
+        for(const contentTag of this.contentTags) {
+          (this.appendChild(contentTag.cloneNode(true)) as HTMLElement)
+            .setAttribute("item", JSON.stringify(item));
         }
       }
     }
