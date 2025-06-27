@@ -4,16 +4,18 @@ export function ensureCustomIterator(tagName?: string) {
       return ["items"];
     }
     shadowRoot: ShadowRoot;
-    templateId: string;
+    isTemplateReady: boolean;
+    contentTag: Node | null;
     constructor() {
       super();
       this.shadowRoot = this.attachShadow({ mode: "closed" });
       this.shadowRoot.appendChild(document.createRange().createContextualFragment(`<slot></slot>`));
-      this.templateId = `template-${crypto.randomUUID()}`;
+      this.isTemplateReady = false;
+      this.contentTag = null;
     }
     get items() {
       try {
-        const itemsStr = this.shadowRoot.host.getAttribute("items");
+        const itemsStr = this.getAttribute("items");
         if (itemsStr == null) {
           return [];
         }
@@ -28,16 +30,19 @@ export function ensureCustomIterator(tagName?: string) {
       }
       this.shadowRoot.host.setAttribute("items", JSON.stringify(value));
     }
-    connectedCallback() {
-      console.log("asdf", this.querySelectorAll("*"));
-      const templateTag = document.createElement("template");
-      templateTag.id = this.templateId;
+    getReadyTemplate() {
+      if (this.isTemplateReady) {
+        return;
+      }
       const contentTag = this.querySelector("*");
       if (contentTag == null) {
         return;
       }
-      templateTag.appendChild(contentTag);
-      this.appendChild(templateTag);
+      this.contentTag = contentTag.cloneNode(true);
+      this.isTemplateReady = true;
+    }
+    connectedCallback() {
+      this.getReadyTemplate();
     }
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
       if (name !== "items") {
@@ -50,6 +55,7 @@ export function ensureCustomIterator(tagName?: string) {
           return [];
         }
       })();
+      this.getReadyTemplate();
       for(const child of Array.from(this.children)) {
         if (/template/i.test(child.tagName)) {
           continue;
@@ -57,18 +63,10 @@ export function ensureCustomIterator(tagName?: string) {
         child.remove();
       }
       for(const item of this.items) {
-        const template = this.querySelector<HTMLTemplateElement>(`#${this.templateId}`);
-        if (template == null) {
-          continue;
+        if (this.contentTag) {
+          (this.appendChild(this.contentTag?.cloneNode(true)) as HTMLElement).setAttribute("item", JSON.stringify(item));
         }
-        (this.appendChild(template.content.cloneNode(true)) as HTMLElement).setAttribute("item", JSON.stringify(item));
       }
-      console.log(this.slot);
-      console.log(this.shadowRoot);
-      console.log(this.shadowRoot.slotAssignment);
-      console.log(this.shadowRoot.querySelector("slot"));
-      console.log(this.shadowRoot.querySelector("slot")?.querySelectorAll("*"));
-      console.log(this.shadowRoot.host.querySelectorAll("*"));
     }
   });
 }
