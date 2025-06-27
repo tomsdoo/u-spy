@@ -50,6 +50,19 @@ export function ensureCustomIterator(tagName?: string) {
           return [];
         }
       })();
+      for(const child of Array.from(this.children)) {
+        if (/template/i.test(child.tagName)) {
+          continue;
+        }
+        child.remove();
+      }
+      for(const item of this.items) {
+        const template = this.querySelector<HTMLTemplateElement>(`#${this.templateId}`);
+        if (template == null) {
+          continue;
+        }
+        (this.appendChild(template.content.cloneNode(true)) as HTMLElement).setAttribute("item", JSON.stringify(item));
+      }
       console.log(this.slot);
       console.log(this.shadowRoot);
       console.log(this.shadowRoot.slotAssignment);
