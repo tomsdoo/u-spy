@@ -141,3 +141,28 @@ div {
 <my-element name="alice" message="this is a test"></my-element>
 <my-element name="bob" class="gray"></my-element>
 ```
+
+## iteraion of custom elements
+
+``` js
+_spy.ensureCustomElement("person-info", {
+  templateHtml: `
+  <div>
+    <span :value="name"></span>
+    <span :value="message"></span>
+  </div>
+  `,
+});
+_spy.ensureCustomIterator();
+```
+``` html
+<custom-iterator id="persons">
+  <person-info></person-info>
+</custom-iterator>
+<script>
+  document.querySelector("#persons").items = [
+    { name: "alice", message: "hi" },
+    { name: "bob", message: "hello" },
+  ];
+</script>
+```
