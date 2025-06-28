@@ -61,8 +61,26 @@ export function ensureCustomIterator(tagName?: string) {
       }
       for(const item of this.items) {
         for(const contentTag of this.contentTags) {
-          (this.appendChild(contentTag.cloneNode(true)) as HTMLElement)
-            .setAttribute("item", JSON.stringify(item));
+          const el = this.appendChild(contentTag.cloneNode(true)) as HTMLElement;
+          const itemGetter = el.getAttribute(":item");
+          const embeddingItem = itemGetter == null
+            ? item
+            : (() => {
+              const [,...propLayers] = itemGetter.split(/[[\].]/);
+              function getValue(item: any, propLayers: string[]) {
+                if (propLayers == null) {
+                  return item;
+                }
+                const [prop, ...restPropLayers] = propLayers;
+                if (prop in item === false) {
+                  return item;
+                }
+                return getValue(item[prop], restPropLayers);
+              }
+              const value = getValue(item, propLayers.filter(s => s !== ""));
+              return value;
+            })();
+          el.setAttribute("item", JSON.stringify(embeddingItem));
         }
       }
     }
