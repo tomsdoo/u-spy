@@ -65,7 +65,7 @@ export function ensureCustomElement(
     static get observedAttributes() {
       return [
         "item",
-        ...variableNames,
+        ...variableNames.map(camelToKebab),
       ];
     }
     shadowRoot: ShadowRoot;
@@ -93,7 +93,7 @@ export function ensureCustomElement(
       const data = Object.fromEntries(
         variableNames.map(prop => [
           prop,
-          this.shadowRoot.host.getAttribute(prop),
+          this.shadowRoot.host.getAttribute(camelToKebab(prop)),
         ])
       );
       this.boundData = new Proxy(data, {
