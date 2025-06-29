@@ -1,5 +1,10 @@
-export function ensureCustomIterator(tagName?: string) {
-  customElements.define(tagName ?? "custom-iterator", class extends HTMLElement {
+export function ensureCustomIterator(customIteratorTagName?: string) {
+  const localCustomIteratorTagName = customIteratorTagName ?? "custom-iterator";
+  if (customElements.get(localCustomIteratorTagName)) {
+    return;
+  }
+
+  customElements.define(localCustomIteratorTagName, class extends HTMLElement {
     static get observedAttributes() {
       return ["items"];
     }
@@ -9,7 +14,9 @@ export function ensureCustomIterator(tagName?: string) {
     constructor() {
       super();
       this.shadowRoot = this.attachShadow({ mode: "closed" });
-      this.shadowRoot.appendChild(document.createRange().createContextualFragment(`<slot></slot>`));
+      this.shadowRoot.appendChild(
+        document.createRange().createContextualFragment(`<slot></slot>`)
+      );
       this.isTemplateReady = false;
       this.contentTags = [];
     }
