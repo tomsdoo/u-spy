@@ -25,9 +25,11 @@ export function ensureCustomElement(
   {
     templateId,
     templateHtml,
+    eventHandlers,
   }: {
     templateId?: string;
     templateHtml?: string;
+    eventHandlers?: Record<string, (e: any) => void>;
   },
 ) {
   if (customElements.get(tagName) != null) {
@@ -37,6 +39,7 @@ export function ensureCustomElement(
     console.warn("templateId or templateHtml is necessary");
     return;
   }
+  const localEventHanders = eventHandlers ?? {};
   const localTemplateId = templateId ?? `template-${crypto.randomUUID()}`;
   if (templateId == null && templateHtml != null) {
     ensureCustomTemplate(localTemplateId, templateHtml);
@@ -61,10 +64,23 @@ export function ensureCustomElement(
     boundData: Record<string, any>;
     constructor() {
       super();
+      const that = this;
       this.shadowRoot = this.attachShadow({ mode: "closed" });
       const clonedNode = template?.content.cloneNode(true);
       if (clonedNode != null) {
         this.shadowRoot.appendChild(clonedNode);
+      }
+      for(const el of Array.from(this.shadowRoot.querySelectorAll("*"))) {
+        const handledEventNames = el.getAttributeNames()
+          .filter(attributeName => /^@/.test(attributeName))
+          .map(attributeName => attributeName.replace(/^@/, ""));
+        for(const handledEventName of handledEventNames) {
+          const handlerName = el.getAttribute(`@${handledEventName}`);
+          if (handlerName == null || handlerName in localEventHanders === false) {
+            continue;
+          }
+          el.addEventListener(handledEventName, localEventHanders[handlerName]);
+        }
       }
       const data = Object.fromEntries(
         variableNames.map(prop => [
@@ -72,7 +88,6 @@ export function ensureCustomElement(
           this.shadowRoot.host.getAttribute(prop),
         ])
       );
-      const that = this;
       this.boundData = new Proxy(data, {
         get(target, prop, receiver) {
           return typeof prop === "string"
