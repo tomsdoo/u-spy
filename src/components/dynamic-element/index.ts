@@ -20,6 +20,14 @@ function getVariableNames(node: HTMLElement) {
   return variableNames;
 }
 
+function camelToKebab(value: string) {
+  return value.replace(/([A-Z])/g, ($0,$1) => `-${$1.toLowerCase()}`);
+}
+
+function kebabToCamel(value: string) {
+  return value.replace(/-([a-z])/g, ($0,$1) => `${$1.toUpperCase()}`);
+}
+
 export function ensureCustomElement(
   tagName: string,
   {
@@ -98,7 +106,7 @@ export function ensureCustomElement(
           if (typeof prop === "symbol") {
             return true;
           }
-          that.shadowRoot.host.setAttribute(prop, value);;
+          that.shadowRoot.host.setAttribute(camelToKebab(prop), value);;
           target[prop] = value;
           return true;
         },
@@ -116,7 +124,8 @@ export function ensureCustomElement(
       }
     }
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-      if (name === "item") {
+      const propName = kebabToCamel(name);
+      if (propName === "item") {
         const item = (() => {
           try {
             return JSON.parse(newValue);
@@ -130,7 +139,7 @@ export function ensureCustomElement(
         this.item = item;
         return;
       }
-      this.shadowRoot.querySelectorAll(`[\\:value='${name}']`).forEach(el => {
+      this.shadowRoot.querySelectorAll(`[\\:value='${propName}']`).forEach(el => {
         el.textContent = newValue;
       });
     }
