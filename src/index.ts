@@ -1,5 +1,5 @@
 import { ControlElement } from "@/components/control-element";
-import { StoreElement } from "@/components/store";
+import { StoreElement, ensureStore } from "@/components/store";
 import { EntryPointElement } from "@/components/entry-point";
 import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
@@ -91,4 +91,5 @@ globalThis._spy = {
   },
   ensureCustomElement,
   ensureCustomIterator,
+  ensureStore,
 };

@@ -30,11 +30,13 @@ export class StoreElement extends HTMLElement {
   eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function; }[]>;
   _keyDefinitions: { key: string; description: string; }[];
   _temporaryDataMap: Map<string, unknown>;
+  _freeData: Map<string, Map<string, unknown>>;
   constructor() {
     super();
     this.eventHandlerMap = new Map();
     this._keyDefinitions = [];
     this._temporaryDataMap = new Map();
+    this._freeData = new Map();
   }
   get keyDefinitions() {
     return this._keyDefinitions.slice()
@@ -55,6 +57,9 @@ export class StoreElement extends HTMLElement {
       bubbles: false,
       detail: eventDetail,
     }));
+  }
+  get freeData() {
+    return this._freeData;
   }
   addKeyDefinition(keyDefinition: { key: string; description: string; }) {
     this.keyDefinitions = this.keyDefinitions
@@ -130,6 +135,14 @@ export class StoreElement extends HTMLElement {
     }
     return this.create();
   }
+}
+
+export function ensureStore(id: string) {
+  const storeElement = StoreElement.ensure();
+  if (storeElement.freeData.has(id) === false) {
+    storeElement.freeData.set(id, new Map());
+  }
+  return storeElement.freeData.get(id)!;
 }
 
 try {
