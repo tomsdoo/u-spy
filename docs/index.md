@@ -5,21 +5,23 @@ layout: home
 hero:
   name: "u-spy"
   text: "utility for me"
-  tagline: My great project tagline
+  tagline: provides some utilities
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Getting Started
+      link: /getting-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: How to intercept
+      link: /interceptions
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Interceptions
+    details: intercepting fetch, XMLHttpRequest, and sendBeacon
+  - title: Mocking
+    details: mocking fetch and XMLHttpRequest
+  - title: Hot Strokes
+    details: registration of hot strokes
+  - title: Custom Elements
+    details: registration of the simple declarative custom elements
 ---
 
