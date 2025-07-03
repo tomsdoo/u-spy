@@ -30,7 +30,7 @@ export class StoreElement extends HTMLElement {
   eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function; }[]>;
   _keyDefinitions: { key: string; description: string; }[];
   _temporaryDataMap: Map<string, unknown>;
-  _freeData: Map<string, Map<string, unknown>>;
+  _freeData: Map<string, ObservableObject>;
   constructor() {
     super();
     this.eventHandlerMap = new Map();
@@ -137,10 +137,57 @@ export class StoreElement extends HTMLElement {
   }
 }
 
+type OnChangeHandler = (prop: string, neWValue: unknown, oldValue: unknown) => void;
+type ObservableObject = Record<string, unknown> & {
+  _onChangeHandlers: OnChangeHandler[];
+  onChange: (f: OnChangeHandler) => void;
+  offChange: (f: OnChangeHandler) => void;
+};
+function generateObservableObject() {
+  const obj = new Proxy(
+    {
+      _onChangeHandlers: [],
+      onChange(f: OnChangeHandler) {
+        this._onChangeHandlers.push(f);
+      },
+      offChange(f: OnChangeHandler) {
+        this._onChangeHandlers = this._onChangeHandlers.filter(handler => handler !== f);
+      }
+    } as ObservableObject,
+    {
+      get(target, prop, receiver) {
+        return Reflect.get(target, prop, receiver);
+      },
+      set(target, prop, newValue, receiver) {
+        if (typeof prop === "symbol") {
+          return true;
+        }
+        if (["onChange", "offChange"].includes(prop)) {
+          return true;
+        }
+        if (["_onChangeHandlers"].includes(prop)) {
+          target[prop] = newValue;
+          return true;
+        }
+        const oldValue = target[prop];
+        target[prop] = newValue;
+        for(const handler of obj._onChangeHandlers as OnChangeHandler[]) {
+          void handler(prop, newValue, oldValue);
+        }
+        return true;
+      },
+    },
+  );
+  return obj;
+}
+
 export function ensureStore(id: string) {
   const storeElement = StoreElement.ensure();
   if (storeElement.freeData.has(id) === false) {
-    storeElement.freeData.set(id, new Map());
+    storeElement.freeData.set(
+      id,
+      generateObservableObject(),
+    );
   }
   return storeElement.freeData.get(id)!;
 }

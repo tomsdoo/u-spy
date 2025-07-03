@@ -110,6 +110,25 @@ _spy.changeHostStrokeStyle("mystyle");
 _spy.unregisterHotStroke();
 ```
 
+## store
+
+``` js
+const store = _spy.ensureStore("my-store");
+store.some = "thing";
+console.log(store.some); // thing
+
+function logChange(prop, value) {
+  console.log(`${prop}: ${value}`);
+}
+
+store.onChange((logChange);
+
+store.another = "test"; // "another: test" will be output on console
+
+store.offChange(logChange);
+store.another = "test2"; // no output on console because the callback had been off
+```
+
 ## custom elements
 
 ``` js

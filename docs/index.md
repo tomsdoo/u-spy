@@ -21,6 +21,8 @@ features:
     details: mocking fetch and XMLHttpRequest
   - title: Hot Strokes
     details: registration of hot strokes
+  - title: Store
+    details: observable store
   - title: Custom Elements
     details: registration of the simple declarative custom elements
 ---
