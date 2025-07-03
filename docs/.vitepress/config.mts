@@ -19,6 +19,7 @@ export default defineConfig({
           { text: 'Interceptions', link: '/interceptions' },
           { text: 'Mockings', link: '/mockings' },
           { text: 'Hot Strokes', link: '/hot-strokes' },
+          { text: 'Store', link: '/store' },
           { text: 'Custom Elements', link: '/custom-elements' },
           { text: 'Custom Iterator', link: '/custom-iterator' },
         ]
