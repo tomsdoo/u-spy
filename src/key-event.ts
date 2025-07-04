@@ -1,6 +1,6 @@
 import { EventType } from "@/constants/event-type";
 
-class KeyWaiter {
+export class KeyWaiter {
   wantedText: string;
   currentIndex: number;
   constructor(wantedText: string) {
