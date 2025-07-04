@@ -61,6 +61,7 @@ async function loadPrettier() {
 async function prettierFormat(text: string, parser: string): Promise<string> {
   try {
     await loadPrettier();
+    // @ts-expect-error prettier cannot be found since it will be loaded dynamically
     return prettier.format(text, { parser, plugins: prettierPlugins });
   } catch(_) {
     const NEW_LINE_CHAR = "\n";
