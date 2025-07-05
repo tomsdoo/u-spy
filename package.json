@@ -1,6 +1,7 @@
 {
   "name": "u-spy",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/index.global.js",
   "scripts": {
     "build": "tsup",
