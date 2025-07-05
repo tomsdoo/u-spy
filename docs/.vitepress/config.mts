@@ -2,6 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/u-spy/',
+  lang: 'en-US',
   title: "u-spy",
   description: "utility for me",
   themeConfig: {
