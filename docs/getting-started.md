@@ -2,6 +2,21 @@
 outline: deep
 ---
 
+# Getting started
+
+loading from CDN
+
+``` html
+<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/index.global.js"></script>
+```
+
+## ..and just type on the page
+
+- type `spy` to see spy log dialog.
+- type `style` to see ad hoc style editor.
+
+***
+
 ![npm](https://img.shields.io/npm/v/u-spy?style=for-the-badge&logo=npm)
 ![NPM](https://img.shields.io/npm/l/u-spy?style=for-the-badge&logo=npm)
 
@@ -18,16 +33,3 @@ outline: deep
     gap: 4px 10px;
   }
 </style>
-
-# Getting started
-
-loading from CDN
-
-``` html
-<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/index.global.js"></script>
-```
-
-## ..and just type on the page
-
-- type `spy` to see spy log dialog.
-- type `style` to see ad hoc style editor.
