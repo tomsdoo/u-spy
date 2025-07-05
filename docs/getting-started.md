@@ -7,36 +7,29 @@ outline: deep
 loading from CDN
 
 ``` html
-<script src="https://"></script>
+<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/index.global.js"></script>
 ```
 
-## logging
+## ..and just type on the page
 
-``` js
-const {
-  receiver,
-  restore,
-} = _spy.intercept("some-id");
+- type `spy` to see the spy log dialog.
+- type `style` to see the ad hoc style editor.
 
-receiver.on(
-  receiver.events.XHR_LOAD,
-  (data) => {
-    console.log("xhr load", data);
-  },
-);
+***
 
-receiver.on(
-  receiver.events.FETCH,
-  (data) => {
-    console.log("fetch", data);
-  },
-);
+![npm](https://img.shields.io/npm/v/u-spy?style=for-the-badge&logo=npm)
+![NPM](https://img.shields.io/npm/l/u-spy?style=for-the-badge&logo=npm)
 
-receiver.on(
-  receiver.events.BEACON,
-  (data) => {
-    console.log("beacon", data);
-  },
-);
-```
+![ci](https://img.shields.io/github/actions/workflow/status/tomsdoo/u-spy/ci.yml?style=social&logo=github)
+![checks](https://img.shields.io/github/check-runs/tomsdoo/u-spy/main?style=social&logo=github)
+![top language](https://img.shields.io/github/languages/top/tomsdoo/u-spy?style=social&logo=typescript)
+![Maintenance](https://img.shields.io/maintenance/yes/2025?style=social&logo=github)
 
+<style>
+  p:has(img[src*="img.shields.io"]) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+</style>

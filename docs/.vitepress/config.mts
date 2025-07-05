@@ -27,7 +27,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/tomsdoo' }
+      { icon: 'github', link: 'https://github.com/tomsdoo/u-spy' }
     ]
   }
 })

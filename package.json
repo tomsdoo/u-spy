@@ -18,6 +18,14 @@
   "author": "tomsdoo",
   "license": "MIT",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomsdoo/u-spy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tomsdoo/u-spy/issues"
+  },
+  "homepage": "https://github.com/tomsdoo/u-spy#readme",
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",
     "@types/node": "24.0.10",
