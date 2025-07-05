@@ -12,8 +12,8 @@ loading from CDN
 
 ## ..and just type on the page
 
-- type `spy` to see spy log dialog.
-- type `style` to see ad hoc style editor.
+- type `spy` to see the spy log dialog.
+- type `style` to see the ad hoc style editor.
 
 ***
 
