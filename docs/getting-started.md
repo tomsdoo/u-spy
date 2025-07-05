@@ -7,13 +7,28 @@ outline: deep
 loading from CDN
 
 ``` html
-<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/index.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/u-spy"></script>
+```
+
+or make a bookmarklet or some
+
+``` js
+javascript: (() => {document.body.appendChild(document.createElement("script")).src = `https://cdn.jsdelivr.net/npm/u-spy`;})();
 ```
 
 ## ..and just type on the page
 
 - type `spy` to see the spy log dialog.
 - type `style` to see the ad hoc style editor.
+
+
+## use a specific version
+
+likewise below for example `v0.1.0`
+
+``` html
+<script src="https://cdn.jsdelivr.net/npm/u-spy@0.1.0"></script>
+```
 
 ***
 

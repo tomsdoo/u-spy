@@ -8,6 +8,16 @@
 ![top language](https://img.shields.io/github/languages/top/tomsdoo/u-spy?style=social&logo=typescript)
 ![Maintenance](https://img.shields.io/maintenance/yes/2025?style=social&logo=github)
 
+## installation
+
+loading from CDN
+
+``` html
+<script src="https://cdn.jsdelivr.net/npm/u-spy"></script>
+```
+
+see also [documentation](https://tomsdoo.github.io/u-spy/)
+
 ## logging
 
 ``` js
