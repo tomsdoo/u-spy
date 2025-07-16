@@ -9,6 +9,7 @@ import { registerHotStroke } from "@/key-event";
 import { MessageBusElement } from "@/components/message-bus";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
+import { showEphemeralMessage } from "@/components/popup";
 
 declare global {
   var _spy: {};
@@ -92,4 +93,5 @@ globalThis._spy = {
   ensureCustomElement,
   ensureCustomIterator,
   ensureStore,
+  showEphemeralMessage,
 };
