@@ -139,7 +139,7 @@ function logChange(prop, value) {
   console.log(`${prop}: ${value}`);
 }
 
-store.onChange((logChange);
+store.onChange(logChange);
 
 store.another = "test"; // "another: test" will be output on console
 
