@@ -93,6 +93,36 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
   }
 }
 
+export type Replacer = (text: string) => string;
+export function replaceContent(selector: string, replacers: Replacer | Replacer[]) {
+  const adjustedReplacers = Array.isArray(replacers) ? replacers : [replacers];
+  function replaceHtml(text: string) {
+    const nextText = adjustedReplacers.reduce((transformedText, replacer) => {
+      return replacer(transformedText);
+    }, text);
+    return {
+      nextText,
+      changed: nextText !== text,
+    };
+  }
+  document.querySelectorAll(selector).forEach(el => {
+    for (const child of Array.from(el.childNodes)) {
+      if (child.nodeType !== child.TEXT_NODE) {
+        continue;
+      }
+      if (child.textContent == null) {
+        continue;
+      }
+      const { nextText, changed } = replaceHtml(child.textContent);
+      if (changed === false) {
+        continue;
+      }
+      child.before(document.createRange().createContextualFragment(nextText));
+      child.remove();
+    }
+  });
+}
+
 export class UtilsElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
 
@@ -106,6 +136,10 @@ export class UtilsElement extends HTMLElement {
 
   prettierFormat(text: string, parser: string) {
     return prettierFormat(text, parser);
+  }
+
+  replaceContent(selector: string, replacers: Replacer | Replacer[]) {
+    replaceContent(selector, replacers);
   }
 
   static create() {

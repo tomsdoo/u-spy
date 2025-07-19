@@ -25,6 +25,7 @@ export default defineConfig({
           { text: 'Ephemeral Messages', link: '/ephemeral-messages' },
           { text: 'Custom Elements', link: '/custom-elements' },
           { text: 'Custom Iterator', link: '/custom-iterator' },
+          { text: 'Replacings', link: '/replacings' },
         ]
       }
     ],
