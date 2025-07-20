@@ -31,7 +31,8 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/tomsdoo/u-spy' }
+      { icon: 'github', link: 'https://github.com/tomsdoo/u-spy' },
+      { icon: 'npm', link: 'https://www.npmjs.com/package/u-spy' },
     ]
   }
 })
