@@ -28,7 +28,7 @@
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",
-    "@types/node": "24.0.13",
+    "@types/node": "24.0.15",
     "@vitest/browser": "3.2.4",
     "playwright": "1.54.1",
     "tsup": "8.5.0",
