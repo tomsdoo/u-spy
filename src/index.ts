@@ -5,7 +5,7 @@ import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { interceptSendBeacon } from "@/beacon";
 import { displayDialog } from "@/components/dialog";
-import { registerHotStroke } from "@/key-event";
+import { registerHotStroke, getRegisteredHotStrokes, getRegisteredHotStroke } from "@/key-event";
 import { MessageBusElement } from "@/components/message-bus";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
@@ -61,6 +61,8 @@ globalThis._spy = {
     };
   },
   registerHotStroke,
+  getRegisteredHotStrokes,
+  getRegisteredHotStroke,
   displayDialog,
   changeHotStrokeSpy(nextStroke: string) {
     const defaultUnregisterHotStroke = unregisterHotStrokeMap.get("spy");

@@ -28,6 +28,22 @@ export class KeyWaiter {
   }
 }
 
+const registeredHotStrokeMap = new Map<string, {
+  unregisterHotStroke: () => void;
+  waiter: {
+    currentIndex: number;
+    currentText: string;
+  };
+}>();
+
+export function getRegisteredHotStrokes() {
+  return Array.from(registeredHotStrokeMap.keys());
+}
+
+export function getRegisteredHotStroke(wantedText: string) {
+  return registeredHotStrokeMap.get(wantedText);
+}
+
 export function registerHotStroke(wantedText: string, handler: () => void) {
   const keyWaiter = new KeyWaiter(wantedText.toLowerCase());
   function keyHandler(e: KeyboardEvent) {
@@ -40,6 +56,7 @@ export function registerHotStroke(wantedText: string, handler: () => void) {
   window.addEventListener(EventType.KEYDOWN, keyHandler);
   function unregisterHotStroke() {
     window.removeEventListener(EventType.KEYDOWN, keyHandler);
+    registeredHotStrokeMap.delete(wantedText);
   }
   const readonlyWaiter = new Proxy({
     currentIndex: keyWaiter.currentIndex,
@@ -58,6 +75,12 @@ export function registerHotStroke(wantedText: string, handler: () => void) {
       return true;
     },
   });
+
+  registeredHotStrokeMap.set(wantedText, {
+    unregisterHotStroke,
+    waiter: readonlyWaiter,
+  });
+
   return {
     unregisterHotStroke,
     waiter: readonlyWaiter,
