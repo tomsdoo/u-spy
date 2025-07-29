@@ -38,3 +38,10 @@ _spy.changeHostStrokeStyle("mystyle");
 ``` js
 _spy.unregisterHotStroke();
 ```
+
+### How to get the registered hot strokes
+
+``` js
+_spy.getRegisteredHotStrokes();
+// ["spy", "style", "somestroke"]
+```
