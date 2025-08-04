@@ -27,19 +27,12 @@ MessageBusElement.ensure();
 
 const unregisterHotStrokeMap = new Map<string, () => void>();
 
-const {
-  unregisterHotStroke: unregisterHotStrokeSpy,
-} = registerHotStroke("spy", () => {
-  displayDialog("spy");
-});
-unregisterHotStrokeMap.set("spy", unregisterHotStrokeSpy);
-
-const {
-  unregisterHotStroke: unregisterHotStrokeStyle,
-} = registerHotStroke("style", () => {
-  displayDialog("style");
-});
-unregisterHotStrokeMap.set("style", unregisterHotStrokeStyle);
+for (const stroke of ["spy", "style"]) {
+  const { unregisterHotStroke } = registerHotStroke(stroke, () => {
+    displayDialog(stroke);
+  });
+  unregisterHotStrokeMap.set(stroke, unregisterHotStroke);
+}
 
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
