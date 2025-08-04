@@ -36,7 +36,7 @@ _spy.changeHostStrokeStyle("mystyle");
 ### How to unregister the default hot strokes
 
 ``` js
-_spy.unregisterHotStroke();
+_spy.unregisterHotStrokes();
 ```
 
 ### How to get the registered hot strokes
@@ -44,4 +44,10 @@ _spy.unregisterHotStroke();
 ``` js
 _spy.getRegisteredHotStrokes();
 // ["spy", "style", "somestroke"]
+```
+
+### How to unregister a specified hot stroke
+
+``` js
+_spy.unregisterHotStroke("style");
 ```
