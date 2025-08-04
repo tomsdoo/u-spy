@@ -81,10 +81,13 @@ globalThis._spy = {
     unregisterHotStrokeMap.set(nextStroke, hotStroke.unregisterHotStroke);
     return hotStroke;
   },
-  unregisterHotStroke() {
+  unregisterHotStrokes() {
     for(const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
       unregisterAHotStroke();
     }
+  },
+  unregisterHotStroke(stroke: string) {
+    getRegisteredHotStroke(stroke)?.unregisterHotStroke();
   },
   ensureCustomElement,
   ensureCustomIterator,
