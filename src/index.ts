@@ -83,7 +83,7 @@ globalThis._spy = {
     }
     defaultUnregisterHotStroke();
     const hotStroke = registerHotStroke(nextStroke, () => {
-      displayDialog("spy");
+      displaySpyDialog();
     });
     unregisterHotStrokeMap.set(nextStroke, hotStroke.unregisterHotStroke);
     return hotStroke;
@@ -95,7 +95,7 @@ globalThis._spy = {
     }
     defaultUnregisterHotStroke();
     const hotStroke = registerHotStroke(nextStroke, () => {
-      displayDialog("style");
+      displayStyleDialog();
     });
     unregisterHotStrokeMap.set(nextStroke, hotStroke.unregisterHotStroke);
     return hotStroke;
