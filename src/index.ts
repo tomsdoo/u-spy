@@ -25,11 +25,28 @@ EntryPointElement.ensure();
 StoreElement.ensure();
 MessageBusElement.ensure();
 
+function displaySpyDialog() {
+  displayDialog("spy");
+}
+
+function displayStyleDialog() {
+  displayDialog("style");
+}
+
 const unregisterHotStrokeMap = new Map<string, () => void>();
 
-for (const stroke of ["spy", "style"]) {
+for (const { stroke, display } of [
+  {
+    stroke: "spy",
+    display: displaySpyDialog,
+  },
+  {
+    stroke: "style",
+    display: displayStyleDialog,
+  },
+]) {
   const { unregisterHotStroke } = registerHotStroke(stroke, () => {
-    displayDialog(stroke);
+    display();
   });
   unregisterHotStrokeMap.set(stroke, unregisterHotStroke);
 }
@@ -53,6 +70,8 @@ globalThis._spy = {
       restoreSendBeacon,
     };
   },
+  displaySpyDialog,
+  displayStyleDialog,
   registerHotStroke,
   getRegisteredHotStrokes,
   getRegisteredHotStroke,
