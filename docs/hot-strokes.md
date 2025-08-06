@@ -51,3 +51,16 @@ _spy.getRegisteredHotStrokes();
 ``` js
 _spy.unregisterHotStroke("style");
 ```
+
+### stroke interface
+
+``` ts
+interface Spy {
+  stroke: {
+    keys: string[];
+    register(stroke: string, handler: () => void): { unregisterHotStroke };
+    unregister(stroke: string): void;
+    unregisterAll(): void;
+  };
+}
+```
