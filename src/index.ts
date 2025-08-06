@@ -72,6 +72,23 @@ globalThis._spy = {
   },
   displaySpyDialog,
   displayStyleDialog,
+  stroke: {
+    register: registerHotStroke,
+    get keys() {
+      return getRegisteredHotStrokes();
+    },
+    get(key: string) {
+      return getRegisteredHotStroke(key);
+    },
+    unregister(key: string) {
+      getRegisteredHotStroke(key)?.unregisterHotStroke();
+    },
+    unregisterAll() {
+      for (const key of getRegisteredHotStrokes()) {
+        getRegisteredHotStroke(key)?.unregisterHotStroke();
+      }
+    },
+  },
   registerHotStroke,
   getRegisteredHotStrokes,
   getRegisteredHotStroke,
