@@ -12,8 +12,47 @@ import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { showEphemeralMessage } from "@/components/popup";
 import { UtilsElement, type Replacer } from "@/components/utils";
 
+interface Spy {
+  stroke: {
+    register: typeof registerHotStroke;
+    get keys(): string[];
+    get(key: string): ReturnType<typeof getRegisteredHotStroke> | undefined;
+    unregister(key: string): void;
+    unregisterAll(): void;
+    replace(beforeKey: string, afterKey: string): ReturnType<typeof registerHotStroke> | null;
+  };  
+}
+
+interface Spy {
+  registerHotStroke: typeof registerHotStroke;
+  getRegisteredHotStrokes: typeof getRegisteredHotStrokes;
+  getRegisteredHotStroke: typeof getRegisteredHotStroke;
+  changeHotStrokeSpy(nextStroke: string): ReturnType<typeof registerHotStroke> | null;
+  changeHotStrokeStyle(nextStroke: string): ReturnType<typeof registerHotStroke> | null
+  unregisterHotStrokes(): void;
+  unregisterHotStroke(stroke: string): void;
+}
+
+interface Spy {
+  displaySpyDialog(): void;
+  displayStyleDialog(): void;
+  intercept(id: string, options?: InterceptionOptions): {
+    receiver: ControlElement;
+    restore: () => void;
+    restoreXMLHttpRequest: () => void;
+    restoreFetch: () => void;
+    restoreSendBeacon: () => void;
+  };
+  displayDialog: typeof displayDialog;
+  ensureCustomElement: typeof ensureCustomElement;
+  ensureCustomIterator: typeof ensureCustomIterator;
+  ensureStore: typeof ensureStore;
+  showEphemeralMessage: typeof showEphemeralMessage;
+  replaceText(replacers: Replacer | Replacer[], selector?: string): void;
+}
+
 declare global {
-  var _spy: {};
+  var _spy: Spy;
 }
 
 interface InterceptionOptions {
@@ -50,6 +89,39 @@ for (const { stroke, display } of [
   });
   unregisterHotStrokeMap.set(stroke, unregisterHotStroke);
 }
+
+const deprecatedSpy = {
+  registerHotStroke(stroke: string, callback: () => void) {
+    console.warn("_spy.registerHotStroke is deprecated. Use _spy.stroke.register instead.");
+    return registerHotStroke(stroke, callback);
+  },
+  getRegisteredHotStrokes() {
+    console.warn("_spy.getRegisteredHotStrokes is deprecated. Use _spy.stroke.keys instead.");
+    return getRegisteredHotStrokes();
+  },
+  getRegisteredHotStroke(stroke: string) {
+    console.warn("_spy.getRegisteredHotStroke is deprecated. Use _spy.stroke.get instead.");
+    return getRegisteredHotStroke(stroke);
+  },
+  changeHotStrokeSpy(nextStroke: string) {
+    console.warn("_spy.changeHotStrokeSpy is deprecated. Use _spy.stroke.replace instead.");
+    return _spy.stroke.replace("spy", nextStroke);
+  },
+  changeHotStrokeStyle(nextStroke: string) {
+    console.warn("_spy.changeHotStrokeStyle is deprecated. Use _spy.stroke.replace instead.");
+    return _spy.stroke.replace("style", nextStroke);
+  },
+  unregisterHotStrokes() {
+    console.warn("_spy.unregisterHotStrokes is deprecated. Use _spy.stroke.unregisterAll instead.");
+    for(const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
+      unregisterAHotStroke();
+    }
+  },
+  unregisterHotStroke(stroke: string) {
+    console.warn("_spy.unregisterHotStroke is deprecated. Use _spy.stroke.unregister instead.");
+    getRegisteredHotStroke(stroke)?.unregisterHotStroke();
+  },
+};
 
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
@@ -88,43 +160,18 @@ globalThis._spy = {
         getRegisteredHotStroke(key)?.unregisterHotStroke();
       }
     },
+    replace(beforeKey: string, afterKey: string) {
+      const beforeDefinition = getRegisteredHotStroke(beforeKey);
+      if (beforeDefinition == null) {
+        return null;
+      }
+      const { unregisterHotStroke, handler } = beforeDefinition;
+      unregisterHotStroke();
+      return registerHotStroke(afterKey, handler);
+    },
   },
-  registerHotStroke,
-  getRegisteredHotStrokes,
-  getRegisteredHotStroke,
+  ...deprecatedSpy,
   displayDialog,
-  changeHotStrokeSpy(nextStroke: string) {
-    const defaultUnregisterHotStroke = unregisterHotStrokeMap.get("spy");
-    if (defaultUnregisterHotStroke == null) {
-      return;
-    }
-    defaultUnregisterHotStroke();
-    const hotStroke = registerHotStroke(nextStroke, () => {
-      displaySpyDialog();
-    });
-    unregisterHotStrokeMap.set(nextStroke, hotStroke.unregisterHotStroke);
-    return hotStroke;
-  },
-  changeHotStrokeStyle(nextStroke: string) {
-    const defaultUnregisterHotStroke = unregisterHotStrokeMap.get("style");
-    if (defaultUnregisterHotStroke == null) {
-      return;
-    }
-    defaultUnregisterHotStroke();
-    const hotStroke = registerHotStroke(nextStroke, () => {
-      displayStyleDialog();
-    });
-    unregisterHotStrokeMap.set(nextStroke, hotStroke.unregisterHotStroke);
-    return hotStroke;
-  },
-  unregisterHotStrokes() {
-    for(const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
-      unregisterAHotStroke();
-    }
-  },
-  unregisterHotStroke(stroke: string) {
-    getRegisteredHotStroke(stroke)?.unregisterHotStroke();
-  },
   ensureCustomElement,
   ensureCustomIterator,
   ensureStore,
