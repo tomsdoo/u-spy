@@ -4,13 +4,13 @@ outline: deep
 
 # Store
 
-We can use some stores with `_spy.ensureStore()`.
+We can use some stores with `_spy.store`.
 
 ``` js
-const myStore = _spy.ensureStore("my-store");
+const myStore = _spy.store.ensure("my-store");
 
-store.some = "thing";
-console.log(store.some); // thing
+myStore.some = "thing";
+console.log(myStore.some); // thing
 ```
 
 ## Callback to observe the changes of the store
@@ -18,10 +18,10 @@ console.log(store.some); // thing
 We can register the callbacks to observe the changes of the store.
 
 ``` js
-store.onChange((prop, value) => {
+myStore.onChange((prop, value) => {
   console.log(`${prop}: ${value}`);
 });
-store.another = "test"; // "another: test" will be output on console
+myStore.another = "test"; // "another: test" will be output on console
 ```
 
 And we can unregister it.
@@ -31,9 +31,15 @@ function log(prop, value) {
   console.log(`${prop}: ${value}`);
 }
 
-store.onChange(log);
-store.test = 1; // console.log
+myStore.onChange(log);
+myStore.test = 1; // console.log
 
-store.offChange(log);
-store.test = 2; // no console.log
+myStore.offChange(log);
+myStore.test = 2; // no console.log
+```
+
+## get store ids
+
+``` js
+console.log(_spy.store.keys); // ["my-store", "another-store"]
 ```

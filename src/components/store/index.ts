@@ -192,6 +192,11 @@ export function ensureStore(id: string) {
   return storeElement.freeData.get(id)!;
 }
 
+export function getStoreIds() {
+  const storeElement = StoreElement.ensure();
+  return Array.from(storeElement.freeData.keys());
+}
+
 try {
   globalThis.customElements.define(TAG_NAME, StoreElement);
 } catch {}

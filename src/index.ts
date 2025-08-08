@@ -1,5 +1,5 @@
 import { ControlElement } from "@/components/control-element";
-import { StoreElement, ensureStore } from "@/components/store";
+import { StoreElement, ensureStore, getStoreIds } from "@/components/store";
 import { EntryPointElement } from "@/components/entry-point";
 import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
@@ -17,6 +17,10 @@ interface Spy {
     display(callback: (dialogElement: HTMLElement) => void): void;
     displaySpy(): void;
     displayStyle(): void;
+  };
+  store: {
+    keys: string[];
+    ensure(key: string): ReturnType<typeof ensureStore>;
   };
   stroke: {
     register: typeof registerHotStroke;
@@ -41,6 +45,8 @@ interface Spy {
   displaySpyDialog(): void;
   displayStyleDialog(): void;
   displayDialog(callback: (dialogElement: HTMLElement) => void): void;
+
+  ensureStore: typeof ensureStore;
 }
 
 interface Spy {
@@ -53,7 +59,6 @@ interface Spy {
   };
   ensureCustomElement: typeof ensureCustomElement;
   ensureCustomIterator: typeof ensureCustomIterator;
-  ensureStore: typeof ensureStore;
   showEphemeralMessage: typeof showEphemeralMessage;
   replaceText(replacers: Replacer | Replacer[], selector?: string): void;
 }
@@ -141,6 +146,11 @@ const deprecatedSpy = {
     console.warn("_spy.displayDialog is deprecated. Use _spy.dialog.display instead.");
     displayDialog(callback);
   },
+
+  ensureStore(key: string) {
+    console.warn("_spy.ensureStore is deprecated. Use _spy.store.ensure instead.");
+    return ensureStore(key);
+  },
 };
 
 globalThis._spy = {
@@ -173,6 +183,14 @@ globalThis._spy = {
       displayStyleDialog();
     },
   },
+  store: {
+    get keys() {
+      return getStoreIds();
+    },
+    ensure(key: string) {
+      return ensureStore(key);
+    },
+  },
   stroke: {
     register: registerHotStroke,
     get keys() {
@@ -202,7 +220,6 @@ globalThis._spy = {
   ...deprecatedSpy,
   ensureCustomElement,
   ensureCustomIterator,
-  ensureStore,
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
     UtilsElement.ensure().replaceContent(selector ?? "*", replacers);

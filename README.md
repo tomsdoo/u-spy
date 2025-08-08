@@ -132,7 +132,7 @@ _spy.stroke.unregisterAll();
 ## store
 
 ``` js
-const store = _spy.ensureStore("my-store");
+const store = _spy.store.ensure("my-store");
 store.some = "thing";
 console.log(store.some); // thing
 

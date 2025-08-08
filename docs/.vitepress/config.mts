@@ -33,6 +33,7 @@ export default defineConfig({
         items: [
           { text: 'v0.4.0 to v0.5.0', link: '/migrations/v0.4.0-to-v0.5.0' },
           { text: 'v0.5.0 to v0.6.0', link: '/migrations/v0.5.0-to-v0.6.0' },
+          { text: 'v0.6.0 to v0.7.0', link: '/migrations/v0.6.0-to-v0.7.0' },
         ]
       },
     ],
