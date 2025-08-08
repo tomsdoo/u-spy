@@ -100,13 +100,13 @@ const {
 });
 ```
 
-## displayDialog()
+## display dialog
 
 ``` js
 const {
   unregisterHotStroke,
 } = _spy.stroke.register("hello", () => {
-  _spy.displayDialog(dialogElement => {
+  _spy.dialog.display(dialogElement => {
     dialogElement.textContent = "world";
   });
   unregisterHotStroke();

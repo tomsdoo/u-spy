@@ -13,6 +13,11 @@ import { showEphemeralMessage } from "@/components/popup";
 import { UtilsElement, type Replacer } from "@/components/utils";
 
 interface Spy {
+  dialog: {
+    display(callback: (dialogElement: HTMLElement) => void): void;
+    displaySpy(): void;
+    displayStyle(): void;
+  };
   stroke: {
     register: typeof registerHotStroke;
     get keys(): string[];
@@ -20,9 +25,10 @@ interface Spy {
     unregister(key: string): void;
     unregisterAll(): void;
     replace(beforeKey: string, afterKey: string): ReturnType<typeof registerHotStroke> | null;
-  };  
+  };
 }
 
+// deprecated methods
 interface Spy {
   registerHotStroke: typeof registerHotStroke;
   getRegisteredHotStrokes: typeof getRegisteredHotStrokes;
@@ -31,11 +37,13 @@ interface Spy {
   changeHotStrokeStyle(nextStroke: string): ReturnType<typeof registerHotStroke> | null
   unregisterHotStrokes(): void;
   unregisterHotStroke(stroke: string): void;
+
+  displaySpyDialog(): void;
+  displayStyleDialog(): void;
+  displayDialog(callback: (dialogElement: HTMLElement) => void): void;
 }
 
 interface Spy {
-  displaySpyDialog(): void;
-  displayStyleDialog(): void;
   intercept(id: string, options?: InterceptionOptions): {
     receiver: ControlElement;
     restore: () => void;
@@ -43,7 +51,6 @@ interface Spy {
     restoreFetch: () => void;
     restoreSendBeacon: () => void;
   };
-  displayDialog: typeof displayDialog;
   ensureCustomElement: typeof ensureCustomElement;
   ensureCustomIterator: typeof ensureCustomIterator;
   ensureStore: typeof ensureStore;
@@ -121,6 +128,19 @@ const deprecatedSpy = {
     console.warn("_spy.unregisterHotStroke is deprecated. Use _spy.stroke.unregister instead.");
     getRegisteredHotStroke(stroke)?.unregisterHotStroke();
   },
+
+  displaySpyDialog() {
+    console.warn("_spy.displaySpyDialog is deprecated. Use _spy.dialog.displaySpy instead.");
+    displaySpyDialog();
+  },
+  displayStyleDialog() {
+    console.warn("_spy.displayStyleDialog is deprecated. Use _spy.dialog.displayStyle instead.");
+    displayStyleDialog();
+  },
+  displayDialog(callback: (dialogElement: HTMLElement) => void) {
+    console.warn("_spy.displayDialog is deprecated. Use _spy.dialog.display instead.");
+    displayDialog(callback);
+  },
 };
 
 globalThis._spy = {
@@ -142,8 +162,17 @@ globalThis._spy = {
       restoreSendBeacon,
     };
   },
-  displaySpyDialog,
-  displayStyleDialog,
+  dialog: {
+    display(callback: (dialogElement: HTMLElement) => void) {
+      displayDialog(callback);
+    },
+    displaySpy() {
+      displaySpyDialog();
+    },
+    displayStyle() {
+      displayStyleDialog();
+    },
+  },
   stroke: {
     register: registerHotStroke,
     get keys() {
@@ -171,7 +200,6 @@ globalThis._spy = {
     },
   },
   ...deprecatedSpy,
-  displayDialog,
   ensureCustomElement,
   ensureCustomIterator,
   ensureStore,

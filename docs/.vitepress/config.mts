@@ -27,7 +27,14 @@ export default defineConfig({
           { text: 'Custom Iterator', link: '/custom-iterator' },
           { text: 'Replacings', link: '/replacings' },
         ]
-      }
+      },
+      {
+        text: 'migrations',
+        items: [
+          { text: 'v0.4.0 to v0.5.0', link: '/migrations/v0.4.0-to-v0.5.0' },
+          { text: 'v0.5.0 to v0.6.0', link: '/migrations/v0.5.0-to-v0.6.0' },
+        ]
+      },
     ],
 
     socialLinks: [
