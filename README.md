@@ -151,7 +151,7 @@ store.another = "test2"; // no output on console because the callback had been o
 ## custom elements
 
 ``` js
-_spy.ensureCustomElement("my-element", { templateHtml: `
+_spy.customElement.ensure("my-element", { templateHtml: `
 <div>
   hi
   <span :value="name"></span>
@@ -183,7 +183,7 @@ div {
 ## iteraion of custom elements
 
 ``` js
-_spy.ensureCustomElement("person-info", {
+_spy.customElement.ensure("person-info", {
   templateHtml: `
   <div>
     <span :value="name"></span>
@@ -191,7 +191,7 @@ _spy.ensureCustomElement("person-info", {
   </div>
   `,
 });
-_spy.ensureCustomIterator();
+_spy.customElement.ensureIterator();
 ```
 ``` html
 <custom-iterator id="persons" items="[]">

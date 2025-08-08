@@ -4,16 +4,16 @@ outline: deep
 
 # Custom Iterator
 
-We can add the simple custom iterator that has the interoperability with custom elements, by using `_spy.ensureCustomIterator()`.
+We can add the simple custom iterator that has the interoperability with custom elements, by using `_spy.customElements.ensureIterator()`.
 
 ``` js
-_spy.ensureCustomElement(
+_spy.customElement.ensure(
   "person-info",
   {
     templateHtml: `<span :value="name"></span>`,
   },
 );
-_spy.ensureCustomIterator();
+_spy.customElement.ensureIterator();
 ```
 ``` html
 <custom-iterator id="persons" items="[]">

@@ -13,6 +13,10 @@ import { showEphemeralMessage } from "@/components/popup";
 import { UtilsElement, type Replacer } from "@/components/utils";
 
 interface Spy {
+  customElement: {
+    ensure: typeof ensureCustomElement;
+    ensureIterator: typeof ensureCustomIterator;
+  };
   dialog: {
     display(callback: (dialogElement: HTMLElement) => void): void;
     displaySpy(): void;
@@ -47,6 +51,9 @@ interface Spy {
   displayDialog(callback: (dialogElement: HTMLElement) => void): void;
 
   ensureStore: typeof ensureStore;
+
+  ensureCustomElement: typeof ensureCustomElement;
+  ensureCustomIterator: typeof ensureCustomIterator;
 }
 
 interface Spy {
@@ -57,8 +64,6 @@ interface Spy {
     restoreFetch: () => void;
     restoreSendBeacon: () => void;
   };
-  ensureCustomElement: typeof ensureCustomElement;
-  ensureCustomIterator: typeof ensureCustomIterator;
   showEphemeralMessage: typeof showEphemeralMessage;
   replaceText(replacers: Replacer | Replacer[], selector?: string): void;
 }
@@ -151,6 +156,21 @@ const deprecatedSpy = {
     console.warn("_spy.ensureStore is deprecated. Use _spy.store.ensure instead.");
     return ensureStore(key);
   },
+  ensureCustomElement(
+    tagName: string,
+    config: {
+      templateId?: string;
+      templateHtml?: string;
+      eventHandlers?: Record<string, (e: any) => void>;
+    },
+  ) {
+    console.warn("_spy.ensureCustomElement is deprecated. Use _spy.customElement.ensure instead.");
+    ensureCustomElement(tagName, config);
+  },
+  ensureCustomIterator(customIteratorTagName?: string) {
+    console.warn("_spy.ensureCustomIterator is deprecated. Use _spy.customElement.ensureIterator instead.");
+    ensureCustomIterator(customIteratorTagName);
+  },
 };
 
 globalThis._spy = {
@@ -171,6 +191,10 @@ globalThis._spy = {
       restoreFetch,
       restoreSendBeacon,
     };
+  },
+  customElement: {
+    ensure: ensureCustomElement,
+    ensureIterator: ensureCustomIterator,
   },
   dialog: {
     display(callback: (dialogElement: HTMLElement) => void) {
@@ -218,8 +242,6 @@ globalThis._spy = {
     },
   },
   ...deprecatedSpy,
-  ensureCustomElement,
-  ensureCustomIterator,
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
     UtilsElement.ensure().replaceContent(selector ?? "*", replacers);

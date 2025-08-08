@@ -4,10 +4,10 @@ outline: deep
 
 # Custom Elements
 
-We can add the simple declarative custom elements with `_spy.ensureCustomElement()`.
+We can add the simple declarative custom elements with `_spy.customElement.ensure()`.
 
 ``` js
-_spy.ensureCustomElement(
+_spy.customElement.ensure(
   "my-element",
   {
     templateHtml: `
@@ -45,7 +45,7 @@ _spy.ensureCustomElement(
 The attribute named `:value` indicates a reactive text content property.
 
 ``` js
-_spy.ensureCustomElement(
+_spy.customElement.ensure(
   "just-div",
   {
     templateHtml: `<div :value="some"></div>`,
@@ -67,7 +67,7 @@ document.querySelector("just-div").boundData.some = "other";
 The attribute that name starts with `@` will invoke the handler.
 
 ``` js
-_spy.ensureCustomElement(
+_spy.customElement.ensure(
   "my-form",
   {
     templateHtml: `
