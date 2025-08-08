@@ -4,11 +4,11 @@ outline: deep
 
 # Hot Strokes
 
-We can register the handlers for the key strokes with `_spy.registerHotStroke()`.
+We can register the handlers for the key strokes with `_spy.stroke.register()`.
 ``` js
 const {
   unregisterHotStroke,
-} = _spy.registerHotStroke("hello", () => {
+} = _spy.stroke.register("hello", () => {
   console.log("world");
   unregisterHotStroke();
 });
@@ -21,35 +21,35 @@ const {
 |1|spy|shows spy log dialog|
 |2|style|shows ad hoc style editor|
 
-### How to change the default hot strokes
+### How to change the hot strokes
 
-`_spy` has the methods to change the strokes.
+we can use `_spy.stroke.replace()` to change the strokes.
 
 ``` js
 // spy -> myspy
-_spy.changeHotStrokeSpy("myspy");
+_spy.stroke.replace("spy", "myspy");
 
 // style -> mystyle
-_spy.changeHostStrokeStyle("mystyle");
+_spy.stroke.replace("style", "mystyle");
 ```
 
-### How to unregister the default hot strokes
+### How to unregister all hot strokes
 
 ``` js
-_spy.unregisterHotStrokes();
+_spy.stroke.unregisterAll();
 ```
 
 ### How to get the registered hot strokes
 
 ``` js
-_spy.getRegisteredHotStrokes();
+_spy.stroke.keys
 // ["spy", "style", "somestroke"]
 ```
 
 ### How to unregister a specified hot stroke
 
 ``` js
-_spy.unregisterHotStroke("style");
+_spy.stroke.unregister("style");
 ```
 
 ### stroke interface
@@ -61,6 +61,7 @@ interface Spy {
     register(stroke: string, handler: () => void): { unregisterHotStroke };
     unregister(stroke: string): void;
     unregisterAll(): void;
+    replace(beforeStroke: string, afterStroke: string): { unregisterHotStroke } | null;
   };
 }
 ```

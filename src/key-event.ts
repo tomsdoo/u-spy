@@ -30,6 +30,7 @@ export class KeyWaiter {
 
 const registeredHotStrokeMap = new Map<string, {
   unregisterHotStroke: () => void;
+  handler: () => void;
   waiter: {
     currentIndex: number;
     currentText: string;
@@ -78,11 +79,13 @@ export function registerHotStroke(wantedText: string, handler: () => void) {
 
   registeredHotStrokeMap.set(wantedText, {
     unregisterHotStroke,
+    handler,
     waiter: readonlyWaiter,
   });
 
   return {
     unregisterHotStroke,
+    handler,
     waiter: readonlyWaiter,
   };
 }

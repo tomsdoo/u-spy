@@ -94,7 +94,7 @@ void _spy.intercept('control-id', {
 ``` js
 const {
   unregisterHotStroke,
-} = _spy.registerHotStroke("hello", () => {
+} = _spy.stroke.register("hello", () => {
   console.log("world");
   unregisterHotStroke();
 });
@@ -105,7 +105,7 @@ const {
 ``` js
 const {
   unregisterHotStroke,
-} = _spy.registerHotStroke("hello", () => {
+} = _spy.stroke.register("hello", () => {
   _spy.displayDialog(dialogElement => {
     dialogElement.textContent = "world";
   });
@@ -117,15 +117,16 @@ const {
 
 ``` js
 // spy -> myspy
-_spy.changeHotStrokeSpy("myspy");
+_spy.stroke.replace("spy", "myspy");
+
 // style -> mystyle
-_spy.changeHostStrokeStyle("mystyle");
+_spy.stroke.replace("style", "mystyle");
 ```
 
-## unregister hot strokes that've been set as default
+## unregister all hot strokes
 
 ``` js
-_spy.unregisterHotStroke();
+_spy.stroke.unregisterAll();
 ```
 
 ## store
