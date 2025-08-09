@@ -4,6 +4,7 @@ import { EntryPointElement } from "@/components/entry-point";
 import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { interceptSendBeacon } from "@/beacon";
+import { interceptWindowMessage } from "@/window-message";
 import { displayDialog } from "@/components/dialog";
 import { registerHotStroke, getRegisteredHotStrokes, getRegisteredHotStroke } from "@/key-event";
 import { MessageBusElement } from "@/components/message-bus";
@@ -179,10 +180,12 @@ globalThis._spy = {
     const { restoreXMLHttpRequest } = interceptXMLHttpRequest(id, options?.xhrHandlers);
     const { restoreFetch } = interceptFetch(id, options?.fetchHandlers);
     const { restoreSendBeacon } = interceptSendBeacon(id);
+    const { restoreInterceptWindowMessage } = interceptWindowMessage(id);
     function restore() {
       restoreXMLHttpRequest();
       restoreFetch();
       restoreSendBeacon();
+      restoreInterceptWindowMessage();
     }
     return {
       receiver,
@@ -190,6 +193,7 @@ globalThis._spy = {
       restoreXMLHttpRequest,
       restoreFetch,
       restoreSendBeacon,
+      restoreInterceptWindowMessage,
     };
   },
   customElement: {

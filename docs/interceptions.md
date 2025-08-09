@@ -4,7 +4,7 @@ outline: deep
 
 # Interceptions
 
-We can intercept fetch/XMLHttpRequest/beacon with `_spy.intercept()`.
+We can intercept `fetch`/`XMLHttpRequest`/`beacon`/`window message` with `_spy.intercept()`.
 
 ``` js
 const {
@@ -42,6 +42,17 @@ receiver.on(
   receiver.events.BEACON,
   (data) => {
     console.log("beacon", data);
+  },
+);
+```
+
+## intercepting windowMessage
+
+``` js
+receiver.on(
+  receiver.events.WINDOW_MESSAGE,
+  (data) => {
+    console.log("window message", data);
   },
 );
 ```

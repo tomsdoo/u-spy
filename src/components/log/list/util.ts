@@ -3,6 +3,7 @@ import type { ControlElement, ControlEvents } from "@/components/control-element
 export type FetchLog = ControlElement["logStore"][ControlEvents.FETCH] extends (infer T)[] ? T : never;
 export type XhrLog = ControlElement["logStore"][ControlEvents.XHR_LOAD] extends (infer T)[] ? T : never;
 export type BeaconLog = ControlElement["logStore"][ControlEvents.BEACON] extends (infer T)[] ? T : never;
+export type WindowMessageLog = ControlElement["logStore"][ControlEvents.WINDOW_MESSAGE] extends (infer T)[] ? T : never;
 
 export function validateFetchLog(
   logItem: ControlElement["logItems"] extends (infer T)[] ? T : never
@@ -18,6 +19,11 @@ export function validateBeaconLog(
   logItem: ControlElement["logItems"] extends (infer T)[] ? T : never
 ): logItem is BeaconLog & { type: "beacon" } {
   return logItem.type === "beacon";
+}
+export function validateWindowMessageLog(
+  logItem: ControlElement["logItems"] extends (infer T)[] ? T : never
+): logItem is WindowMessageLog & { type: "windowMessage" } {
+  return logItem.type === "windowMessage";
 }
 
 function getUrl(url: RequestInfo | URL) {
@@ -83,6 +89,19 @@ export function transformLogItem(
       host: getHost(logItem.data.url),
       path: getPath(logItem.data.url),
       body: logItem.data.data,
+      response: "",
+    };
+  }
+
+  if (validateWindowMessageLog(logItem)) {
+    return {
+      method: "",
+      url: logItem.data.origin,
+      host: logItem.data.origin,
+      path: "",
+      body: typeof logItem.data.data === "string"
+        ? logItem.data.data
+        : JSON.stringify(logItem.data.data),
       response: "",
     };
   }
