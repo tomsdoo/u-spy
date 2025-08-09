@@ -46,6 +46,13 @@ receiver.on(
     console.log('beacon', data);
   },
 );
+
+receiver.on(
+  receiver.events.WINDOW_MESSAGE,
+  (data) => {
+    console.log('window message', data);
+  },
+);
 ```
 
 ## intercepting
