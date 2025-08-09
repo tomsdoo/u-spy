@@ -7,10 +7,24 @@ outline: deep
 We can use some stores with `_spy.store`.
 
 ``` js
-const myStore = _spy.store.ensure("my-store");
+// in a block
+{
+  const store = _spy.store.ensure("my-store");
+  store.some = "thing";
 
-myStore.some = "thing";
-console.log(myStore.some); // thing
+  function logChange(prop, value) {
+    console.log(`${prop}: ${value}`);
+    store.offChange(logChange);
+  }
+  store.onChange(logChange);
+}
+
+// in another block
+{
+  _spy.store.ensure("my-store").another = "test"; // "another: test" will be output on console
+
+  _spy.store.ensure("my-store").another = "test2"; // no output on console because the callback had been off
+}
 ```
 
 ## Callback to observe the changes of the store

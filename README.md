@@ -139,20 +139,24 @@ _spy.stroke.unregisterAll();
 ## store
 
 ``` js
-const store = _spy.store.ensure("my-store");
-store.some = "thing";
-console.log(store.some); // thing
+// in a block
+{
+  const store = _spy.store.ensure("my-store");
+  store.some = "thing";
 
-function logChange(prop, value) {
-  console.log(`${prop}: ${value}`);
+  function logChange(prop, value) {
+    console.log(`${prop}: ${value}`);
+    store.offChange(logChange);
+  }
+  store.onChange(logChange);
 }
 
-store.onChange(logChange);
+// in another block
+{
+  _spy.store.ensure("my-store").another = "test"; // "another: test" will be output on console
 
-store.another = "test"; // "another: test" will be output on console
-
-store.offChange(logChange);
-store.another = "test2"; // no output on console because the callback had been off
+  _spy.store.ensure("my-store").another = "test2"; // no output on console because the callback had been off
+}
 ```
 
 ## custom elements
