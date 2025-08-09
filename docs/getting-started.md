@@ -4,27 +4,30 @@ outline: deep
 
 # Getting started
 
-loading from CDN
+1. load js
+    - from CDN
+      ``` html
+      <script src="https://cdn.jsdelivr.net/npm/u-spy"></script>
+      ```
+    - or make a bookmarklet or some
+      ``` js
+      javascript: (() => {document.body.appendChild(document.createElement("script")).src = `https://cdn.jsdelivr.net/npm/u-spy`;})();
+      ```
 
-``` html
-<script src="https://cdn.jsdelivr.net/npm/u-spy"></script>
-```
+2. start intercepting
+    - on your console
+      ``` js
+      _spy.intercept("hello-world");
+      ```
 
-or make a bookmarklet or some
-
-``` js
-javascript: (() => {document.body.appendChild(document.createElement("script")).src = `https://cdn.jsdelivr.net/npm/u-spy`;})();
-```
-
-## ..and just type on the page
-
-- type `spy` to see the spy log dialog.
-- type `style` to see the ad hoc style editor.
+3. ..and just type on the page
+    - type `spy` to see the spy log dialog.
+    - type `style` to see the ad hoc style editor.
 
 
 ## use a specific version
 
-likewise below for example `v0.1.0`
+for example, for `v0.1.0` like below
 
 ``` html
 <script src="https://cdn.jsdelivr.net/npm/u-spy@0.1.0"></script>

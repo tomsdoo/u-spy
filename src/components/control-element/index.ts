@@ -9,6 +9,7 @@ export enum ControlEvents {
   XHR_LOAD = 'xhr_load',
   FETCH = 'fetch',
   BEACON = 'beacon',
+  WINDOW_MESSAGE = 'window_message',
 }
 
 type XhrLoadEventData = {
@@ -52,10 +53,22 @@ type BeaconEvent = {
   data: BeaconEventData;
 };
 
+type WindowMessageEventData = {
+  data: unknown;
+  origin: string;
+  lastEventId: string;
+};
+
+type WindowMessageEvent = {
+  type: ControlEvents.WINDOW_MESSAGE;
+  data: WindowMessageEventData;
+};
+
 export type ControlEventDetail =
   | XhrLoadEvent
   | FetchEvent
-  | BeaconEvent;
+  | BeaconEvent
+  | WindowMessageEvent;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -70,10 +83,12 @@ declare global {
 type FetchHandler = (data: FetchEventData) => void;
 type XhrLoadHandler = (data: XhrLoadEventData) => void;
 type BeaconHandler = (data: BeaconEventData) => void;
+type WindowMessageHandler = (data: WindowMessageEventData) => void;
 type Handler =
   | FetchHandler
   | XhrLoadHandler
-  | BeaconHandler;
+  | BeaconHandler
+  | WindowMessageHandler;
 
 export class ControlElement extends HTMLElement {
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
@@ -82,10 +97,12 @@ export class ControlElement extends HTMLElement {
     [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData; }[];
     [ControlEvents.XHR_LOAD]: { id: string; time: Date; data: XhrLoadEventData; }[];
     [ControlEvents.BEACON]: { id: string; time: Date; data: BeaconEventData; }[];
+    [ControlEvents.WINDOW_MESSAGE]: { id: string; time: Date; data: WindowMessageEventData; }[];
   } = {
     [ControlEvents.FETCH]: [],
     [ControlEvents.XHR_LOAD]: [],
     [ControlEvents.BEACON]: [],
+    [ControlEvents.WINDOW_MESSAGE]: [],
   };
   constructor() {
     super();
@@ -105,6 +122,7 @@ export class ControlElement extends HTMLElement {
   on(event: ControlEvents.FETCH, handler: FetchHandler): void;
   on(event: ControlEvents.XHR_LOAD, handler: XhrLoadHandler): void;
   on(event: ControlEvents.BEACON, handler: BeaconHandler): void;
+  on(event: ControlEvents.WINDOW_MESSAGE, handler: WindowMessageHandler): void;
   on(event: ControlEvents, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
     const exists = existingHandlers.find(({ handler: existingHandler}) => existingHandler === handler) != null;
@@ -124,6 +142,9 @@ export class ControlElement extends HTMLElement {
           return;
         case ControlEvents.BEACON:
           (handler as BeaconHandler)(e.detail.data as BeaconEventData);
+          return;
+        case ControlEvents.WINDOW_MESSAGE:
+          (handler as WindowMessageHandler)(e.detail.data as WindowMessageEventData);
           return;
         default:
           return;
@@ -194,6 +215,20 @@ export class ControlElement extends HTMLElement {
       },
     }));
   }
+  dispatchWindowMessage(data: WindowMessageEventData) {
+    this.logStore[ControlEvents.WINDOW_MESSAGE].push({
+      data,
+      time: new Date(),
+      id: `log-item-window-message-${crypto.randomUUID()}`,
+    });
+    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
+      bubbles: false,
+      detail: {
+        type: ControlEvents.WINDOW_MESSAGE,
+        data,
+      },
+    }));
+  }
   get logItems() {
     return [
       ...this.logStore[ControlEvents.FETCH]
@@ -210,6 +245,11 @@ export class ControlElement extends HTMLElement {
         .map(beaconLog => ({
           ...beaconLog,
           type: "beacon",
+        })),
+      ...this.logStore[ControlEvents.WINDOW_MESSAGE]
+        .map(messageLog => ({
+          ...messageLog,
+          type: "windowMessage",
         })),
     ]
       .toSorted((a,b) => a.time.getTime() - b.time.getTime());
