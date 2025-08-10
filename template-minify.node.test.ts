@@ -10,7 +10,7 @@ vi.mock("fs/promises", async () => {
   };
 });
 
-describe("styleMinify()", () => {
+describe("templateMinify()", () => {
   let transform: (args: any) => Promise<
     { contents: string; loader: string; } | null
   >;
@@ -23,21 +23,24 @@ describe("styleMinify()", () => {
     });
   });
   it.each([
-    [
-      "template.ts",
-      `
+    {
+      path: "template.ts",
+      content: `
       \tthis is
        a test 
       `,
-      ` this is a test `,
-    ],
-  ])("file: %s, content: %s", async (path, content, expectedOputputContent) => {
-    vi.mocked(readFile).mockResolvedValue(content);
-    await expect(transform({
-      path,
-    })).resolves.toEqual({
-      contents: expectedOputputContent,
-      loader: "ts",
-    });
-  });
+      expectedOputputContent: ` this is a test `,
+    },
+  ])(
+    "file: $path, content: $content",
+    async ({ path, content, expectedOputputContent }) => {
+      vi.mocked(readFile).mockResolvedValue(content);
+      await expect(transform({
+        path,
+      })).resolves.toEqual({
+        contents: expectedOputputContent,
+        loader: "ts",
+      });
+    },
+  );
 });

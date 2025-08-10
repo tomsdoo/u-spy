@@ -23,9 +23,9 @@ describe("styleMinify()", () => {
     });
   });
   it.each([
-    [
-      "src/components/log/list/template.ts",
-      `
+    {
+      path: "src/components/log/list/template.ts",
+      content: `
       <div></div>
       <style>
       .test-block {
@@ -33,14 +33,14 @@ describe("styleMinify()", () => {
       }
       </style>
       `,
-      `
+      expectedOputputContent: `
       <div></div>
       <style> .test-block { color: red; } </style>
       `,
-    ],
-    [
-      "src/components/dialog/template.ts",
-      `
+    },
+    {
+      path: "src/components/dialog/template.ts",
+      content: `
       <div></div>
       <style>
       .test-block {
@@ -48,20 +48,23 @@ describe("styleMinify()", () => {
       }
       </style>
       `,
-      `
+      expectedOputputContent: `
       <div></div>
       <style> .test-block { color: red; } </style>
       `
-    ],
-  ])("file: %s, content: %s", async (path, content, expectedOputputContent) => {
-    vi.mocked(readFile).mockResolvedValue(content);
-    await expect(transform({
-      path,
-    })).resolves.toEqual({
-      contents: expectedOputputContent,
-      loader: "ts",
-    });
-  });
+    },
+  ])(
+    "file: $path, content: $content",
+    async ({ path, content, expectedOputputContent }) => {
+      vi.mocked(readFile).mockResolvedValue(content);
+      await expect(transform({
+        path,
+      })).resolves.toEqual({
+        contents: expectedOputputContent,
+        loader: "ts",
+      });
+    },
+  );
   it("resolves as null if not a target", async () => {
     vi.mocked(readFile).mockResolvedValue("test");
     await expect(transform({
