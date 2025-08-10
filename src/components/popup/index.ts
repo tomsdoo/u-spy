@@ -6,6 +6,7 @@ export class PopupElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
   id: string = "";
   shadowRoot: ShadowRoot | null = null;
+  messageMap: Map<string, string> = new Map();
   connectedCallback() {
     const id = `usid-${crypto.randomUUID()}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
@@ -15,24 +16,38 @@ export class PopupElement extends HTMLElement {
     this.id = id;
     this.shadowRoot = shadowRoot;
   }
-  setMessage(message: string) {
+  get canRemoveRoot() {
+    return this.messageMap.size === 0;
+  }
+  async addMessage(message: string) {
     if (this.shadowRoot == null) {
       return;
     }
-    this.shadowRoot.querySelector(`#${this.id}`)!.textContent = message;
+    const messageId = crypto.randomUUID();
+    this.messageMap.set(messageId, message);
+    const ul = this.shadowRoot.querySelector(`#${this.id}`)!;
+    const li = ul.appendChild(document.createElement("li"));
+    li.textContent = message;
+    await new Promise(resolve => setTimeout(resolve, 1));
+    li.classList.add("visible");
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    li.classList.remove("visible");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    li.remove();
+    this.messageMap.delete(messageId);
+  }
+  static ensure() {
+    return document.querySelector<PopupElement>(PopupElement.TAG_NAME) ??
+      document.body.appendChild<PopupElement>(
+        document.createElement(PopupElement.TAG_NAME) as PopupElement,
+      );
   }
   static async show(message: string) {
-    const popup = document.body.appendChild(document.createElement(PopupElement.TAG_NAME));
-    if (popup instanceof PopupElement === false) {
+    const popup = PopupElement.ensure();
+    await popup.addMessage(message);
+    if (popup.canRemoveRoot === false) {
       return;
     }
-    popup.setMessage(message);
-    const el = popup.shadowRoot?.querySelector(`#${popup.id}`);
-    await new Promise(resolve => setTimeout(resolve, 1));
-    el?.classList.add("visible");
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    el?.classList.remove("visible");
-    await new Promise(resolve => setTimeout(resolve, 1000));
     popup.remove();
   }
 }
