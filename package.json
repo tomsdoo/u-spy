@@ -28,12 +28,12 @@
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",
-    "@types/node": "24.2.0",
+    "@types/node": "24.2.1",
     "@vitest/browser": "3.2.4",
     "playwright": "1.54.2",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
-    "vitepress": "1.6.3",
+    "vitepress": "1.6.4",
     "vitest": "3.2.4"
   }
 }
