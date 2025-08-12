@@ -17,6 +17,12 @@ function getVariableNames(node: HTMLElement) {
     }
     variableNames.push(variableName);
   }
+  for (const el of Array.from(node.querySelectorAll("[\\:props]"))) {
+    const propNames = (el.getAttribute(":props") ?? "").split(",").map(s => s.trim()).filter(Boolean);
+    for (const propName of propNames) {
+      variableNames.push(propName);
+    }
+  }
   return variableNames;
 }
 
