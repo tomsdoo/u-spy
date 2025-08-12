@@ -75,11 +75,18 @@ _spy.customElement.ensure(
         <button type="button" @click="work">
           click me
         </button>
+        <div :value="name"></div>
+        <button type="button" @click="work2">
+          click me 2
+        </button>
       </div>
     `,
     eventHandlers: {
       work(e) {
         console.log(e.target.textContent);
+      },
+      work2(e, { name }) {
+        console.log(name);
       },
     },
   },

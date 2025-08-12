@@ -37,7 +37,7 @@ export function ensureCustomElement(
   }: {
     templateId?: string;
     templateHtml?: string;
-    eventHandlers?: Record<string, (e: any) => void>;
+    eventHandlers?: Record<string, (e: any, item?: Record<string, any>) => void>;
   },
 ) {
   if (customElements.get(tagName) != null) {
@@ -87,7 +87,12 @@ export function ensureCustomElement(
           if (handlerName == null || handlerName in localEventHandlers === false) {
             continue;
           }
-          el.addEventListener(handledEventName, localEventHandlers[handlerName]);
+          el.addEventListener(
+            handledEventName,
+            (e) => {
+              localEventHandlers[handlerName](e, that.boundData);
+            },
+          );
         }
       }
       const data = Object.fromEntries(
