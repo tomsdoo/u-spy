@@ -7,9 +7,9 @@ const TAG_NAME = "u-spy-style-editor";
 const STYLE_TAG_ID = "u-spy-style-edited";
 
 function ensureStyleTag() {
-  const existingSyleTag = document.querySelector<HTMLStyleElement>(`#${STYLE_TAG_ID}`);
-  if (existingSyleTag != null) {
-    return existingSyleTag;
+  const existingStyleTag = document.querySelector<HTMLStyleElement>(`#${STYLE_TAG_ID}`);
+  if (existingStyleTag != null) {
+    return existingStyleTag;
   }
   const styleTag = document.createElement("style");
   styleTag.id = STYLE_TAG_ID;

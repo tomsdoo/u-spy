@@ -2,7 +2,7 @@ export function template({ id, url, host }: { id: string; url: string; host: str
   const linkColor = "cornflowerblue";
   return `
   <div id="${id}" class="host">
-    <abbr ttile="${url}">${host}</abbr>
+    <abbr title="${url}">${host}</abbr>
     <a href="${url}" target="_blank">${url}</a>
   </div>
   <style>
