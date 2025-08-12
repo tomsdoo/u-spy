@@ -54,7 +54,7 @@ _spy.customElement.ensure(
 ```
 
 
-`<just-div some="thing"></just-div>` will render `<div>thing</div>` in the custom elemnet.
+`<just-div some="thing"></just-div>` will render `<div>thing</div>` in the custom element.
 
 And we can change the value via `boundData` property of them.
 

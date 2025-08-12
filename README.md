@@ -191,7 +191,7 @@ div {
 <my-element name="bob" class="gray"></my-element>
 ```
 
-## iteraion of custom elements
+## iteration of custom elements
 
 ``` js
 _spy.customElement.ensure("person-info", {

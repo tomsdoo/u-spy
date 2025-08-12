@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "u-spy"
   text: "utility for me"
-  tagline: provides some handinesses
+  tagline: provides some handiness
   actions:
     - theme: brand
       text: Getting Started

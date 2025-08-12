@@ -47,7 +47,7 @@ export function ensureCustomElement(
     console.warn("templateId or templateHtml is necessary");
     return;
   }
-  const localEventHanders = eventHandlers ?? {};
+  const localEventHandlers = eventHandlers ?? {};
   const localTemplateId = templateId ?? `template-${crypto.randomUUID()}`;
   if (templateId == null && templateHtml != null) {
     ensureCustomTemplate(localTemplateId, templateHtml);
@@ -84,10 +84,10 @@ export function ensureCustomElement(
           .map(attributeName => attributeName.replace(/^@/, ""));
         for(const handledEventName of handledEventNames) {
           const handlerName = el.getAttribute(`@${handledEventName}`);
-          if (handlerName == null || handlerName in localEventHanders === false) {
+          if (handlerName == null || handlerName in localEventHandlers === false) {
             continue;
           }
-          el.addEventListener(handledEventName, localEventHanders[handlerName]);
+          el.addEventListener(handledEventName, localEventHandlers[handlerName]);
         }
       }
       const data = Object.fromEntries(

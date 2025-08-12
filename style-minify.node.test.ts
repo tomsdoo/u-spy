@@ -33,7 +33,7 @@ describe("styleMinify()", () => {
       }
       </style>
       `,
-      expectedOputputContent: `
+      expectedOutputContent: `
       <div></div>
       <style> .test-block { color: red; } </style>
       `,
@@ -48,19 +48,19 @@ describe("styleMinify()", () => {
       }
       </style>
       `,
-      expectedOputputContent: `
+      expectedOutputContent: `
       <div></div>
       <style> .test-block { color: red; } </style>
       `
     },
   ])(
     "file: $path, content: $content",
-    async ({ path, content, expectedOputputContent }) => {
+    async ({ path, content, expectedOutputContent }) => {
       vi.mocked(readFile).mockResolvedValue(content);
       await expect(transform({
         path,
       })).resolves.toEqual({
-        contents: expectedOputputContent,
+        contents: expectedOutputContent,
         loader: "ts",
       });
     },

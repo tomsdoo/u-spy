@@ -29,16 +29,16 @@ describe("templateMinify()", () => {
       \tthis is
        a test 
       `,
-      expectedOputputContent: ` this is a test `,
+      expectedOutputContent: ` this is a test `,
     },
   ])(
     "file: $path, content: $content",
-    async ({ path, content, expectedOputputContent }) => {
+    async ({ path, content, expectedOutputContent }) => {
       vi.mocked(readFile).mockResolvedValue(content);
       await expect(transform({
         path,
       })).resolves.toEqual({
-        contents: expectedOputputContent,
+        contents: expectedOutputContent,
         loader: "ts",
       });
     },
