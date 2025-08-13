@@ -37,6 +37,12 @@ export default defineConfig({
           { text: 'v0.7.0 to v0.8.0', link: '/migrations/v0.7.0-to-v0.8.0' },
         ]
       },
+      {
+        text: 'others',
+        items: [
+          { text: 'versions', link: '/versions' },
+        ],
+      },
     ],
 
     socialLinks: [
