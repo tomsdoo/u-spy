@@ -92,3 +92,35 @@ _spy.customElement.ensure(
   },
 );
 ```
+
+## `:props` attribute in templateHTML
+The attribute named `:props` indicates a reactive property for actions like event handlers.
+
+``` js
+_spy.customElement.ensure(
+  "my-button",
+  {
+    templateHtml: `
+      <button
+        type="button"
+        :props="message1,message2"
+        @click="showLog"
+      >
+        click me
+      </button>
+    `,
+    eventHandlers: {
+      showLog(e, { message1, message2 }) {
+        console.log(message1, message2);
+      },
+    },
+  },
+);
+
+document.body.appendChild(
+  document.createElement("my-button")
+).item = {
+  message1: "hello",
+  message2: "world",
+};
+```
