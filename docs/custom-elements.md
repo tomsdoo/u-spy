@@ -71,7 +71,7 @@ _spy.customElement.ensure(
   "my-form",
   {
     templateHtml: `
-      <div>
+      <div :props="message1,message2">
         <button type="button" @click="work">
           click me
         </button>
@@ -85,8 +85,8 @@ _spy.customElement.ensure(
       work(e) {
         console.log(e.target.textContent);
       },
-      work2(e, { name }) {
-        console.log(name);
+      work2(e, { message1, message2 }) {
+        console.log(message1, message2);
       },
     },
   },
