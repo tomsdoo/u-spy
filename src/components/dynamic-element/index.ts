@@ -10,23 +10,21 @@ export function ensureCustomTemplate(templateId: string, templateHtml: string) {
 
 function getVariableNames(node: HTMLElement) {
   const variableNames: string[] = [];
-  const topVariableName = node.getAttribute(":value");
-  if (topVariableName != null) {
-    variableNames.push(topVariableName);
-  }
-  for (const el of Array.from(node.querySelectorAll("[\\:value]"))) {
+  for (const el of [
+    node,
+    ...Array.from(node.querySelectorAll("[\\:value]")),
+  ]) {
     const variableName = el.getAttribute(":value");
     if (variableName == null) {
       continue;
     }
     variableNames.push(variableName);
   }
-  const topPropNames = (node.getAttribute(":props" )?? "")?.split(",").map(s => s.trim()).filter(Boolean);
-  for (const topPropName of topPropNames) {
-    variableNames.push(topPropName);
-  }
 
-  for (const el of Array.from(node.querySelectorAll("[\\:props]"))) {
+  for (const el of [
+    node,
+    ...Array.from(node.querySelectorAll("[\\:props]")),
+  ]) {
     const propNames = (el.getAttribute(":props") ?? "").split(",").map(s => s.trim()).filter(Boolean);
     for (const propName of propNames) {
       variableNames.push(propName);
