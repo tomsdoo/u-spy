@@ -10,12 +10,25 @@ export function ensureCustomTemplate(templateId: string, templateHtml: string) {
 
 function getVariableNames(node: HTMLElement) {
   const variableNames: string[] = [];
-  for (const el of Array.from(node.querySelectorAll("[\\:value]"))) {
+  for (const el of [
+    node,
+    ...Array.from(node.querySelectorAll("[\\:value]")),
+  ]) {
     const variableName = el.getAttribute(":value");
     if (variableName == null) {
       continue;
     }
     variableNames.push(variableName);
+  }
+
+  for (const el of [
+    node,
+    ...Array.from(node.querySelectorAll("[\\:props]")),
+  ]) {
+    const propNames = (el.getAttribute(":props") ?? "").split(",").map(s => s.trim()).filter(Boolean);
+    for (const propName of propNames) {
+      variableNames.push(propName);
+    }
   }
   return variableNames;
 }

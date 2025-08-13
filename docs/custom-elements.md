@@ -71,7 +71,7 @@ _spy.customElement.ensure(
   "my-form",
   {
     templateHtml: `
-      <div>
+      <div :props="message1,message2">
         <button type="button" @click="work">
           click me
         </button>
@@ -85,10 +85,42 @@ _spy.customElement.ensure(
       work(e) {
         console.log(e.target.textContent);
       },
-      work2(e, { name }) {
-        console.log(name);
+      work2(e, { message1, message2 }) {
+        console.log(message1, message2);
       },
     },
   },
 );
+```
+
+## `:props` attribute in templateHTML
+The attribute named `:props` indicates a reactive property for actions like event handlers.
+
+``` js
+_spy.customElement.ensure(
+  "my-button",
+  {
+    templateHtml: `
+      <button
+        type="button"
+        :props="message1,message2"
+        @click="showLog"
+      >
+        click me
+      </button>
+    `,
+    eventHandlers: {
+      showLog(e, { message1, message2 }) {
+        console.log(message1, message2);
+      },
+    },
+  },
+);
+
+document.body.appendChild(
+  document.createElement("my-button")
+).item = {
+  message1: "hello",
+  message2: "world",
+};
 ```
