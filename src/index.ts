@@ -12,6 +12,7 @@ import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { showEphemeralMessage } from "@/components/popup";
 import { UtilsElement, type Replacer } from "@/components/utils";
+import { eventBus } from "@/event-bus";
 
 interface Spy {
   customElement: {
@@ -23,6 +24,7 @@ interface Spy {
     displaySpy(): void;
     displayStyle(): void;
   };
+  eventBus: typeof eventBus,
   store: {
     keys: string[];
     ensure(key: string): ReturnType<typeof ensureStore>;
@@ -211,6 +213,7 @@ globalThis._spy = {
       displayStyleDialog();
     },
   },
+  eventBus,
   store: {
     get keys() {
       return getStoreIds();
