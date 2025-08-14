@@ -63,3 +63,13 @@ _spy.stroke.register("clearall", () => {
   console.log("cleared all events");
 });
 ```
+
+``` ts
+eventBus: {
+  on: (eventName: string | Symbol, (data: unknown) => void) => void;
+  off: (eventName: string | Symbol, (data: unknown) => void) => void;
+  once: (eventName: string | Symbol, (data: unknown) => void) => void;
+  emit: (eventName: string | Symbol, data: unknown) => void;
+  clear: (eventName?: string | Symbol) => void;
+}
+```
