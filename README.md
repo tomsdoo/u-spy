@@ -136,6 +136,25 @@ _spy.stroke.replace("style", "mystyle");
 _spy.stroke.unregisterAll();
 ```
 
+## Event Bus
+
+``` js
+function someEventHandler(data) {
+  console.log("some-event", data);
+}
+
+const SOME_EVENT = "some-event";
+
+_spy.eventBus.on(
+  SOME_EVENT,
+  someEventHandler,
+);
+
+_spy.eventBus.emit(SOME_EVENT, {
+  message: "hello",
+});
+```
+
 ## store
 
 ``` js
