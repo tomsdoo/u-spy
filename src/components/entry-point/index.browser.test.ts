@@ -19,7 +19,9 @@ describe("EntryPointElement", () => {
     document.body.innerHTML ="";
   });
   it("renders correctly", () => {
-    const entryPointElement = document.body.appendChild(document.createElement(EntryPointElement.TAG_NAME));
+    const entryPointElement = document.body.appendChild(
+      document.createElement(EntryPointElement.TAG_NAME),
+    );
     expect(entryPointElement.shadowRoot).toSatisfy(({ innerHTML }) => {
       const matched = innerHTML.match(/dummyName@dummyVersion/);
       return matched != null;
