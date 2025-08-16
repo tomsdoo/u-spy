@@ -29,7 +29,10 @@ describe("interceptFetch", () => {
     const spyEnsure = vi.spyOn(ControlElement, "ensure");
     const {
       restoreFetch,
-    } = interceptFetch(controlId);
+    } = interceptFetch(controlId, [
+        async (input: RequestInfo | URL) => await Promise.resolve(null),
+      ],
+    );
     await fetch(dummyUrl, {
       method: "POST",
       body: dummyData,
