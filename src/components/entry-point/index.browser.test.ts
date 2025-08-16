@@ -27,4 +27,12 @@ describe("EntryPointElement", () => {
       return matched != null;
     });
   });
+  describe("ensure", () => {
+    it("element will be returned as regardless of the tag already exists or nor", () => {
+      const element = EntryPointElement.ensure();
+      expect(element).toHaveProperty("nodeName", EntryPointElement.TAG_NAME.toUpperCase());
+      const element2 = EntryPointElement.ensure();
+      expect(element === element2).toBe(true);
+    });
+  });
 });
