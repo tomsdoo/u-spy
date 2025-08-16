@@ -26,6 +26,11 @@ describe("eventBus", () => {
     afterEach(() => {
       vi.clearAllMocks();
     });
+    it("not calls callback if no handlers are registered", () => {
+      eventBus.clear();
+      eventBus.emit(DUMMY_EVENT, dummyData);
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
     it("calls callback", () => {
       eventBus.emit(DUMMY_EVENT, dummyData);
       expect(spy).toHaveBeenCalledTimes(1);
@@ -61,15 +66,28 @@ describe("eventBus", () => {
     afterEach(() => {
       vi.clearAllMocks();
     });
-    it("not calls callback if off has been called", () => {
-      eventBus.emit(DUMMY_EVENT, dummyData);
-      expect(spy).toHaveBeenCalledTimes(1);
+    describe("not calls callback if off has been called", () => {
+      it("case if some handlers are registered", () => {
+        eventBus.emit(DUMMY_EVENT, dummyData);
+        expect(spy).toHaveBeenCalledTimes(1);
 
-      eventBus.off(DUMMY_EVENT, spy);
+        eventBus.off(DUMMY_EVENT, spy);
 
-      eventBus.emit(DUMMY_EVENT, dummyData2);
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenNthCalledWith(1, dummyData);
+        eventBus.emit(DUMMY_EVENT, dummyData2);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenNthCalledWith(1, dummyData);
+      });
+      it("case no handlers are registered", () => {
+        eventBus.clear();
+
+        eventBus.emit(DUMMY_EVENT, dummyData);
+        expect(spy).toHaveBeenCalledTimes(0);
+
+        eventBus.off(DUMMY_EVENT, spy);
+
+        eventBus.emit(DUMMY_EVENT, dummyData2);
+        expect(spy).toHaveBeenCalledTimes(0);
+      });
     });
   });
 });

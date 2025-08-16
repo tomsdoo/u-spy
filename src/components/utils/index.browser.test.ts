@@ -29,7 +29,18 @@ describe("UtilsElement", () => {
     expect(formattedTime).toBe("12:34:56.789");
     expect(spyDateTimeFormatResolvedOptions).toHaveBeenCalledTimes(1);
   });
-  it("download()", () => {
+  it.each([
+    {
+      type: "string",
+      data: "test data",
+    },
+    {
+      type: "object",
+      data: {
+        test: 1,
+      },
+    },
+  ])("download() type: $type", ({ data }) => {
     const FILENAME = "dummyFileName";
     const observer = new MutationObserver((mutationList) => {
       for(const mutation of mutationList) {
@@ -49,7 +60,7 @@ describe("UtilsElement", () => {
       }
     });
     observer.observe(document.body, { childList: true });
-    UtilsElement.ensure().download({data: { test: 1 }, filename: FILENAME });
+    UtilsElement.ensure().download({data, filename: FILENAME });
   });
   it("replaceContent()", () => {
     document.body.innerHTML = `
@@ -84,6 +95,26 @@ describe("UtilsElement", () => {
     expect(document.querySelector("[data-test-id='test2']")).toSatisfy(el => {
       expect(el.textContent.trim()).toBe("this is a test2 !!!replaced!!! this is a test2");
       return true;
+    });
+  });
+  describe("prettierFormat()",  () => {
+    describe("when can load script", () => {
+      it("can proceed", async () => {
+        const result = await UtilsElement.ensure().prettierFormat(".some { display: grid; }", "css");
+        expect(result).toBe(".some {\n  display: grid;\n}\n");
+      });
+    });
+    describe("when cannot load script", () => {
+      beforeEach(() => {
+        vi.spyOn(document.head, "appendChild").mockImplementation((scriptTag) => {
+          scriptTag.dispatchEvent(new Event("error"));
+          return scriptTag;
+        });
+      });
+      it("can proceed", async () => {
+        const result = await UtilsElement.ensure().prettierFormat(".some { display: grid; .other { display: grid; }}", "css");
+        expect(result).toBe(".some {\n  display: grid;\n\n  .other {\n    display: grid;\n  }\n}\n");
+      });
     });
   });
 });
