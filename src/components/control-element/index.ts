@@ -91,6 +91,7 @@ type Handler =
   | WindowMessageHandler;
 
 export class ControlElement extends HTMLElement {
+  static TAG_NAME = TAG_NAME;
   eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
   events = ControlEvents;
   logStore: {
