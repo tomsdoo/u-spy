@@ -67,6 +67,14 @@ const token = _spy.c.set("willBeRemoved", "dummy");
 _spy.c.delete("willBeRemoved", token);
 ```
 
+## getting keys
+
+We can get the keys registered with `container.keys`.
+
+``` js
+_spy.c.keys // ["key1", "key2"]
+```
+
 ## shorthand alias
 
 `_spy.c` is an alias of `_spy.container`, for shorthand. We can use both of them as mixed since that which of them is same with each other.

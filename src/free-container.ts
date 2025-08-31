@@ -7,8 +7,17 @@ type Container = Record<string, any> & {
   delete: (key: string, token: string) => void;
 };
 
+const reservedProps = [
+  "set",
+  "delete",
+  "keys",
+];
+
 export const freeContainer = new Proxy({
   set(key: string, value: any, token?: string) {
+    if (reservedProps.includes(key)) {
+      throw new Error(`${key} is reserved`);
+    }
     if (containerMap.has(key)) {
       if (token == null) {
         throw new Error(`value of ${key} is already set. token is required to overwrite it.`);
@@ -36,8 +45,11 @@ export const freeContainer = new Proxy({
   },
 } as Container,{
   get(target, prop, receiver) {
+    if (prop === "keys") {
+      return Array.from(containerMap.keys());
+    }
     const isThrough = typeof prop === "symbol" ||
-      ["set", "delete"].includes(prop);
+      reservedProps.includes(prop);
     if (isThrough) {
       return Reflect.get(target, prop, receiver);
     }

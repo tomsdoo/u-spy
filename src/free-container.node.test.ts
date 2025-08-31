@@ -18,6 +18,13 @@ describe("freeContainer", () => {
       freeContainer.set(key, value);
       expect(freeContainer[key]).toBe(value);
     });
+    it.each([
+      "set",
+      "delete",
+      "keys",
+    ])("throws if key is reserved, key: %s", (key) => {
+      expect(() => freeContainer.set(key, "dummyValue")).throws(`${key} is reserved`);
+    });
     it("throws if key exists", () => {
       const {
         key,
@@ -45,6 +52,14 @@ describe("freeContainer", () => {
       expect(freeContainer[key]).toBe(value);
       freeContainer.set(key, "anotherValue", token);
       expect(freeContainer[key]).toBe("anotherValue");
+    });
+    it("not changed if it is overwritten", () => {
+      const originalSet = freeContainer.set;
+      function dummySet(key: string, value: any) {
+        return "dummy";
+      }
+      freeContainer.set = dummySet;
+      expect(freeContainer.set).toEqual(originalSet);
     });
   });
   describe("delete()", () => {
@@ -77,6 +92,31 @@ describe("freeContainer", () => {
       expect(freeContainer[key]).toBe(value);
       freeContainer.delete(key, token);
       expect(freeContainer[key]).toBeUndefined();
+    });
+    it("not changed if it is overwritten", () => {
+      const originalDelete = freeContainer.delete;
+      function dummyDelete(key: string, token: string) {
+      }
+      freeContainer.delete = dummyDelete;
+      expect(freeContainer.delete).toEqual(originalDelete);
+    });
+  });
+  describe("keys", () => {
+    it("is an array of keys", () => {
+      const {
+        key,
+        value,
+      } = generateRandomKeyValue();
+      freeContainer.set(key, value);
+      expect(freeContainer.keys).toSatisfy(keys =>
+        keys.includes(key)
+      );
+    });
+    it("not changed if it is overwritten", () => {
+      const originalKeys = freeContainer.keys;
+      const dummyKeys = ["dummy"];
+      freeContainer.keys = dummyKeys;
+      expect(freeContainer.keys).toEqual(originalKeys);
     });
   });
   describe("getting property", () => {
