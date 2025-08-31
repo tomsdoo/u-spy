@@ -13,8 +13,11 @@ import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { showEphemeralMessage } from "@/components/popup";
 import { UtilsElement, type Replacer } from "@/components/utils";
 import { eventBus } from "@/event-bus";
+import { freeContainer } from "@/free-container";
 
 interface Spy {
+  c: typeof freeContainer;
+  container: typeof freeContainer;
   customElement: {
     ensure: typeof ensureCustomElement;
     ensureIterator: typeof ensureCustomIterator;
@@ -198,6 +201,8 @@ globalThis._spy = {
       restoreInterceptWindowMessage,
     };
   },
+  c: freeContainer,
+  container: freeContainer,
   customElement: {
     ensure: ensureCustomElement,
     ensureIterator: ensureCustomIterator,

@@ -22,6 +22,7 @@ export default defineConfig({
           { text: 'Mockings', link: '/mockings' },
           { text: 'Hot Strokes', link: '/hot-strokes' },
           { text: 'Event Bus', link: '/event-bus' },
+          { text: 'Container', link: '/container' },
           { text: 'Store', link: '/store' },
           { text: 'Ephemeral Messages', link: '/ephemeral-messages' },
           { text: 'Custom Elements', link: '/custom-elements' },
