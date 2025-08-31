@@ -155,6 +155,14 @@ _spy.eventBus.emit(SOME_EVENT, {
 });
 ```
 
+## container
+
+``` js
+_spy.container.set("some", "thing");
+
+_spy.c.some // thing
+```
+
 ## store
 
 ``` js
