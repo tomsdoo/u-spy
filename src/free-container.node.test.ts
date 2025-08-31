@@ -18,6 +18,13 @@ describe("freeContainer", () => {
       freeContainer.set(key, value);
       expect(freeContainer[key]).toBe(value);
     });
+    it.each([
+      "set",
+      "delete",
+      "keys",
+    ])("throws if key is reserved, key: %s", (key) => {
+      expect(() => freeContainer.set(key, "dummyValue")).throws(`${key} is reserved`);
+    });
     it("throws if key exists", () => {
       const {
         key,
