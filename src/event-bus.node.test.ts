@@ -1,12 +1,7 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { eventBus } from "@/event-bus";
 
-const {
-  DUMMY_EVENT,
-  dummyData,
-  dummyData2,
-  spy,
-} = vi.hoisted(() => ({
+const { DUMMY_EVENT, dummyData, dummyData2, spy } = vi.hoisted(() => ({
   DUMMY_EVENT: "dummy-event",
   dummyData: {
     value: "dummyValue",
@@ -91,5 +86,3 @@ describe("eventBus", () => {
     });
   });
 });
-
-

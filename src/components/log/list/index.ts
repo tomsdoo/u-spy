@@ -1,9 +1,8 @@
-import { template } from "./template";
 import { ControlElement } from "@/components/control-element";
-import { EventType } from "@/constants/event-type";
-import { transformLogItem } from "@/components/log/list/util";
-import { StoreElement } from "@/components/store";
 import { LogItemElement } from "@/components/log/item";
+import { StoreElement } from "@/components/store";
+import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-list";
 
@@ -28,47 +27,64 @@ export class LogListElement extends HTMLElement {
     };
     const shadowRoot = this.attachShadow({ mode: "open" });
     this.shadowRoot = shadowRoot;
-    const controlId = shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
+    const controlId =
+      shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
     const controlElement = ControlElement.ensure(controlId);
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id, controlId, controlElement.logItems, ids))
+      document
+        .createRange()
+        .createContextualFragment(
+          template(id, controlId, controlElement.logItems, ids),
+        ),
     );
-    shadowRoot.querySelector(Selectors.SEARCH_FORM)?.addEventListener("submit", (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener(EventType.KEYDOWN, (e: KeyboardEvent) => {
-      e.stopPropagation();
-      if (e.key === "Escape") {
+    shadowRoot
+      .querySelector(Selectors.SEARCH_FORM)
+      ?.addEventListener("submit", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    shadowRoot
+      .querySelector(Selectors.SEARCH_KEY_BOX)
+      ?.addEventListener(EventType.KEYDOWN, (e: KeyboardEvent) => {
+        e.stopPropagation();
+        if (e.key === "Escape") {
+          if (e.target instanceof HTMLInputElement === false) {
+            return;
+          }
+          e.target.blur();
+        }
+      });
+    shadowRoot
+      .querySelector(Selectors.SEARCH_KEY_BOX)
+      ?.addEventListener("change", (e) => {
+        if (e.target == null) {
+          return;
+        }
         if (e.target instanceof HTMLInputElement === false) {
           return;
         }
-        e.target.blur();
-      }
-    });
-    shadowRoot.querySelector(Selectors.SEARCH_KEY_BOX)?.addEventListener("change", (e) => {
-      if (e.target == null) {
-        return;
-      }
-      if (e.target instanceof HTMLInputElement === false) {
-        return;
-      }
 
-      const keyword = e.target.value;
-      shadowRoot.querySelectorAll<LogItemElement>(LogItemElement.TAG_NAME).forEach((logItemElement) => {
-        logItemElement.feedKeyword(keyword);
+        const keyword = e.target.value;
+        shadowRoot
+          .querySelectorAll<LogItemElement>(LogItemElement.TAG_NAME)
+          .forEach((logItemElement) => {
+            logItemElement.feedKeyword(keyword);
+          });
       });
-    });
     this.keyEventHandler = (e: KeyboardEvent) => {
       if (e.key !== "s") {
         return;
       }
-      shadowRoot.querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)?.focus();
+      shadowRoot
+        .querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)
+        ?.focus();
     };
     window.addEventListener("keyup", this.keyEventHandler);
     this.store.addKeyDefinition({ key: "s", description: "focus search box" });
     setTimeout(() => {
-      const logListUl = shadowRoot.querySelector<HTMLUListElement>(Selectors.LOG_LIST);
+      const logListUl = shadowRoot.querySelector<HTMLUListElement>(
+        Selectors.LOG_LIST,
+      );
       if (logListUl == null) {
         return;
       }

@@ -3,7 +3,7 @@ import { EntryPointElement } from "@/components/entry-point";
 const TAG_NAME = "u-spy-message-bus";
 
 export enum MessageBusEvent {
-  GENERAL = 'general',
+  GENERAL = "general",
 }
 
 type GeneralEventData = unknown;
@@ -19,12 +19,15 @@ declare global {
 }
 
 type GeneralHandler = (data: GeneralEventData) => void;
-type Handler =
-  | GeneralHandler;
+type Handler = GeneralHandler;
 
 export class MessageBusElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
-  eventHandlerMap: Map<MessageBusEvent, { handler: Handler; wrapper: Function; }[]>;
+  eventHandlerMap: Map<
+    MessageBusEvent,
+    // biome-ignore lint/complexity/noBannedTypes: use Function
+    { handler: Handler; wrapper: Function }[]
+  >;
   constructor() {
     super();
     this.eventHandlerMap = new Map();
@@ -32,21 +35,26 @@ export class MessageBusElement extends HTMLElement {
   on(event: MessageBusEvent.GENERAL, handler: GeneralHandler): void;
   on(event: MessageBusEvent, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler }) => existingHandler === handler) != null;
+    const exists =
+      existingHandlers.find(
+        ({ handler: existingHandler }) => existingHandler === handler,
+      ) != null;
     if (exists) {
       return;
     }
     switch (event) {
       case MessageBusEvent.GENERAL: {
-        const wrapper = (e: { detail: GeneralEventData}) => {
+        const wrapper = (e: { detail: GeneralEventData }) => {
           (handler as GeneralHandler)(e.detail);
         };
         this.eventHandlerMap.set(
           event,
           existingHandlers
-            .filter(({ handler: existingHandler }) => existingHandler !== handler)
+            .filter(
+              ({ handler: existingHandler }) => existingHandler !== handler,
+            )
             .concat([{ handler, wrapper }]),
-        )
+        );
         return;
       }
       default: {
@@ -56,14 +64,17 @@ export class MessageBusElement extends HTMLElement {
   }
   off(event: MessageBusEvent, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler }) => existingHandler === handler);
+    const exists = existingHandlers.find(
+      ({ handler: existingHandler }) => existingHandler === handler,
+    );
     if (exists == null) {
       return;
     }
     this.eventHandlerMap.set(
       event,
-      existingHandlers
-        .filter(({ handler: existingHandler }) => existingHandler !== handler),
+      existingHandlers.filter(
+        ({ handler: existingHandler }) => existingHandler !== handler,
+      ),
     );
     this.removeEventListener(event, exists.wrapper as () => void);
   }
@@ -84,7 +95,7 @@ export class MessageBusElement extends HTMLElement {
     if (existing != null) {
       return existing;
     }
-    return this.create(id);
+    return MessageBusElement.create(id);
   }
 }
 

@@ -1,10 +1,7 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { EntryPointElement } from "@/components/entry-point";
 
-const {
-  dummyName,
-  dummyVersion,
-} = vi.hoisted(() => ({
+const { dummyName, dummyVersion } = vi.hoisted(() => ({
   dummyName: "dummyName",
   dummyVersion: "dummyVersion",
 }));
@@ -16,7 +13,7 @@ vi.mock("@@/package.json", () => ({
 
 describe("EntryPointElement", () => {
   beforeEach(() => {
-    document.body.innerHTML ="";
+    document.body.innerHTML = "";
   });
   it("renders correctly", () => {
     const entryPointElement = document.body.appendChild(
@@ -30,7 +27,10 @@ describe("EntryPointElement", () => {
   describe("ensure", () => {
     it("element will be returned as regardless of the tag already exists or nor", () => {
       const element = EntryPointElement.ensure();
-      expect(element).toHaveProperty("nodeName", EntryPointElement.TAG_NAME.toUpperCase());
+      expect(element).toHaveProperty(
+        "nodeName",
+        EntryPointElement.TAG_NAME.toUpperCase(),
+      );
       const element2 = EntryPointElement.ensure();
       expect(element === element2).toBe(true);
     });

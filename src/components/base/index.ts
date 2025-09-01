@@ -3,14 +3,17 @@ export class BaseElement extends HTMLElement {
   static get observedAttributes() {
     return [] as string[];
   }
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (/:/.test(name) === false) {
       return;
     }
     const propName = name
       .replace(/^[s|o]?:/i, "")
-      .replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
-    const isPropValid = ((instance: typeof this, propName: string): instance is typeof this & { [propName: string]: string } => {
+      .replace(/-([a-z])/g, (_$0, $1) => $1.toUpperCase());
+    const isPropValid = ((
+      instance: typeof this,
+      propName: string,
+    ): instance is typeof this & { [propName: string]: string } => {
       return propName in instance;
     })(this, propName);
     if (isPropValid === false) {
@@ -20,9 +23,7 @@ export class BaseElement extends HTMLElement {
     this[propName] = (() => {
       const isObject = name.startsWith("o:");
       try {
-        return isObject
-          ? JSON.parse(newValue)
-          : newValue;
+        return isObject ? JSON.parse(newValue) : newValue;
       } catch {
         return newValue;
       }
@@ -31,9 +32,10 @@ export class BaseElement extends HTMLElement {
   }
   async render() {
     this.innerHTML = "";
-    const contentHtml = typeof this.template === "string"
-      ? this.template
-      : await this.template(this);
+    const contentHtml =
+      typeof this.template === "string"
+        ? this.template
+        : await this.template(this);
     this.appendChild(
       document.createRange().createContextualFragment(contentHtml),
     );

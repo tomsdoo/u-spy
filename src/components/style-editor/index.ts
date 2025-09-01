@@ -1,13 +1,15 @@
 import { BaseElement } from "@/components/base";
-import { template } from "./template";
-import { EventType } from "@/constants/event-type";
 import { UtilsElement } from "@/components/utils";
+import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-style-editor";
 const STYLE_TAG_ID = "u-spy-style-edited";
 
 function ensureStyleTag() {
-  const existingStyleTag = document.querySelector<HTMLStyleElement>(`#${STYLE_TAG_ID}`);
+  const existingStyleTag = document.querySelector<HTMLStyleElement>(
+    `#${STYLE_TAG_ID}`,
+  );
   if (existingStyleTag != null) {
     return existingStyleTag;
   }
@@ -47,11 +49,12 @@ export class StyleEditorElement extends BaseElement {
     this.render();
   }
   onRendered() {
-    const that = this;
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
-    const textarea = this.querySelector<HTMLTextAreaElement>(`#${this.id} > form > textarea`);
+    const textarea = this.querySelector<HTMLTextAreaElement>(
+      `#${this.id} > form > textarea`,
+    );
     if (textarea == null) {
       return;
     }
@@ -59,7 +62,7 @@ export class StyleEditorElement extends BaseElement {
     textarea.addEventListener("keydown", (e) => {
       e.stopPropagation();
       setTimeout(() => {
-        that.styleText = textarea.value;
+        this.styleText = textarea.value;
       }, 1);
       if (e.key === "Escape") {
         textarea.blur();
@@ -68,7 +71,9 @@ export class StyleEditorElement extends BaseElement {
     setTimeout(() => {
       textarea.focus();
     }, 1);
-    const downloadButton = this.querySelector<HTMLButtonElement>(`#${this.id} .download-button`);
+    const downloadButton = this.querySelector<HTMLButtonElement>(
+      `#${this.id} .download-button`,
+    );
     if (downloadButton == null) {
       return;
     }
@@ -78,19 +83,26 @@ export class StyleEditorElement extends BaseElement {
         filename: "style.css",
       });
     });
-    const copyButton = this.querySelector<HTMLButtonElement>(`#${this.id} .copy-button`);
+    const copyButton = this.querySelector<HTMLButtonElement>(
+      `#${this.id} .copy-button`,
+    );
     if (copyButton == null) {
       return;
     }
     copyButton.addEventListener(EventType.CLICK, async () => {
       await navigator.clipboard.writeText(this.styleText);
     });
-    const formatButton = this.querySelector<HTMLButtonElement>(`#${this.id} .format-button`);
+    const formatButton = this.querySelector<HTMLButtonElement>(
+      `#${this.id} .format-button`,
+    );
     if (formatButton == null) {
       return;
     }
     formatButton.addEventListener(EventType.CLICK, async () => {
-      this.styleText = await UtilsElement.ensure().prettierFormat(this.styleText, "css");
+      this.styleText = await UtilsElement.ensure().prettierFormat(
+        this.styleText,
+        "css",
+      );
       textarea.value = this.styleText;
     });
   }

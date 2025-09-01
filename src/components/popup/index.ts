@@ -11,7 +11,7 @@ export class PopupElement extends HTMLElement {
     const id = `usid-${crypto.randomUUID()}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id))
+      document.createRange().createContextualFragment(template(id)),
     );
     this.id = id;
     this.shadowRoot = shadowRoot;
@@ -25,22 +25,25 @@ export class PopupElement extends HTMLElement {
     }
     const messageId = crypto.randomUUID();
     this.messageMap.set(messageId, message);
+    // biome-ignore lint/style/noNonNullAssertion: certainly exists
     const ul = this.shadowRoot.querySelector(`#${this.id}`)!;
     const li = ul.appendChild(document.createElement("li"));
     li.textContent = message;
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise((resolve) => setTimeout(resolve, 1));
     li.classList.add("visible");
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     li.classList.remove("visible");
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     li.remove();
     this.messageMap.delete(messageId);
   }
   static ensure() {
-    return document.querySelector<PopupElement>(PopupElement.TAG_NAME) ??
+    return (
+      document.querySelector<PopupElement>(PopupElement.TAG_NAME) ??
       document.body.appendChild<PopupElement>(
         document.createElement(PopupElement.TAG_NAME) as PopupElement,
-      );
+      )
+    );
   }
   static async show(message: string) {
     const popup = PopupElement.ensure();

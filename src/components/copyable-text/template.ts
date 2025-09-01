@@ -1,4 +1,4 @@
-export async function template({ id, textId }: { id: string; textId: string }) {
+export async function template({ id }: { id: string; textId: string }) {
   return `
   <div id="${id}">
   </div>

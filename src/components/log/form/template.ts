@@ -15,14 +15,14 @@ export async function template({
     <div id="${id}">
       <h1>u-spy log</h1>
       <ul id="${controlListId}">
-        ${
-          controlElements.map(
-            controlElement =>
+        ${controlElements
+          .map(
+            (controlElement) =>
               `<li data-control-id="${controlElement.id}">
                 <button type="button">${controlElement.id}</button>
-              </li>`
-          ).join("")
-        }
+              </li>`,
+          )
+          .join("")}
       </ul>
       <div id="${contentId}"></div>
     </div>

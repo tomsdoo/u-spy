@@ -3,12 +3,12 @@ import { EntryPointElement } from "@/components/entry-point";
 const TAG_NAME = "u-spy-store";
 
 export enum StoreEvent {
-  CHANGE_KEY_DEFINITIONS = 'change_key_definitions',
+  CHANGE_KEY_DEFINITIONS = "change_key_definitions",
 }
 
 type ChangeKeyDefinitionEventData = {
-  value: { key: string; description: string; }[];
-  oldValue: { key: string; description: string; }[];
+  value: { key: string; description: string }[];
+  oldValue: { key: string; description: string }[];
 };
 
 declare global {
@@ -22,13 +22,13 @@ declare global {
 }
 
 type ChangeKeyDefinitionHandler = (data: ChangeKeyDefinitionEventData) => void;
-type Handler =
-  | ChangeKeyDefinitionHandler;
+type Handler = ChangeKeyDefinitionHandler;
 
 export class StoreElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
-  eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function; }[]>;
-  _keyDefinitions: { key: string; description: string; }[];
+  // biome-ignore lint/complexity/noBannedTypes: use Function
+  eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function }[]>;
+  _keyDefinitions: { key: string; description: string }[];
   _temporaryDataMap: Map<string, unknown>;
   _freeData: Map<string, ObservableObject>;
   constructor() {
@@ -39,67 +39,74 @@ export class StoreElement extends HTMLElement {
     this._freeData = new Map();
   }
   get keyDefinitions() {
-    return this._keyDefinitions.slice()
-      .toSorted((a,b) => {
-        if (a.key === b.key) {
-          return 0;
-        }
-        return a.key > b.key ? 1 : -1;
-      });
+    return this._keyDefinitions.slice().toSorted((a, b) => {
+      if (a.key === b.key) {
+        return 0;
+      }
+      return a.key > b.key ? 1 : -1;
+    });
   }
-  set keyDefinitions(value: { key: string; description: string; }[]) {
+  set keyDefinitions(value: { key: string; description: string }[]) {
     const eventDetail = {
       value: value.slice(),
       oldValue: this.keyDefinitions,
     };
     this._keyDefinitions = value;
-    this.dispatchEvent(new CustomEvent(StoreEvent.CHANGE_KEY_DEFINITIONS, {
-      bubbles: false,
-      detail: eventDetail,
-    }));
+    this.dispatchEvent(
+      new CustomEvent(StoreEvent.CHANGE_KEY_DEFINITIONS, {
+        bubbles: false,
+        detail: eventDetail,
+      }),
+    );
   }
   get freeData() {
     return this._freeData;
   }
-  addKeyDefinition(keyDefinition: { key: string; description: string; }) {
+  addKeyDefinition(keyDefinition: { key: string; description: string }) {
     this.keyDefinitions = this.keyDefinitions
       .filter(({ key }) => keyDefinition.key !== key)
       .concat([keyDefinition]);
   }
   removeKeyDefinition(key: string) {
-    this.keyDefinitions = this.keyDefinitions
-      .filter((keyDefinition) => keyDefinition.key !== key);
+    this.keyDefinitions = this.keyDefinitions.filter(
+      (keyDefinition) => keyDefinition.key !== key,
+    );
   }
   getTemporaryData(key: string) {
     return this._temporaryDataMap.get(key) ?? "";
   }
   addTemporaryData(data: unknown, key?: string) {
     const dataKey = key ?? crypto.randomUUID();
-    this._temporaryDataMap.set(
-      dataKey,
-      data,
-    );
+    this._temporaryDataMap.set(dataKey, data);
     return dataKey;
   }
   removeTemporaryData(key: string) {
     this._temporaryDataMap.delete(key);
   }
-  on(event: StoreEvent.CHANGE_KEY_DEFINITIONS, handler: ChangeKeyDefinitionHandler): void;
+  on(
+    event: StoreEvent.CHANGE_KEY_DEFINITIONS,
+    handler: ChangeKeyDefinitionHandler,
+  ): void;
   on(event: StoreEvent, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler }) => existingHandler === handler) != null;
+    const exists =
+      existingHandlers.find(
+        ({ handler: existingHandler }) => existingHandler === handler,
+      ) != null;
     if (exists) {
       return;
     }
     switch (event) {
       case StoreEvent.CHANGE_KEY_DEFINITIONS: {
-        const wrapper = (e: {detail: ChangeKeyDefinitionEventData}) => {
+        const wrapper = (e: { detail: ChangeKeyDefinitionEventData }) => {
           (handler as ChangeKeyDefinitionHandler)(e.detail);
         };
         this.eventHandlerMap.set(
           event,
           existingHandlers
-            .filter(({handler: existingHandler}) => existingHandler !== handler)
+            .filter(
+              ({ handler: existingHandler }) => existingHandler !== handler,
+            )
             .concat([{ handler, wrapper }]),
         );
         this.addEventListener(event, wrapper);
@@ -112,13 +119,17 @@ export class StoreElement extends HTMLElement {
   }
   off(event: StoreEvent, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler}) => existingHandler === handler);
+    const exists = existingHandlers.find(
+      ({ handler: existingHandler }) => existingHandler === handler,
+    );
     if (exists == null) {
       return;
     }
     this.eventHandlerMap.set(
       event,
-      existingHandlers.filter(({ handler: existingHandler }) => existingHandler !== handler),
+      existingHandlers.filter(
+        ({ handler: existingHandler }) => existingHandler !== handler,
+      ),
     );
     this.removeEventListener(event, exists.wrapper as () => void);
   }
@@ -129,15 +140,21 @@ export class StoreElement extends HTMLElement {
     return ele as StoreElement;
   }
   static ensure() {
-    const existing = document.querySelector<StoreElement>(StoreElement.TAG_NAME);
+    const existing = document.querySelector<StoreElement>(
+      StoreElement.TAG_NAME,
+    );
     if (existing != null) {
       return existing;
     }
-    return this.create();
+    return StoreElement.create();
   }
 }
 
-type OnChangeHandler = (prop: string, neWValue: unknown, oldValue: unknown) => void;
+type OnChangeHandler = (
+  prop: string,
+  neWValue: unknown,
+  oldValue: unknown,
+) => void;
 type ObservableObject = Record<string, unknown> & {
   _onChangeHandlers: OnChangeHandler[];
   onChange: (f: OnChangeHandler) => void;
@@ -151,14 +168,16 @@ function generateObservableObject() {
         this._onChangeHandlers.push(f);
       },
       offChange(f: OnChangeHandler) {
-        this._onChangeHandlers = this._onChangeHandlers.filter(handler => handler !== f);
-      }
+        this._onChangeHandlers = this._onChangeHandlers.filter(
+          (handler) => handler !== f,
+        );
+      },
     } as ObservableObject,
     {
       get(target, prop, receiver) {
         return Reflect.get(target, prop, receiver);
       },
-      set(target, prop, newValue, receiver) {
+      set(target, prop, newValue, _receiver) {
         if (typeof prop === "symbol") {
           return true;
         }
@@ -171,7 +190,7 @@ function generateObservableObject() {
         }
         const oldValue = target[prop];
         target[prop] = newValue;
-        for(const handler of obj._onChangeHandlers as OnChangeHandler[]) {
+        for (const handler of obj._onChangeHandlers as OnChangeHandler[]) {
           void handler(prop, newValue, oldValue);
         }
         return true;
@@ -184,11 +203,9 @@ function generateObservableObject() {
 export function ensureStore(id: string) {
   const storeElement = StoreElement.ensure();
   if (storeElement.freeData.has(id) === false) {
-    storeElement.freeData.set(
-      id,
-      generateObservableObject(),
-    );
+    storeElement.freeData.set(id, generateObservableObject());
   }
+  // biome-ignore lint/style/noNonNullAssertion: certainly exists
   return storeElement.freeData.get(id)!;
 }
 

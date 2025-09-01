@@ -28,14 +28,17 @@ export class KeyWaiter {
   }
 }
 
-const registeredHotStrokeMap = new Map<string, {
-  unregisterHotStroke: () => void;
-  handler: () => void;
-  waiter: {
-    currentIndex: number;
-    currentText: string;
-  };
-}>();
+const registeredHotStrokeMap = new Map<
+  string,
+  {
+    unregisterHotStroke: () => void;
+    handler: () => void;
+    waiter: {
+      currentIndex: number;
+      currentText: string;
+    };
+  }
+>();
 
 export function getRegisteredHotStrokes() {
   return Array.from(registeredHotStrokeMap.keys());
@@ -59,23 +62,26 @@ export function registerHotStroke(wantedText: string, handler: () => void) {
     window.removeEventListener(EventType.KEYDOWN, keyHandler);
     registeredHotStrokeMap.delete(wantedText);
   }
-  const readonlyWaiter = new Proxy({
-    currentIndex: keyWaiter.currentIndex,
-    currentText: keyWaiter.currentText,
-  }, {
-    get(obj, prop, receiver) {
-      if (prop === "currentIndex") {
-        return keyWaiter.currentIndex;
-      }
-      if (prop === "currentText") {
-        return keyWaiter.currentText;
-      }
-      return Reflect.get(obj, prop, receiver);
+  const readonlyWaiter = new Proxy(
+    {
+      currentIndex: keyWaiter.currentIndex,
+      currentText: keyWaiter.currentText,
     },
-    set() {
-      return true;
+    {
+      get(obj, prop, receiver) {
+        if (prop === "currentIndex") {
+          return keyWaiter.currentIndex;
+        }
+        if (prop === "currentText") {
+          return keyWaiter.currentText;
+        }
+        return Reflect.get(obj, prop, receiver);
+      },
+      set() {
+        return true;
+      },
     },
-  });
+  );
 
   registeredHotStrokeMap.set(wantedText, {
     unregisterHotStroke,

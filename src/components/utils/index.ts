@@ -4,29 +4,29 @@ const TAG_NAME = "u-spy-utils";
 
 const logTimeFormatter = new Intl.DateTimeFormat("en-US", {
   hour12: false,
-  hour:   '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
   fractionalSecondDigits: 3,
   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 });
 
-function download({ data, filename }: {data: string | object; filename: string;}) {
-  const BOM = new Uint8Array([0xEF, 0xBB, 0xBF]);
-  const blob = typeof data === "string"
-    ? new Blob(
-      [BOM, data],
-      { type: "text/plain" },
-    )
-    : new Blob(
-      [BOM, JSON.stringify(data, null, 2)],
-      { type: "application/json" },
-    );
+function download({
+  data,
+  filename,
+}: {
+  data: string | object;
+  filename: string;
+}) {
+  const BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
+  const blob =
+    typeof data === "string"
+      ? new Blob([BOM, data], { type: "text/plain" })
+      : new Blob([BOM, JSON.stringify(data, null, 2)], {
+          type: "application/json",
+        });
   const url = URL.createObjectURL(blob);
-  const anc = document.body
-    .appendChild(
-      document.createElement("a")
-    );
+  const anc = document.body.appendChild(document.createElement("a"));
   anc.setAttribute("download", filename);
   anc.setAttribute("href", url);
   anc.click();
@@ -49,12 +49,8 @@ function loadScript(src: string): Promise<string> {
 
 async function loadPrettier() {
   return Promise.all([
-    loadScript(
-      "https://unpkg.com/prettier@3.5.3/standalone.js",
-    ),
-    loadScript(
-      "https://unpkg.com/prettier@3.5.3/plugins/postcss.js",
-    ),
+    loadScript("https://unpkg.com/prettier@3.5.3/standalone.js"),
+    loadScript("https://unpkg.com/prettier@3.5.3/plugins/postcss.js"),
   ]);
 }
 
@@ -63,7 +59,7 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
     await loadPrettier();
     // @ts-expect-error prettier cannot be found since it will be loaded dynamically
     return prettier.format(text, { parser, plugins: prettierPlugins });
-  } catch(_) {
+  } catch (_) {
     const NEW_LINE_CHAR = "\n";
     const formatted = text
       .replace(/;\s*/g, `;${NEW_LINE_CHAR}`)
@@ -72,7 +68,7 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
     const lines = formatted.split(/\n/);
     const nextLines: string[] = [];
     const indentChars: string[] = [];
-    for(const line of lines) {
+    for (const line of lines) {
       if (line.replace(/\s/g, "") === "") {
         continue;
       }
@@ -94,7 +90,10 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
 }
 
 export type Replacer = (text: string) => string;
-export function replaceContent(selector: string, replacers: Replacer | Replacer[]) {
+export function replaceContent(
+  selector: string,
+  replacers: Replacer | Replacer[],
+) {
   const adjustedReplacers = Array.isArray(replacers) ? replacers : [replacers];
   function replaceHtml(text: string) {
     const nextText = adjustedReplacers.reduce((transformedText, replacer) => {
@@ -105,7 +104,7 @@ export function replaceContent(selector: string, replacers: Replacer | Replacer[
       changed: nextText !== text,
     };
   }
-  document.querySelectorAll(selector).forEach(el => {
+  document.querySelectorAll(selector).forEach((el) => {
     for (const child of Array.from(el.childNodes)) {
       if (child.nodeType !== child.TEXT_NODE) {
         continue;
@@ -130,7 +129,7 @@ export class UtilsElement extends HTMLElement {
     return logTimeFormatter.format(dateValue);
   }
 
-  download({ data, filename }: {data: string | object; filename: string;}) {
+  download({ data, filename }: { data: string | object; filename: string }) {
     return download({ data, filename });
   }
 
@@ -149,7 +148,9 @@ export class UtilsElement extends HTMLElement {
     return ele as UtilsElement;
   }
   static ensure() {
-    const existing = document.querySelector<UtilsElement>(UtilsElement.TAG_NAME);
+    const existing = document.querySelector<UtilsElement>(
+      UtilsElement.TAG_NAME,
+    );
     if (existing != null) {
       return existing;
     }

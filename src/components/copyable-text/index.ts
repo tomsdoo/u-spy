@@ -1,7 +1,7 @@
 import { BaseElement } from "@/components/base";
-import { template } from "./template";
-import { EventType } from "@/constants/event-type";
 import { StoreElement } from "@/components/store";
+import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-copyable";
 
@@ -14,7 +14,7 @@ export class CopyableTextElement extends BaseElement {
   constructor() {
     super();
     this.id = `uscpt-${crypto.randomUUID()}`;
-    this.template = (instance) => template(this);
+    this.template = (_instance) => template(this);
   }
   onRendered() {
     const div = this.querySelector(`#${this.id}`);

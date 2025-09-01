@@ -1,4 +1,4 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ControlElement } from "@/components/control-element";
 
 const {
@@ -55,19 +55,19 @@ describe("ControlElement", () => {
   describe("ensure", () => {
     it("case the element exists and not exists", () => {
       ControlElement.ensure(controlId);
-      expect(
-        document.querySelectorAll(ControlElement.TAG_NAME)
-      ).toHaveLength(1);
+      expect(document.querySelectorAll(ControlElement.TAG_NAME)).toHaveLength(
+        1,
+      );
 
       ControlElement.ensure(controlId);
-      expect(
-        document.querySelectorAll(ControlElement.TAG_NAME)
-      ).toHaveLength(1);
+      expect(document.querySelectorAll(ControlElement.TAG_NAME)).toHaveLength(
+        1,
+      );
 
       ControlElement.ensure(controlId2);
-      expect(
-        document.querySelectorAll(ControlElement.TAG_NAME)
-      ).toHaveLength(2);
+      expect(document.querySelectorAll(ControlElement.TAG_NAME)).toHaveLength(
+        2,
+      );
     });
   });
 
@@ -115,7 +115,9 @@ describe("ControlElement", () => {
 
     it("logItems", () => {
       const mockedTime = new Date("2025-01-23T12:34:56.789Z");
-      vi.spyOn(crypto, "randomUUID").mockReturnValue("dummy-random-universally-unique-identifier");
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(
+        "dummy-random-universally-unique-identifier",
+      );
       vi.useFakeTimers();
       vi.setSystemTime(mockedTime);
       const controlElement = ControlElement.ensure(controlId);
@@ -164,7 +166,9 @@ describe("ControlElement", () => {
 
     it("logItems", () => {
       const mockedTime = new Date("2025-01-23T12:34:56.789Z");
-      vi.spyOn(crypto, "randomUUID").mockReturnValue("dummy-random-universally-unique-identifier");
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(
+        "dummy-random-universally-unique-identifier",
+      );
       vi.useFakeTimers();
       vi.setSystemTime(mockedTime);
       const controlElement = ControlElement.ensure(controlId);
@@ -204,7 +208,7 @@ describe("ControlElement", () => {
         responseXML: dummyResponseXML,
       },
     },
-  ])("xhr event", ({eventData}) => {
+  ])("xhr event", ({ eventData }) => {
     it("on, off", () => {
       const controlElement = ControlElement.ensure(controlId);
       const spyHandler = vi.fn();
@@ -221,7 +225,9 @@ describe("ControlElement", () => {
 
     it("logItems", () => {
       const mockedTime = new Date("2025-01-23T12:34:56.789Z");
-      vi.spyOn(crypto, "randomUUID").mockReturnValue("dummy-random-universally-unique-identifier");
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(
+        "dummy-random-universally-unique-identifier",
+      );
       vi.useFakeTimers();
       vi.setSystemTime(mockedTime);
       const controlElement = ControlElement.ensure(controlId);
@@ -267,7 +273,9 @@ describe("ControlElement", () => {
 
     it("logItems", () => {
       const mockedTime = new Date("2025-01-23T12:34:56.789Z");
-      vi.spyOn(crypto, "randomUUID").mockReturnValue("dummy-random-universally-unique-identifier");
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(
+        "dummy-random-universally-unique-identifier",
+      );
       vi.useFakeTimers();
       vi.setSystemTime(mockedTime);
       const controlElement = ControlElement.ensure(controlId);

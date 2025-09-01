@@ -1,9 +1,9 @@
-import { ControlElement } from "@/components/control-element";
 import { BaseElement } from "@/components/base";
-import { template } from "./template";
-import { EventType } from "@/constants/event-type";
+import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
 import { StoreElement } from "@/components/store";
+import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-form";
 
@@ -26,7 +26,6 @@ export class LogFormElement extends BaseElement {
     this.contentId = `uslfc-${crypto.randomUUID()}`;
   }
   connectedCallback() {
-    const that = this;
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
@@ -34,7 +33,9 @@ export class LogFormElement extends BaseElement {
       if (e.key !== "r") {
         return;
       }
-      that.querySelector<HTMLButtonElement>(`#${that.controlListId} > li.active > button`)?.click();
+      this.querySelector<HTMLButtonElement>(
+        `#${this.controlListId} > li.active > button`,
+      )?.click();
     };
     this.store.addKeyDefinition({
       key: "r",
@@ -44,8 +45,9 @@ export class LogFormElement extends BaseElement {
     this.render();
   }
   onRendered() {
-    const that = this;
-    this.querySelectorAll<HTMLButtonElement>(`#${this.controlListId} > li > button`).forEach((button, buttonIndex) => {
+    this.querySelectorAll<HTMLButtonElement>(
+      `#${this.controlListId} > li > button`,
+    ).forEach((button, buttonIndex) => {
       button.addEventListener(EventType.CLICK, (e) => {
         if (e.target == null) {
           return;
@@ -68,7 +70,9 @@ export class LogFormElement extends BaseElement {
           contentArea.innerHTML = "";
           contentArea.appendChild(ele);
         }
-        that.querySelectorAll<HTMLLIElement>(`#${that.controlListId} > li`).forEach(li => {
+        this.querySelectorAll<HTMLLIElement>(
+          `#${this.controlListId} > li`,
+        ).forEach((li) => {
           const ACTIVE_CLASS_NAME = "active";
           if (li.dataset.controlId === controlId) {
             li.classList.add(ACTIVE_CLASS_NAME);

@@ -1,5 +1,13 @@
-import { beforeEach, afterEach, describe, it, expect, vi, type MockInstance } from "vitest";
-import { StoreElement, ensureStore, getStoreIds } from "@/components/store/";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type MockInstance,
+  vi,
+} from "vitest";
+import { ensureStore, getStoreIds, StoreElement } from "@/components/store/";
 
 describe("store", () => {
   beforeEach(() => {
@@ -11,8 +19,8 @@ describe("store", () => {
   describe("getStoreIds", () => {
     let spy: MockInstance;
     beforeEach(() => {
-      spy = vi.spyOn(StoreElement.prototype, "freeData", "get")
-        .mockReturnValue(new Map([
+      spy = vi.spyOn(StoreElement.prototype, "freeData", "get").mockReturnValue(
+        new Map([
           [
             "dummyKey1",
             {
@@ -29,13 +37,14 @@ describe("store", () => {
               offChange() {},
             },
           ],
-        ]));
+        ]),
+      );
     });
     afterEach(() => {
       vi.restoreAllMocks();
     });
     it("returns correct value", () => {
-      expect(getStoreIds()).toEqual(["dummyKey1","dummyKey2"]);
+      expect(getStoreIds()).toEqual(["dummyKey1", "dummyKey2"]);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
@@ -50,5 +59,3 @@ describe("store", () => {
     expect(spyStoreEnsure).toHaveBeenCalledTimes(3);
   });
 });
-
-

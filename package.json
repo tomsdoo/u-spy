@@ -10,6 +10,7 @@
     "build": "tsup",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "lint": "biome check src",
     "prepare": "playwright install",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -28,6 +29,7 @@
   },
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
+    "@biomejs/biome": "2.2.2",
     "@tsconfig/node22": "22.0.2",
     "@types/node": "24.3.0",
     "@vitest/browser": "3.2.4",

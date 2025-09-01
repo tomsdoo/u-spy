@@ -7,7 +7,7 @@ export class EntryPointElement extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template)
+      document.createRange().createContextualFragment(template),
     );
   }
   static create() {
@@ -17,7 +17,9 @@ export class EntryPointElement extends HTMLElement {
     return entryPointTag as EntryPointElement;
   }
   static ensure() {
-    const existing = document.querySelector<EntryPointElement>(EntryPointElement.TAG_NAME);
+    const existing = document.querySelector<EntryPointElement>(
+      EntryPointElement.TAG_NAME,
+    );
     if (existing != null) {
       return existing;
     }

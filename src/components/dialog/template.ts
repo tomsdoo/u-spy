@@ -1,12 +1,12 @@
+import { CustomFormElement } from "@/components/custom-form";
 import { KeyHelpElement } from "@/components/key-help";
 import { LogFormElement } from "@/components/log/form";
 import { StyleEditorElement } from "@/components/style-editor";
-import { CustomFormElement } from "@/components/custom-form";
 
 export enum DialogType {
   LOG_LIST = "log-list",
   STYLE_EDITOR = "style-editor",
-  CUSTOM_FORM = 'custom-form',
+  CUSTOM_FORM = "custom-form",
 }
 
 export function template(id: string, dialogType: DialogType) {
@@ -15,7 +15,7 @@ export function template(id: string, dialogType: DialogType) {
       ${
         ({
           [DialogType.LOG_LIST]: `<${LogFormElement.TAG_NAME}></${LogFormElement.TAG_NAME}>`,
-          [DialogType.STYLE_EDITOR]:  `<${StyleEditorElement.TAG_NAME}></${StyleEditorElement.TAG_NAME}>`,
+          [DialogType.STYLE_EDITOR]: `<${StyleEditorElement.TAG_NAME}></${StyleEditorElement.TAG_NAME}>`,
           [DialogType.CUSTOM_FORM]: `<${CustomFormElement.TAG_NAME}></${CustomFormElement.TAG_NAME}>`,
         })[dialogType] ?? ""
       }
