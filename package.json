@@ -10,6 +10,7 @@
     "build": "tsup",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "lint": "biome check src",
     "prepare": "playwright install",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
