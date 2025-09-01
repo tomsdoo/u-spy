@@ -1,6 +1,6 @@
 import { BaseElement } from "@/components/base";
-import { template } from "./template";
 import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-custom-form";
 
@@ -19,18 +19,14 @@ export class CustomFormElement extends BaseElement {
     this.render();
   }
   onRendered() {
-    const that = this;
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
     this.dispatchEvent(
-      new CustomEvent(
-        'load',
-        {
-          bubbles: false,
-          detail: { element: that },
-        }
-      )
+      new CustomEvent("load", {
+        bubbles: false,
+        detail: { element: this },
+      }),
     );
   }
 }

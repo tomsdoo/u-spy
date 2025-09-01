@@ -1,8 +1,8 @@
-import { beforeEach, describe, it, expect } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
-  KeyWaiter,
-  getRegisteredHotStrokes,
   getRegisteredHotStroke,
+  getRegisteredHotStrokes,
+  KeyWaiter,
   registerHotStroke,
 } from "@/key-event";
 
@@ -19,35 +19,38 @@ describe("KeyWaiter", () => {
     ["iwanti", "t", false],
     ["iwantit", "", true],
     ["iwantia", "i", false],
-  ])(`wanted: ${WANTED_TEXT}, input: %s`, ([inputText, expectedWantedKey, expectedSatisfied]) => {
-    let keyWaiter: KeyWaiter;
-    beforeEach(() => {
-      function isString(s: string | boolean): s is string {
-        return typeof s === "string";
-      }
-      keyWaiter = new KeyWaiter(WANTED_TEXT);
-      const isInputTextString = isString(inputText);
-      if (isInputTextString) {
-        for(const key of inputText.split("")) {
-          keyWaiter.feed(key);
+  ])(
+    `wanted: ${WANTED_TEXT}, input: %s`,
+    ([inputText, expectedWantedKey, expectedSatisfied]) => {
+      let keyWaiter: KeyWaiter;
+      beforeEach(() => {
+        function isString(s: string | boolean): s is string {
+          return typeof s === "string";
         }
-      }
-    });
+        keyWaiter = new KeyWaiter(WANTED_TEXT);
+        const isInputTextString = isString(inputText);
+        if (isInputTextString) {
+          for (const key of inputText.split("")) {
+            keyWaiter.feed(key);
+          }
+        }
+      });
 
-    it(`wantedKey will be ${expectedWantedKey}`, () => {
-      expect(keyWaiter).toHaveProperty("wantedKey", expectedWantedKey);
-    });
+      it(`wantedKey will be ${expectedWantedKey}`, () => {
+        expect(keyWaiter).toHaveProperty("wantedKey", expectedWantedKey);
+      });
 
-    it(`isSatisfied will be ${expectedSatisfied}`, () => {
-      expect(keyWaiter).toHaveProperty("isSatisfied", expectedSatisfied);
-    });
+      it(`isSatisfied will be ${expectedSatisfied}`, () => {
+        expect(keyWaiter).toHaveProperty("isSatisfied", expectedSatisfied);
+      });
 
-    it("clear() will clears", () => {
-      keyWaiter.clear();
-      expect(keyWaiter).toHaveProperty("wantedKey", "i");
-      expect(keyWaiter).toHaveProperty("isSatisfied", false);
-    });
-  });
+      it("clear() will clears", () => {
+        keyWaiter.clear();
+        expect(keyWaiter).toHaveProperty("wantedKey", "i");
+        expect(keyWaiter).toHaveProperty("isSatisfied", false);
+      });
+    },
+  );
 });
 
 describe("scenario", () => {
@@ -62,6 +65,7 @@ describe("scenario", () => {
     expect(hotStroke?.waiter).toHaveProperty("currentIndex", 0);
     expect(hotStroke?.waiter).toHaveProperty("currentText", "");
     expect(hotStroke?.waiter).not.toHaveProperty("noProp");
+    // biome-ignore lint/style/noNonNullAssertion: certainly exists
     hotStroke!.waiter.currentIndex = 1;
     expect(hotStroke?.waiter).toHaveProperty("currentIndex", 0);
     hotStroke?.unregisterHotStroke();

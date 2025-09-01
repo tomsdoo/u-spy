@@ -1,4 +1,12 @@
-export function template({ id, url, host }: { id: string; url: string; host: string; }) {
+export function template({
+  id,
+  url,
+  host,
+}: {
+  id: string;
+  url: string;
+  host: string;
+}) {
   const linkColor = "cornflowerblue";
   return `
   <div id="${id}" class="host">

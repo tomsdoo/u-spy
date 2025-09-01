@@ -1,20 +1,28 @@
-import { ControlElement } from "@/components/control-element";
-import { StoreElement, ensureStore, getStoreIds } from "@/components/store";
-import { EntryPointElement } from "@/components/entry-point";
-import { interceptXMLHttpRequest, type MockXHRHandler } from "@/xml-http-request";
-import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { interceptSendBeacon } from "@/beacon";
-import { interceptWindowMessage } from "@/window-message";
+import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
-import { registerHotStroke, getRegisteredHotStrokes, getRegisteredHotStroke } from "@/key-event";
-import { MessageBusElement } from "@/components/message-bus";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
+import { EntryPointElement } from "@/components/entry-point";
+import { MessageBusElement } from "@/components/message-bus";
 import { showEphemeralMessage } from "@/components/popup";
-import { UtilsElement, type Replacer } from "@/components/utils";
+import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
+import { type Replacer, UtilsElement } from "@/components/utils";
 import { eventBus } from "@/event-bus";
+import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { freeContainer } from "@/free-container";
+import {
+  getRegisteredHotStroke,
+  getRegisteredHotStrokes,
+  registerHotStroke,
+} from "@/key-event";
+import { interceptWindowMessage } from "@/window-message";
+import {
+  interceptXMLHttpRequest,
+  type MockXHRHandler,
+} from "@/xml-http-request";
 
+// biome-ignore lint/correctness/noUnusedVariables: divided
 interface Spy {
   c: typeof freeContainer;
   container: typeof freeContainer;
@@ -27,7 +35,7 @@ interface Spy {
     displaySpy(): void;
     displayStyle(): void;
   };
-  eventBus: typeof eventBus,
+  eventBus: typeof eventBus;
   store: {
     keys: string[];
     ensure(key: string): ReturnType<typeof ensureStore>;
@@ -38,17 +46,25 @@ interface Spy {
     get(key: string): ReturnType<typeof getRegisteredHotStroke> | undefined;
     unregister(key: string): void;
     unregisterAll(): void;
-    replace(beforeKey: string, afterKey: string): ReturnType<typeof registerHotStroke> | null;
+    replace(
+      beforeKey: string,
+      afterKey: string,
+    ): ReturnType<typeof registerHotStroke> | null;
   };
 }
 
 // deprecated methods
+// biome-ignore lint/correctness/noUnusedVariables: divided
 interface Spy {
   registerHotStroke: typeof registerHotStroke;
   getRegisteredHotStrokes: typeof getRegisteredHotStrokes;
   getRegisteredHotStroke: typeof getRegisteredHotStroke;
-  changeHotStrokeSpy(nextStroke: string): ReturnType<typeof registerHotStroke> | null;
-  changeHotStrokeStyle(nextStroke: string): ReturnType<typeof registerHotStroke> | null
+  changeHotStrokeSpy(
+    nextStroke: string,
+  ): ReturnType<typeof registerHotStroke> | null;
+  changeHotStrokeStyle(
+    nextStroke: string,
+  ): ReturnType<typeof registerHotStroke> | null;
   unregisterHotStrokes(): void;
   unregisterHotStroke(stroke: string): void;
 
@@ -63,7 +79,10 @@ interface Spy {
 }
 
 interface Spy {
-  intercept(id: string, options?: InterceptionOptions): {
+  intercept(
+    id: string,
+    options?: InterceptionOptions,
+  ): {
     receiver: ControlElement;
     restore: () => void;
     restoreXMLHttpRequest: () => void;
@@ -115,51 +134,73 @@ for (const { stroke, display } of [
 
 const deprecatedSpy = {
   registerHotStroke(stroke: string, callback: () => void) {
-    console.warn("_spy.registerHotStroke is deprecated. Use _spy.stroke.register instead.");
+    console.warn(
+      "_spy.registerHotStroke is deprecated. Use _spy.stroke.register instead.",
+    );
     return registerHotStroke(stroke, callback);
   },
   getRegisteredHotStrokes() {
-    console.warn("_spy.getRegisteredHotStrokes is deprecated. Use _spy.stroke.keys instead.");
+    console.warn(
+      "_spy.getRegisteredHotStrokes is deprecated. Use _spy.stroke.keys instead.",
+    );
     return getRegisteredHotStrokes();
   },
   getRegisteredHotStroke(stroke: string) {
-    console.warn("_spy.getRegisteredHotStroke is deprecated. Use _spy.stroke.get instead.");
+    console.warn(
+      "_spy.getRegisteredHotStroke is deprecated. Use _spy.stroke.get instead.",
+    );
     return getRegisteredHotStroke(stroke);
   },
   changeHotStrokeSpy(nextStroke: string) {
-    console.warn("_spy.changeHotStrokeSpy is deprecated. Use _spy.stroke.replace instead.");
+    console.warn(
+      "_spy.changeHotStrokeSpy is deprecated. Use _spy.stroke.replace instead.",
+    );
     return _spy.stroke.replace("spy", nextStroke);
   },
   changeHotStrokeStyle(nextStroke: string) {
-    console.warn("_spy.changeHotStrokeStyle is deprecated. Use _spy.stroke.replace instead.");
+    console.warn(
+      "_spy.changeHotStrokeStyle is deprecated. Use _spy.stroke.replace instead.",
+    );
     return _spy.stroke.replace("style", nextStroke);
   },
   unregisterHotStrokes() {
-    console.warn("_spy.unregisterHotStrokes is deprecated. Use _spy.stroke.unregisterAll instead.");
-    for(const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
+    console.warn(
+      "_spy.unregisterHotStrokes is deprecated. Use _spy.stroke.unregisterAll instead.",
+    );
+    for (const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
       unregisterAHotStroke();
     }
   },
   unregisterHotStroke(stroke: string) {
-    console.warn("_spy.unregisterHotStroke is deprecated. Use _spy.stroke.unregister instead.");
+    console.warn(
+      "_spy.unregisterHotStroke is deprecated. Use _spy.stroke.unregister instead.",
+    );
     getRegisteredHotStroke(stroke)?.unregisterHotStroke();
   },
 
   displaySpyDialog() {
-    console.warn("_spy.displaySpyDialog is deprecated. Use _spy.dialog.displaySpy instead.");
+    console.warn(
+      "_spy.displaySpyDialog is deprecated. Use _spy.dialog.displaySpy instead.",
+    );
     displaySpyDialog();
   },
   displayStyleDialog() {
-    console.warn("_spy.displayStyleDialog is deprecated. Use _spy.dialog.displayStyle instead.");
+    console.warn(
+      "_spy.displayStyleDialog is deprecated. Use _spy.dialog.displayStyle instead.",
+    );
     displayStyleDialog();
   },
   displayDialog(callback: (dialogElement: HTMLElement) => void) {
-    console.warn("_spy.displayDialog is deprecated. Use _spy.dialog.display instead.");
+    console.warn(
+      "_spy.displayDialog is deprecated. Use _spy.dialog.display instead.",
+    );
     displayDialog(callback);
   },
 
   ensureStore(key: string) {
-    console.warn("_spy.ensureStore is deprecated. Use _spy.store.ensure instead.");
+    console.warn(
+      "_spy.ensureStore is deprecated. Use _spy.store.ensure instead.",
+    );
     return ensureStore(key);
   },
   ensureCustomElement(
@@ -167,14 +208,19 @@ const deprecatedSpy = {
     config: {
       templateId?: string;
       templateHtml?: string;
+      // biome-ignore lint/suspicious/noExplicitAny: accept any
       eventHandlers?: Record<string, (e: any) => void>;
     },
   ) {
-    console.warn("_spy.ensureCustomElement is deprecated. Use _spy.customElement.ensure instead.");
+    console.warn(
+      "_spy.ensureCustomElement is deprecated. Use _spy.customElement.ensure instead.",
+    );
     ensureCustomElement(tagName, config);
   },
   ensureCustomIterator(customIteratorTagName?: string) {
-    console.warn("_spy.ensureCustomIterator is deprecated. Use _spy.customElement.ensureIterator instead.");
+    console.warn(
+      "_spy.ensureCustomIterator is deprecated. Use _spy.customElement.ensureIterator instead.",
+    );
     ensureCustomIterator(customIteratorTagName);
   },
 };
@@ -182,7 +228,10 @@ const deprecatedSpy = {
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
     const receiver = ControlElement.ensure(id);
-    const { restoreXMLHttpRequest } = interceptXMLHttpRequest(id, options?.xhrHandlers);
+    const { restoreXMLHttpRequest } = interceptXMLHttpRequest(
+      id,
+      options?.xhrHandlers,
+    );
     const { restoreFetch } = interceptFetch(id, options?.fetchHandlers);
     const { restoreSendBeacon } = interceptSendBeacon(id);
     const { restoreInterceptWindowMessage } = interceptWindowMessage(id);

@@ -11,7 +11,9 @@ export class LogItemHostElement extends HTMLElement {
     const host = shadowRoot.host.attributes.getNamedItem("host")?.value ?? "";
     const url = shadowRoot.host.attributes.getNamedItem("url")?.value ?? "";
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template({ id, url, host })),
+      document
+        .createRange()
+        .createContextualFragment(template({ id, url, host })),
     );
     const el = shadowRoot.querySelector(`#${id}`);
     if (el == null) {

@@ -1,20 +1,19 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
-import { interceptFetch } from "@/fetch";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ControlElement } from "@/components/control-element";
+import { interceptFetch } from "@/fetch";
 
-const {
-  spyFetch,
-  controlId,
-  dummyUrl,
-  dummyData,
-  dummyData2,
-} = vi.hoisted(() => ({
-  spyFetch: vi.fn(async () => await new Response(JSON.stringify({ value: "dummyResponse" }))),
-  controlId: "control-id",
-  dummyUrl: "http://dummy.com",
-  dummyData: "dummyData",
-  dummyData2: "dummyData2",
-}));
+const { spyFetch, controlId, dummyUrl, dummyData, dummyData2 } = vi.hoisted(
+  () => ({
+    spyFetch: vi.fn(
+      async () =>
+        await new Response(JSON.stringify({ value: "dummyResponse" })),
+    ),
+    controlId: "control-id",
+    dummyUrl: "http://dummy.com",
+    dummyData: "dummyData",
+    dummyData2: "dummyData2",
+  }),
+);
 
 describe("interceptFetch", () => {
   beforeEach(() => {
@@ -27,12 +26,9 @@ describe("interceptFetch", () => {
 
   it("intercept and restore", async () => {
     const spyEnsure = vi.spyOn(ControlElement, "ensure");
-    const {
-      restoreFetch,
-    } = interceptFetch(controlId, [
-        async (input: RequestInfo | URL) => await Promise.resolve(null),
-      ],
-    );
+    const { restoreFetch } = interceptFetch(controlId, [
+      async (_input: RequestInfo | URL) => await Promise.resolve(null),
+    ]);
     await fetch(dummyUrl, {
       method: "POST",
       body: dummyData,
@@ -59,4 +55,3 @@ describe("interceptFetch", () => {
     });
   });
 });
-

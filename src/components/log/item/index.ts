@@ -1,7 +1,7 @@
-import { ControlElement } from "@/components/control-element";
 import { BaseElement } from "@/components/base";
-import { template } from "./template";
+import { ControlElement } from "@/components/control-element";
 import { EventType } from "@/constants/event-type";
+import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-item";
 
@@ -18,13 +18,16 @@ export class LogItemElement extends BaseElement {
     this.id = `usli-${crypto.randomUUID().replace(/-/g, "")}`;
   }
   get logItem() {
-    return ControlElement.ensure(this.controlId)
-      .logItems.find(({ id }) => id === this.logId) ?? null;
+    return (
+      ControlElement.ensure(this.controlId).logItems.find(
+        ({ id }) => id === this.logId,
+      ) ?? null
+    );
   }
   feedKeyword(keyword: string) {
     const itemText = this.querySelector("[data-item-text]")?.textContent ?? "";
-    const regExps = keyword.split(/\s+/).map(s => new RegExp(s, "i"));
-    const isVisible = regExps.every(regExp => regExp.test(itemText));
+    const regExps = keyword.split(/\s+/).map((s) => new RegExp(s, "i"));
+    const isVisible = regExps.every((regExp) => regExp.test(itemText));
     if (isVisible) {
       this.classList.remove("hidden");
     } else {
@@ -33,7 +36,6 @@ export class LogItemElement extends BaseElement {
   }
   onRendered() {
     this.querySelectorAll(`[data-foldable]`).forEach((el) => {
-      const div = el.querySelector("div");
       const button = el.querySelector("button");
       if (button == null) {
         return;

@@ -1,13 +1,8 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { interceptSendBeacon } from "@/beacon";
 import { ControlElement } from "@/components/control-element";
 
-const {
-  spySendBeacon,
-  controlId,
-  dummyUrl,
-  dummyData,
-} = vi.hoisted(() => ({
+const { spySendBeacon, controlId, dummyUrl, dummyData } = vi.hoisted(() => ({
   spySendBeacon: vi.fn(),
   controlId: "control-id",
   dummyUrl: "http://dummy.com",
@@ -16,8 +11,9 @@ const {
 
 describe("interceptSendBeacon", () => {
   beforeEach(() => {
-    vi.spyOn(globalThis.navigator, "sendBeacon")
-      .mockImplementation(spySendBeacon);
+    vi.spyOn(globalThis.navigator, "sendBeacon").mockImplementation(
+      spySendBeacon,
+    );
   });
 
   afterEach(() => {
@@ -26,9 +22,7 @@ describe("interceptSendBeacon", () => {
 
   it("intercept and restore", () => {
     const spyEnsure = vi.spyOn(ControlElement, "ensure");
-    const {
-      restoreSendBeacon,
-    } = interceptSendBeacon(controlId);
+    const { restoreSendBeacon } = interceptSendBeacon(controlId);
 
     navigator.sendBeacon(dummyUrl, dummyData);
     expect(spyEnsure).toHaveBeenCalledTimes(1);
@@ -44,4 +38,3 @@ describe("interceptSendBeacon", () => {
     expect(spySendBeacon).toHaveBeenCalledWith(dummyUrl, dummyData);
   });
 });
-

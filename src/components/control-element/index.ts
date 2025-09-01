@@ -3,13 +3,13 @@ import { template } from "./template";
 
 const TAG_NAME = "u-spy-control-element";
 
-export const CONTROL_EVENT = 'u-spy-control';
+export const CONTROL_EVENT = "u-spy-control";
 
 export enum ControlEvents {
-  XHR_LOAD = 'xhr_load',
-  FETCH = 'fetch',
-  BEACON = 'beacon',
-  WINDOW_MESSAGE = 'window_message',
+  XHR_LOAD = "xhr_load",
+  FETCH = "fetch",
+  BEACON = "beacon",
+  WINDOW_MESSAGE = "window_message",
 }
 
 type XhrLoadEventData = {
@@ -92,13 +92,25 @@ type Handler =
 
 export class ControlElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
-  eventHandlerMap: Map<ControlEvents, { handler: Handler; wrapper: Function; }[]>;
+  eventHandlerMap: Map<
+    ControlEvents,
+    // biome-ignore lint/complexity/noBannedTypes: use Function
+    { handler: Handler; wrapper: Function }[]
+  >;
   events = ControlEvents;
   logStore: {
-    [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData; }[];
-    [ControlEvents.XHR_LOAD]: { id: string; time: Date; data: XhrLoadEventData; }[];
-    [ControlEvents.BEACON]: { id: string; time: Date; data: BeaconEventData; }[];
-    [ControlEvents.WINDOW_MESSAGE]: { id: string; time: Date; data: WindowMessageEventData; }[];
+    [ControlEvents.FETCH]: { id: string; time: Date; data: FetchEventData }[];
+    [ControlEvents.XHR_LOAD]: {
+      id: string;
+      time: Date;
+      data: XhrLoadEventData;
+    }[];
+    [ControlEvents.BEACON]: { id: string; time: Date; data: BeaconEventData }[];
+    [ControlEvents.WINDOW_MESSAGE]: {
+      id: string;
+      time: Date;
+      data: WindowMessageEventData;
+    }[];
   } = {
     [ControlEvents.FETCH]: [],
     [ControlEvents.XHR_LOAD]: [],
@@ -111,7 +123,9 @@ export class ControlElement extends HTMLElement {
   }
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: "open" });
-    shadowRoot.appendChild(document.createRange().createContextualFragment(template));
+    shadowRoot.appendChild(
+      document.createRange().createContextualFragment(template),
+    );
     const [anchor, hrefAttr] = [
       shadowRoot.querySelector("a"),
       shadowRoot.host.attributes.getNamedItem("href"),
@@ -126,7 +140,10 @@ export class ControlElement extends HTMLElement {
   on(event: ControlEvents.WINDOW_MESSAGE, handler: WindowMessageHandler): void;
   on(event: ControlEvents, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler}) => existingHandler === handler) != null;
+    const exists =
+      existingHandlers.find(
+        ({ handler: existingHandler }) => existingHandler === handler,
+      ) != null;
     if (exists) {
       return;
     }
@@ -134,7 +151,7 @@ export class ControlElement extends HTMLElement {
       if (e.detail.type !== event) {
         return;
       }
-      switch(event) {
+      switch (event) {
         case ControlEvents.FETCH:
           (handler as FetchHandler)(e.detail.data as FetchEventData);
           return;
@@ -145,7 +162,9 @@ export class ControlElement extends HTMLElement {
           (handler as BeaconHandler)(e.detail.data as BeaconEventData);
           return;
         case ControlEvents.WINDOW_MESSAGE:
-          (handler as WindowMessageHandler)(e.detail.data as WindowMessageEventData);
+          (handler as WindowMessageHandler)(
+            e.detail.data as WindowMessageEventData,
+          );
           return;
         default:
           return;
@@ -154,20 +173,24 @@ export class ControlElement extends HTMLElement {
     this.eventHandlerMap.set(
       event,
       existingHandlers
-        .filter(({handler: existingHandler }) => existingHandler !== handler)
+        .filter(({ handler: existingHandler }) => existingHandler !== handler)
         .concat([{ handler, wrapper }]),
     );
     this.addEventListener(CONTROL_EVENT, wrapper);
   }
   off(event: ControlEvents, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
-    const exists = existingHandlers.find(({ handler: existingHandler}) => existingHandler === handler);
+    const exists = existingHandlers.find(
+      ({ handler: existingHandler }) => existingHandler === handler,
+    );
     if (exists == null) {
       return;
     }
     this.eventHandlerMap.set(
       event,
-      existingHandlers.filter(({ handler: existingHandler }) => existingHandler !== handler),
+      existingHandlers.filter(
+        ({ handler: existingHandler }) => existingHandler !== handler,
+      ),
     );
     this.removeEventListener(CONTROL_EVENT, exists.wrapper as () => void);
   }
@@ -177,13 +200,15 @@ export class ControlElement extends HTMLElement {
       time: new Date(),
       id: `log-item-xhr-${crypto.randomUUID()}`,
     });
-    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
-      bubbles: false,
-      detail: {
-        type: ControlEvents.XHR_LOAD,
-        data,
-      },
-    }));
+    this.dispatchEvent(
+      new CustomEvent(CONTROL_EVENT, {
+        bubbles: false,
+        detail: {
+          type: ControlEvents.XHR_LOAD,
+          data,
+        },
+      }),
+    );
   }
   dispatchFetch(data: FetchEventData) {
     this.logStore[ControlEvents.FETCH].push({
@@ -194,13 +219,15 @@ export class ControlElement extends HTMLElement {
       time: new Date(),
       id: `log-item-fetch-${crypto.randomUUID()}`,
     });
-    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
-      bubbles: false,
-      detail: {
-        type: ControlEvents.FETCH,
-        data,
-      },
-    }));
+    this.dispatchEvent(
+      new CustomEvent(CONTROL_EVENT, {
+        bubbles: false,
+        detail: {
+          type: ControlEvents.FETCH,
+          data,
+        },
+      }),
+    );
   }
   dispatchBeacon(data: BeaconEventData) {
     this.logStore[ControlEvents.BEACON].push({
@@ -208,13 +235,15 @@ export class ControlElement extends HTMLElement {
       time: new Date(),
       id: `log-item-beacon-${crypto.randomUUID()}`,
     });
-    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
-      bubbles: false,
-      detail: {
-        type: ControlEvents.BEACON,
-        data,
-      },
-    }));
+    this.dispatchEvent(
+      new CustomEvent(CONTROL_EVENT, {
+        bubbles: false,
+        detail: {
+          type: ControlEvents.BEACON,
+          data,
+        },
+      }),
+    );
   }
   dispatchWindowMessage(data: WindowMessageEventData) {
     this.logStore[ControlEvents.WINDOW_MESSAGE].push({
@@ -222,38 +251,35 @@ export class ControlElement extends HTMLElement {
       time: new Date(),
       id: `log-item-window-message-${crypto.randomUUID()}`,
     });
-    this.dispatchEvent(new CustomEvent(CONTROL_EVENT, {
-      bubbles: false,
-      detail: {
-        type: ControlEvents.WINDOW_MESSAGE,
-        data,
-      },
-    }));
+    this.dispatchEvent(
+      new CustomEvent(CONTROL_EVENT, {
+        bubbles: false,
+        detail: {
+          type: ControlEvents.WINDOW_MESSAGE,
+          data,
+        },
+      }),
+    );
   }
   get logItems() {
     return [
-      ...this.logStore[ControlEvents.FETCH]
-        .map(fetchLog => ({
-          ...fetchLog,
-          type: "fetch",
-        })),
-      ...this.logStore[ControlEvents.XHR_LOAD]
-        .map(xhrLog => ({
-          ...xhrLog,
-          type: "xhr",
-        })),
-      ...this.logStore[ControlEvents.BEACON]
-        .map(beaconLog => ({
-          ...beaconLog,
-          type: "beacon",
-        })),
-      ...this.logStore[ControlEvents.WINDOW_MESSAGE]
-        .map(messageLog => ({
-          ...messageLog,
-          type: "windowMessage",
-        })),
-    ]
-      .toSorted((a,b) => a.time.getTime() - b.time.getTime());
+      ...this.logStore[ControlEvents.FETCH].map((fetchLog) => ({
+        ...fetchLog,
+        type: "fetch",
+      })),
+      ...this.logStore[ControlEvents.XHR_LOAD].map((xhrLog) => ({
+        ...xhrLog,
+        type: "xhr",
+      })),
+      ...this.logStore[ControlEvents.BEACON].map((beaconLog) => ({
+        ...beaconLog,
+        type: "beacon",
+      })),
+      ...this.logStore[ControlEvents.WINDOW_MESSAGE].map((messageLog) => ({
+        ...messageLog,
+        type: "windowMessage",
+      })),
+    ].toSorted((a, b) => a.time.getTime() - b.time.getTime());
   }
   static create(id: string) {
     const ele = document.createElement(TAG_NAME);
@@ -266,16 +292,14 @@ export class ControlElement extends HTMLElement {
     const existing = document.getElementById(id);
     if (existing != null) {
       return existing as ControlElement;
-    } 
-    return this.create(id);
+    }
+    return ControlElement.create(id);
   }
   static list() {
-    return  Array.from(document.querySelectorAll(TAG_NAME));
+    return Array.from(document.querySelectorAll(TAG_NAME));
   }
 }
-
 
 try {
   globalThis.customElements.define(TAG_NAME, ControlElement);
 } catch {}
-

@@ -1,24 +1,18 @@
-import { ControlElement } from "@/components/control-element";
-import {
-  transformLogItem,
-} from "@/components/log/list/util";
-import { LogItemHostElement } from "@/components/log/item/host";
-import { UtilsElement } from "@/components/utils";
+import type { ControlElement } from "@/components/control-element";
 import { CopyableTextElement } from "@/components/copyable-text";
+import { LogItemHostElement } from "@/components/log/item/host";
+import { transformLogItem } from "@/components/log/list/util";
+import { UtilsElement } from "@/components/utils";
 
-export async function template(
-  {
-    id,
-    controlId,
-    logId,
-    logItem,
-  }: {
-    id: string;
-    controlId: string;
-    logId: string;
-    logItem: (ControlElement["logItems"] extends (infer T)[] ? T : never) | null;
-  }
-) {
+export async function template({
+  id,
+  logItem,
+}: {
+  id: string;
+  controlId: string;
+  logId: string;
+  logItem: (ControlElement["logItems"] extends (infer T)[] ? T : never) | null;
+}) {
   const { formatTime } = UtilsElement.ensure();
 
   if (logItem == null) {
@@ -52,13 +46,7 @@ export async function template(
     }
     return rawResponse;
   })();
-  const itemText = [
-    logItem.type,
-    method,
-    url,
-    body,
-    response,
-  ].join(" ");
+  const itemText = [logItem.type, method, url, body, response].join(" ");
   return `
   <li id="${id}">
     <div>
@@ -74,13 +62,13 @@ export async function template(
     </div>
     <div data-foldable class="body folded">
       <${CopyableTextElement.TAG_NAME}
-        :text-id="${CopyableTextElement.store(body == null ? '' : body)}"
+        :text-id="${CopyableTextElement.store(body == null ? "" : body)}"
       ></${CopyableTextElement.TAG_NAME}>
       <button>expand</button>
     </div>
     <div data-foldable class="response folded">
       <${CopyableTextElement.TAG_NAME}
-        :text-id="${CopyableTextElement.store(response == null ? '' : response)}"
+        :text-id="${CopyableTextElement.store(response == null ? "" : response)}"
       ></${CopyableTextElement.TAG_NAME}>
       <button>expand</button>
     </div>

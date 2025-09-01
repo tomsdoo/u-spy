@@ -1,4 +1,4 @@
-import { ControlElement } from "@/components/control-element";
+import type { ControlElement } from "@/components/control-element";
 import { LogItemElement } from "@/components/log/item";
 
 export function template(
@@ -21,14 +21,16 @@ export function template(
         <input id="${keyBoxId}" placeholder="keyword.." />
       </form>
       <ul id="${logListId}">
-        ${
-          logItems.map(logItem => `
+        ${logItems
+          .map(
+            (logItem) => `
             <${LogItemElement.TAG_NAME}
               :control-id=${JSON.stringify(controlId)}
               :log-id=${JSON.stringify(logItem.id)}
             ></${LogItemElement.TAG_NAME}>
-          `).join("")
-        }
+          `,
+          )
+          .join("")}
       </ul>
     </div>
     <style>
