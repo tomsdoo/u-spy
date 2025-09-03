@@ -1,3 +1,4 @@
+import { sleep } from "@/utils";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-popup";
@@ -19,10 +20,11 @@ export class PopupElement extends HTMLElement {
   get canRemoveRoot() {
     return this.messageMap.size === 0;
   }
-  async addMessage(message: string) {
+  async addMessage(message: string, displayMs: number = 1000) {
     if (this.shadowRoot == null) {
       return;
     }
+    const TRANSITION_DURATION_MS = 1000;
     const messageId = crypto.randomUUID();
     this.messageMap.set(messageId, message);
     // biome-ignore lint/style/noNonNullAssertion: certainly exists
@@ -31,9 +33,9 @@ export class PopupElement extends HTMLElement {
     li.textContent = message;
     await new Promise((resolve) => setTimeout(resolve, 1));
     li.classList.add("visible");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await sleep(TRANSITION_DURATION_MS + displayMs);
     li.classList.remove("visible");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(TRANSITION_DURATION_MS);
     li.remove();
     this.messageMap.delete(messageId);
   }
@@ -45,9 +47,9 @@ export class PopupElement extends HTMLElement {
       )
     );
   }
-  static async show(message: string) {
+  static async show(message: string, displayMs?: number) {
     const popup = PopupElement.ensure();
-    await popup.addMessage(message);
+    await popup.addMessage(message, displayMs);
     if (popup.canRemoveRoot === false) {
       return;
     }
@@ -55,8 +57,8 @@ export class PopupElement extends HTMLElement {
   }
 }
 
-export function showEphemeralMessage(message: string) {
-  PopupElement.show(message);
+export function showEphemeralMessage(message: string, displayMs?: number) {
+  PopupElement.show(message, displayMs);
 }
 
 try {
