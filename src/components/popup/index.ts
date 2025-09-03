@@ -3,11 +3,18 @@ import { template } from "./template";
 
 const TAG_NAME = "u-spy-popup";
 
+type JsonPrimitive = string | number | boolean | null;
+type JsonArray = JsonPrimitive[] | JsonObject[];
+type JsonObject = {
+  [key: string]: JsonPrimitive | JsonObject | JsonArray;
+};
+type Json = JsonPrimitive | JsonArray | JsonObject;
+
 export class PopupElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
   id: string = "";
   shadowRoot: ShadowRoot | null = null;
-  messageMap: Map<string, string> = new Map();
+  messageMap: Map<string, Json> = new Map();
   connectedCallback() {
     const id = `usid-${crypto.randomUUID()}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
@@ -20,7 +27,7 @@ export class PopupElement extends HTMLElement {
   get canRemoveRoot() {
     return this.messageMap.size === 0;
   }
-  async addMessage(message: string, displayMs: number = 1000) {
+  async addMessage(message: Json, displayMs: number = 1000) {
     if (this.shadowRoot == null) {
       return;
     }
@@ -30,7 +37,8 @@ export class PopupElement extends HTMLElement {
     // biome-ignore lint/style/noNonNullAssertion: certainly exists
     const ul = this.shadowRoot.querySelector(`#${this.id}`)!;
     const li = ul.appendChild(document.createElement("li"));
-    li.textContent = message;
+    li.textContent =
+      typeof message === "string" ? message : JSON.stringify(message);
     await new Promise((resolve) => setTimeout(resolve, 1));
     li.classList.add("visible");
     await sleep(TRANSITION_DURATION_MS + displayMs);
@@ -47,7 +55,7 @@ export class PopupElement extends HTMLElement {
       )
     );
   }
-  static async show(message: string, displayMs?: number) {
+  static async show(message: Json, displayMs?: number) {
     const popup = PopupElement.ensure();
     await popup.addMessage(message, displayMs);
     if (popup.canRemoveRoot === false) {
@@ -57,7 +65,7 @@ export class PopupElement extends HTMLElement {
   }
 }
 
-export function showEphemeralMessage(message: string, displayMs?: number) {
+export function showEphemeralMessage(message: Json, displayMs?: number) {
   PopupElement.show(message, displayMs);
 }
 
