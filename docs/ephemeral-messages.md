@@ -7,12 +7,12 @@ outline: deep
 We can show some messages with `_spy.showEphemeralMessage()`.
 
 ``` js
-_spy.showEphemeralMessage("hello");
+_spy.showEphemeralMessage({ message: "hello" });
 ```
 
 ``` ts
 showEphemeralMessage(
-  value: string,
+  value: any,
   displayMs?: number,
 ): void;
 ```
