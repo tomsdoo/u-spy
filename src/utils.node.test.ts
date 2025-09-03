@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { sleep } from "@/utils";
 
 describe("sleep", () => {
@@ -8,6 +8,6 @@ describe("sleep", () => {
     await sleep(200).then(spy);
     const end = performance.now();
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(end - start).toSatisfy(duration => duration >= 200);
+    expect(end - start).toSatisfy((duration) => duration >= 200);
   });
 });
