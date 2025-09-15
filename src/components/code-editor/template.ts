@@ -1,16 +1,13 @@
 export async function template({ id }: { id: string }) {
   return `
     <div id="${id}">
-      <h1>u-spy style</h1>
+      <h1>u-spy code</h1>
       <ul>
         <li>
           <button class="format-button">format</button>
         </li>
         <li>
-          <button class="copy-button">copy</button>
-        </li>
-        <li>
-          <button class="download-button">download</button>
+          <button class="execute-button">execute</button>
         </li>
       </ul>
       <form onsubmit="return false">
@@ -25,8 +22,6 @@ export async function template({ id }: { id: string }) {
       background: rgb(0 0 0 / 40%);
       width: 90vw;
       height: 90vh;
-      max-width: 90vw;
-      max-height: 90vh;
       padding: 16px 32px;
       border-radius: 8px;
       box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
@@ -44,8 +39,9 @@ export async function template({ id }: { id: string }) {
         display: grid;
         justify-content: end;
         align-items: center;
-        grid-template-columns: repeat(3, max-content);
+        grid-template-columns: repeat(2, max-content);
         gap: 16px;
+
         > li {
           button {
             display: grid;
@@ -62,7 +58,6 @@ export async function template({ id }: { id: string }) {
           }
         }
       }
-
       > form {
         display: grid;
 

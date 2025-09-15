@@ -34,6 +34,7 @@ interface Spy {
     display(callback: (dialogElement: HTMLElement) => void): void;
     displaySpy(): void;
     displayStyle(): void;
+    displayCode(): void;
   };
   eventBus: typeof eventBus;
   store: {
@@ -114,6 +115,10 @@ function displayStyleDialog() {
   displayDialog("style");
 }
 
+function displayCodeDialog() {
+  displayDialog("code");
+}
+
 const unregisterHotStrokeMap = new Map<string, () => void>();
 
 for (const { stroke, display } of [
@@ -124,6 +129,10 @@ for (const { stroke, display } of [
   {
     stroke: "style",
     display: displayStyleDialog,
+  },
+  {
+    stroke: "code",
+    display: displayCodeDialog,
   },
 ]) {
   const { unregisterHotStroke } = registerHotStroke(stroke, () => {
@@ -265,6 +274,9 @@ globalThis._spy = {
     },
     displayStyle() {
       displayStyleDialog();
+    },
+    displayCode() {
+      displayCodeDialog();
     },
   },
   eventBus,
