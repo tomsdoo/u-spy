@@ -16,6 +16,7 @@ import {
   getRegisteredHotStrokes,
   registerHotStroke,
 } from "@/key-event";
+import { storage } from "@/storage";
 import { interceptWindowMessage } from "@/window-message";
 import {
   interceptXMLHttpRequest,
@@ -26,6 +27,7 @@ import {
 interface Spy {
   c: typeof freeContainer;
   container: typeof freeContainer;
+  storage: typeof storage;
   customElement: {
     ensure: typeof ensureCustomElement;
     ensureIterator: typeof ensureCustomIterator;
@@ -280,6 +282,7 @@ globalThis._spy = {
     },
   },
   eventBus,
+  storage,
   store: {
     get keys() {
       return getStoreIds();
