@@ -20,6 +20,7 @@ const {
 |--:|:--|:--|
 |1|spy|shows spy log dialog|
 |2|style|shows ad hoc style editor|
+|3|code|shows ad hoc code editor|
 
 ### How to change the hot strokes
 
