@@ -1,27 +1,16 @@
 import { BaseElement } from"@/components/base";
 import { UtilsElement } from "@/components/utils";
+import { ensureStore } from "@/components/store";
 import { EventType } from "@/constants/event-type";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-code-editor";
-const CODE_TAG_ID = "u-spy-code-edited";
-
-function ensureCodeTag() {
-  const existingCodeTag = document.querySelector<HTMLElement>(`#${CODE_TAG_ID}`);
-  if (existingCodeTag != null) {
-    return existingCodeTag;
-  }
-  const codeTag = document.createElement("pre");
-  codeTag.id = CODE_TAG_ID;
-  codeTag.style.display = "none";
-  document.body.appendChild(codeTag);
-  return codeTag;
-}
+const STORE_ID = "u-spy-code-store";
 
 export class CodeEditorElement extends BaseElement {
   id: string;
   _codeText: string;
-  _codeTag: HTMLElement;
+  _store: ReturnType<typeof ensureStore>;
   static get observedAttributes() {
     return [];
   }
@@ -33,18 +22,21 @@ export class CodeEditorElement extends BaseElement {
     this._codeText = value;
     this.onCodeTextChange();
   }
+  get storedCode() {
+    return (this._store.code ?? "") as string;
+  }
+  set storedCode(value: string) {
+    this._store.code = value;
+  }
   constructor() {
     super();
     this.template = (instance) => template(instance);
     this.id = `usce-${crypto.randomUUID()}`;
-    this._codeTag = ensureCodeTag();
-    this._codeText = this._codeTag.innerHTML;
-  }
-  get codeTag() {
-    return this._codeTag ?? ensureCodeTag();
+    this._store = ensureStore(STORE_ID);
+    this._codeText = this.storedCode;
   }
   connectedCallback() {
-    this._codeText = this.codeTag.innerHTML;
+    this._codeText = this.storedCode;
     this.render();
   }
   onRendered() {
@@ -98,7 +90,7 @@ export class CodeEditorElement extends BaseElement {
     });
   }
   onCodeTextChange() {
-    this._codeTag.innerHTML = this.codeText;
+    this.storedCode = this.codeText;
   }
 }
 
