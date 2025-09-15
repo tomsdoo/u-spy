@@ -51,6 +51,8 @@ async function loadPrettier() {
   return Promise.all([
     loadScript("https://unpkg.com/prettier@3.5.3/standalone.js"),
     loadScript("https://unpkg.com/prettier@3.5.3/plugins/postcss.js"),
+    loadScript("https://unpkg.com/prettier@3.5.3/plugins/estree.js"),
+    loadScript("https://unpkg.com/prettier@3.5.3/plugins/typescript.js"),
   ]);
 }
 

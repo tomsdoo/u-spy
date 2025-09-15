@@ -3,6 +3,7 @@ import { KeyHelpElement } from "@/components/key-help";
 import { LogFormElement } from "@/components/log/form";
 import { StoreElement } from "@/components/store";
 import { StyleEditorElement } from "@/components/style-editor";
+import { CodeEditorElement } from "@/components/code-editor";
 import { EventType } from "@/constants/event-type";
 import { DialogType, template } from "./template";
 
@@ -148,6 +149,7 @@ export class DialogElement extends HTMLElement {
     for (const tagName of [
       LogFormElement.TAG_NAME,
       StyleEditorElement.TAG_NAME,
+      CodeEditorElement.TAG_NAME,
     ]) {
       spyDiv.querySelectorAll(`${tagName}`).forEach((el) => {
         el.remove();
@@ -157,6 +159,11 @@ export class DialogElement extends HTMLElement {
       case DialogType.STYLE_EDITOR: {
         return spyDiv.appendChild(
           document.createElement(StyleEditorElement.TAG_NAME),
+        );
+      }
+      case DialogType.CODE_EDITOR: {
+        return spyDiv.appendChild(
+          document.createElement(CodeEditorElement.TAG_NAME),
         );
       }
       case DialogType.CUSTOM_FORM: {
@@ -191,6 +198,9 @@ export function displayDialog(
     switch (dialogTypeName) {
       case "style":
         dialogTag.changeType(DialogType.STYLE_EDITOR);
+        break;
+      case "code":
+        dialogTag.changeType(DialogType.CODE_EDITOR);
         break;
       default:
         dialogTag.changeType(DialogType.LOG_LIST);
