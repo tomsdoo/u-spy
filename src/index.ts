@@ -11,12 +11,12 @@ import { type Replacer, UtilsElement } from "@/components/utils";
 import { eventBus } from "@/event-bus";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { freeContainer } from "@/free-container";
-import { storage } from "@/storage";
 import {
   getRegisteredHotStroke,
   getRegisteredHotStrokes,
   registerHotStroke,
 } from "@/key-event";
+import { storage } from "@/storage";
 import { interceptWindowMessage } from "@/window-message";
 import {
   interceptXMLHttpRequest,

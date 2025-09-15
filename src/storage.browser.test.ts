@@ -1,4 +1,4 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { storage } from "@/storage";
 
 describe("storage", () => {
@@ -26,11 +26,11 @@ describe("storage", () => {
   describe("keys", () => {
     it("is an array of keys", () => {
       localStorage.setItem("uss_dummy", "dummy");
-      expect(storage.keys).toSatisfy(keys => {
-        if(Array.isArray(keys) === false) {
+      expect(storage.keys).toSatisfy((keys) => {
+        if (Array.isArray(keys) === false) {
           return false;
         }
-        return keys.every(key => typeof key === "string");
+        return keys.every((key) => typeof key === "string");
       });
     });
     it("prefix is not added", () => {
@@ -53,7 +53,7 @@ describe("storage", () => {
       storage.dummy = "dummyDataUpdated";
       expect(storage.keys).toHaveLength(1);
       expect(localStorage.getItem("uss_dummy")).toBe("dummyDataUpdated");
-      expect(storage.dummy).toBe("dummyDataUpdated"); 
+      expect(storage.dummy).toBe("dummyDataUpdated");
     });
     it("affects nothing if prop is reserved", () => {
       localStorage.setItem("uss_dummy", "dummyData");
