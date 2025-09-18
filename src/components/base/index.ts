@@ -31,11 +31,11 @@ export class BaseElement extends HTMLElement {
     this.render();
   }
   async render() {
-    this.innerHTML = "";
     const contentHtml =
       typeof this.template === "string"
         ? this.template
         : await this.template(this);
+    this.innerHTML = "";
     this.appendChild(
       document.createRange().createContextualFragment(contentHtml),
     );
