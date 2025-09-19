@@ -1,5 +1,5 @@
 import { CustomFormElement } from "@/components/custom-form";
-import { KeyHelpElement } from "@/components/key-help-next";
+import { KeyHelpElement } from "@/components/key-help";
 import { LogFormElement } from "@/components/log/form";
 import { StyleEditorElement } from "@/components/style-editor";
 import { CodeEditorElement } from "@/components/code-editor";
