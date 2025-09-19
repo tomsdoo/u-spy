@@ -128,12 +128,7 @@ export class StyleEditorElement extends BaseElement {
     }
     const {
       error,
-      result: {
-        saveButton,
-        saveForm,
-        loadButton,
-        selectForm,
-      },
+      result: { saveButton, saveForm, loadButton, selectForm },
     } = [
       {
         name: "saveButton",
@@ -151,17 +146,19 @@ export class StyleEditorElement extends BaseElement {
         name: "selectForm",
         selector: `#${this.id} .select-form`,
       },
-    ].reduce((acc, {name, selector}) => {
-      const { error, element } = getElement(selector);
-      return {
-        ...acc,
-        error: acc.error || error,
-        result: {
-          ...acc.result,
-          [name]: element,
-        },
-      };
-    }, { error: false, result: {} as Record<string, Element | null>}) as unknown as {
+    ].reduce(
+      (acc, { name, selector }) => {
+        const { error, element } = getElement(selector);
+        return {
+          error: acc.error || error,
+          result: {
+            ...acc.result,
+            [name]: element,
+          },
+        };
+      },
+      { error: false, result: {} as Record<string, Element | null> },
+    ) as unknown as {
       error: boolean;
       result: {
         saveButton: HTMLButtonElement;
@@ -174,14 +171,17 @@ export class StyleEditorElement extends BaseElement {
       return;
     }
     saveButton.addEventListener(EventType.CLICK, () => {
-      function saveHandler(e: {detail: { value: string }}) {
+      function saveHandler(e: { detail: { value: string } }) {
         const nextData = {
           ...that.storageData,
           // biome-ignore lint/style/noNonNullAssertion: textarea exists
           [e.detail.value]: textarea!.value,
         };
         that._storage.data = JSON.stringify(nextData);
-        saveForm.removeEventListener(InputFormElement.FINISH_INPUT_EVENT, saveHandler);
+        saveForm.removeEventListener(
+          InputFormElement.FINISH_INPUT_EVENT,
+          saveHandler,
+        );
         saveForm.removeEventListener(
           InputFormElement.CANCEL_EVENT,
           cancelHandler,
@@ -200,40 +200,81 @@ export class StyleEditorElement extends BaseElement {
         saveForm?.classList.add("hidden");
       }
       // @ts-expect-error handler type will be resolved
-      saveForm.addEventListener(InputFormElement.FINISH_INPUT_EVENT, saveHandler);
+      saveForm.addEventListener(
+        InputFormElement.FINISH_INPUT_EVENT,
+        saveHandler,
+      );
       saveForm.addEventListener(InputFormElement.CANCEL_EVENT, cancelHandler);
       saveForm.classList.remove("hidden");
     });
     loadButton.addEventListener(EventType.CLICK, () => {
       const options = Array.from(Object.keys(that.storageData));
-      function chooseHandler(e: {detail: { value: string }}) {
+      function chooseHandler(e: { detail: { value: string } }) {
         textarea.value = that.storageData[e.detail.value];
         that.styleText = that.storageData[e.detail.value];
         selectForm.classList.add("hidden");
-        selectForm.removeEventListener(SelectFormElement.CHOOSE_EVENT, chooseHandler);
-        selectForm.removeEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
-        selectForm.removeEventListener(SelectFormElement.CANCEL_EVENT, cancelHandler);
+        selectForm.removeEventListener(
+          SelectFormElement.CHOOSE_EVENT,
+          chooseHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.REMOVE_EVENT,
+          removeHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.CANCEL_EVENT,
+          cancelHandler,
+        );
       }
-      function removeHandler(e: { detail: { value: string }}) {
+      function removeHandler(e: { detail: { value: string } }) {
         const nextData = Object.fromEntries(
-          Object.entries(that.storageData).filter(([key]) => key !== e.detail.value)
+          Object.entries(that.storageData).filter(
+            ([key]) => key !== e.detail.value,
+          ),
         );
         that._storage.data = JSON.stringify(nextData);
         selectForm.classList.add("hidden");
-        selectForm.removeEventListener(SelectFormElement.CHOOSE_EVENT, chooseHandler);
-        selectForm.removeEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
-        selectForm.removeEventListener(SelectFormElement.CANCEL_EVENT, cancelHandler);
+        selectForm.removeEventListener(
+          SelectFormElement.CHOOSE_EVENT,
+          chooseHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.REMOVE_EVENT,
+          removeHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.CANCEL_EVENT,
+          cancelHandler,
+        );
       }
-      function cancelHandler(e: { detail: { value: string }}) {
+      function cancelHandler() {
         selectForm.classList.add("hidden");
-        selectForm.removeEventListener(SelectFormElement.CHOOSE_EVENT, chooseHandler);
-        selectForm.removeEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
-        selectForm.removeEventListener(SelectFormElement.CANCEL_EVENT, cancelHandler);
+        selectForm.removeEventListener(
+          SelectFormElement.CHOOSE_EVENT,
+          chooseHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.REMOVE_EVENT,
+          removeHandler,
+        );
+        selectForm.removeEventListener(
+          SelectFormElement.CANCEL_EVENT,
+          cancelHandler,
+        );
       }
       selectForm.setAttribute(":options", options.join(","));
-      selectForm.addEventListener(SelectFormElement.CHOOSE_EVENT, chooseHandler);
-      selectForm.addEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
-      selectForm.addEventListener(SelectFormElement.CANCEL_EVENT,  cancelHandler);
+      selectForm.addEventListener(
+        SelectFormElement.CHOOSE_EVENT,
+        chooseHandler,
+      );
+      selectForm.addEventListener(
+        SelectFormElement.REMOVE_EVENT,
+        removeHandler,
+      );
+      selectForm.addEventListener(
+        SelectFormElement.CANCEL_EVENT,
+        cancelHandler,
+      );
       selectForm.classList.remove("hidden");
     });
   }
