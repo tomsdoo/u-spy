@@ -1,5 +1,5 @@
 import { CustomFormElement } from "@/components/custom-form";
-import { KeyHelpElement } from "@/components/key-help";
+import { KeyHelpElement } from "@/components/key-help-next";
 import { LogFormElement } from "@/components/log/form";
 import { StyleEditorElement } from "@/components/style-editor";
 import { CodeEditorElement } from "@/components/code-editor";
@@ -22,7 +22,7 @@ export function template(id: string, dialogType: DialogType) {
           [DialogType.CUSTOM_FORM]: `<${CustomFormElement.TAG_NAME}></${CustomFormElement.TAG_NAME}>`,
         })[dialogType] ?? ""
       }
-      <${KeyHelpElement.TAG_NAME} visible="false" tabindex="-1"></${KeyHelpElement.TAG_NAME}>
+      <${KeyHelpElement.TAG_NAME} role="dialog" visible="false" tabindex="-1" :key-definitions="[]"></${KeyHelpElement.TAG_NAME}>
     </div>
     <style>
     #${id} {
@@ -44,6 +44,17 @@ export function template(id: string, dialogType: DialogType) {
         margin-block-end: 0;
         padding-inline-start: 0;
         list-style-type: none;
+      }
+
+      > [role="dialog"] {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        &[visible="false"] {
+          display: none;
+        }
       }
     }
     </style>

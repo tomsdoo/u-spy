@@ -1,5 +1,5 @@
 import { CustomFormElement } from "@/components/custom-form";
-import { KeyHelpElement } from "@/components/key-help";
+import { KeyHelpElement } from "@/components/key-help-next";
 import { LogFormElement } from "@/components/log/form";
 import { StoreElement } from "@/components/store";
 import { StyleEditorElement } from "@/components/style-editor";
@@ -91,7 +91,7 @@ export class DialogElement extends HTMLElement {
       });
       keyHelpElement.setAttribute("visible", "true");
       keyHelpElement.setAttribute(
-        "key-definitions",
+        ":key-definitions",
         JSON.stringify(that.store.keyDefinitions),
       );
       keyHelpElement.focus();
