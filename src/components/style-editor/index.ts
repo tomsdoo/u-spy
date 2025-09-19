@@ -66,69 +66,18 @@ export class StyleEditorElement extends BaseElement {
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
-    const textarea = this.querySelector<HTMLTextAreaElement>(
-      `#${this.id} > .editor-form > textarea`,
-    );
-    if (textarea == null) {
-      return;
-    }
-    textarea.value = this.styleText;
-    textarea.addEventListener("keydown", (e) => {
-      e.stopPropagation();
-      setTimeout(() => {
-        this.styleText = textarea.value;
-      }, 1);
-      if (e.key === "Escape") {
-        textarea.blur();
-      }
-    });
-    setTimeout(() => {
-      textarea.focus();
-    }, 1);
-    const downloadButton = this.querySelector<HTMLButtonElement>(
-      `#${this.id} .download-button`,
-    );
-    if (downloadButton == null) {
-      return;
-    }
-    downloadButton.addEventListener(EventType.CLICK, async () => {
-      UtilsElement.ensure().download({
-        data: this.styleText,
-        filename: "style.css",
-      });
-    });
-    const copyButton = this.querySelector<HTMLButtonElement>(
-      `#${this.id} .copy-button`,
-    );
-    if (copyButton == null) {
-      return;
-    }
-    copyButton.addEventListener(EventType.CLICK, async () => {
-      await navigator.clipboard.writeText(this.styleText);
-    });
-    const formatButton = this.querySelector<HTMLButtonElement>(
-      `#${this.id} .format-button`,
-    );
-    if (formatButton == null) {
-      return;
-    }
-    formatButton.addEventListener(EventType.CLICK, async () => {
-      this.styleText = await UtilsElement.ensure().prettierFormat(
-        this.styleText,
-        "css",
-      );
-      textarea.value = this.styleText;
-    });
-    function getElement<T extends Element>(selector: string) {
-      const element = that.querySelector<T>(selector);
-      return {
-        error: element == null,
-        element,
-      };
-    }
     const {
       error,
-      result: { saveButton, saveForm, loadButton, selectForm },
+      result: {
+        textarea,
+        formatButton,
+        copyButton,
+        downloadButton,
+        saveButton,
+        saveForm,
+        loadButton,
+        selectForm,
+      },
     } = [
       {
         name: "saveButton",
@@ -146,11 +95,27 @@ export class StyleEditorElement extends BaseElement {
         name: "selectForm",
         selector: `#${this.id} .select-form`,
       },
+      {
+        name: "textarea",
+        selector: `#${this.id} > .editor-form > textarea`,
+      },
+      {
+        name: "downloadButton",
+        selector: `#${this.id} .download-button`,
+      },
+      {
+        name: "copyButton",
+        selector: `#${this.id} .copy-button`,
+      },
+      {
+        name: "formatButton",
+        selector: `#${this.id} .format-button`,
+      },
     ].reduce(
       (acc, { name, selector }) => {
-        const { error, element } = getElement(selector);
+        const element = that.querySelector(selector);
         return {
-          error: acc.error || error,
+          error: acc.error || element == null,
           result: {
             ...acc.result,
             [name]: element,
@@ -165,11 +130,49 @@ export class StyleEditorElement extends BaseElement {
         saveForm: HTMLFormElement;
         loadButton: HTMLButtonElement;
         selectForm: HTMLFormElement;
+        textarea: HTMLTextAreaElement;
+        downloadButton: HTMLButtonElement;
+        copyButton: HTMLButtonElement;
+        formatButton: HTMLButtonElement;
       };
     };
     if (error) {
       return;
     }
+
+    textarea.value = this.styleText;
+    textarea.addEventListener("keydown", (e) => {
+      e.stopPropagation();
+      setTimeout(() => {
+        this.styleText = textarea.value;
+      }, 1);
+      if (e.key === "Escape") {
+        textarea.blur();
+      }
+    });
+    setTimeout(() => {
+      textarea.focus();
+    }, 1);
+
+    downloadButton.addEventListener(EventType.CLICK, async () => {
+      UtilsElement.ensure().download({
+        data: this.styleText,
+        filename: "style.css",
+      });
+    });
+
+    copyButton.addEventListener(EventType.CLICK, async () => {
+      await navigator.clipboard.writeText(this.styleText);
+    });
+
+    formatButton.addEventListener(EventType.CLICK, async () => {
+      this.styleText = await UtilsElement.ensure().prettierFormat(
+        this.styleText,
+        "css",
+      );
+      textarea.value = this.styleText;
+    });
+
     saveButton.addEventListener(EventType.CLICK, () => {
       function saveHandler(e: { detail: { value: string } }) {
         const nextData = {
@@ -178,6 +181,7 @@ export class StyleEditorElement extends BaseElement {
           [e.detail.value]: textarea!.value,
         };
         that._storage.data = JSON.stringify(nextData);
+        // @ts-expect-error handler type will be resolved
         saveForm.removeEventListener(
           InputFormElement.FINISH_INPUT_EVENT,
           saveHandler,
@@ -189,6 +193,7 @@ export class StyleEditorElement extends BaseElement {
         saveForm?.classList.add("hidden");
       }
       function cancelHandler() {
+        // @ts-expect-error handler type will be resolved
         saveForm.removeEventListener(
           InputFormElement.FINISH_INPUT_EVENT,
           saveHandler,
@@ -213,10 +218,12 @@ export class StyleEditorElement extends BaseElement {
         textarea.value = that.storageData[e.detail.value];
         that.styleText = that.storageData[e.detail.value];
         selectForm.classList.add("hidden");
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.CHOOSE_EVENT,
           chooseHandler,
         );
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.REMOVE_EVENT,
           removeHandler,
@@ -234,10 +241,12 @@ export class StyleEditorElement extends BaseElement {
         );
         that._storage.data = JSON.stringify(nextData);
         selectForm.classList.add("hidden");
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.CHOOSE_EVENT,
           chooseHandler,
         );
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.REMOVE_EVENT,
           removeHandler,
@@ -249,10 +258,12 @@ export class StyleEditorElement extends BaseElement {
       }
       function cancelHandler() {
         selectForm.classList.add("hidden");
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.CHOOSE_EVENT,
           chooseHandler,
         );
+        // @ts-expect-error handler type will be resolved
         selectForm.removeEventListener(
           SelectFormElement.REMOVE_EVENT,
           removeHandler,
@@ -263,10 +274,12 @@ export class StyleEditorElement extends BaseElement {
         );
       }
       selectForm.setAttribute(":options", options.join(","));
+      // @ts-expect-error handler type will be resolved
       selectForm.addEventListener(
         SelectFormElement.CHOOSE_EVENT,
         chooseHandler,
       );
+      // @ts-expect-error handler type will be resolved
       selectForm.addEventListener(
         SelectFormElement.REMOVE_EVENT,
         removeHandler,
