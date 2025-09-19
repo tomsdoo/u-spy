@@ -91,7 +91,7 @@ export class DialogElement extends HTMLElement {
       });
       keyHelpElement.setAttribute("visible", "true");
       keyHelpElement.setAttribute(
-        "key-definitions",
+        ":key-definitions",
         JSON.stringify(that.store.keyDefinitions),
       );
       keyHelpElement.focus();
