@@ -1,3 +1,6 @@
+import { InputFormElement } from "@/components/input-form";
+import { SelectFormElement } from "@/components/select-form";
+
 export async function template({ id }: { id: string }) {
   return `
     <div id="${id}">
@@ -7,15 +10,33 @@ export async function template({ id }: { id: string }) {
           <button class="format-button">format</button>
         </li>
         <li>
+          <button class="load-button">load</button>
+        </li>
+        <li>
+          <button class="save-button">save</button>
+        </li>
+        <li>
           <button class="copy-button">copy</button>
         </li>
         <li>
           <button class="download-button">download</button>
         </li>
       </ul>
-      <form onsubmit="return false">
+      <form onsubmit="return false" class="editor-form">
         <textarea></textarea>
       </form>
+      <${InputFormElement.TAG_NAME}
+        class="save-form hidden"
+        :text="name for style"
+        :button-caption="save"
+        :cancel-caption="cancel"
+      ></${InputFormElement.TAG_NAME}>
+      <${SelectFormElement.TAG_NAME}
+        class="select-form hidden"
+        :title-text="choose one to load"
+        :options=""
+        :can-remove="true"
+      ></${SelectFormElement.TAG_NAME}>
     </div>
     <style>
     #${id} {
@@ -44,7 +65,7 @@ export async function template({ id }: { id: string }) {
         display: grid;
         justify-content: end;
         align-items: center;
-        grid-template-columns: repeat(3, max-content);
+        grid-template-columns: repeat(5, max-content);
         gap: 16px;
         > li {
           button {
@@ -63,7 +84,7 @@ export async function template({ id }: { id: string }) {
         }
       }
 
-      > form {
+      > .editor-form {
         display: grid;
 
         > textarea {
@@ -75,6 +96,16 @@ export async function template({ id }: { id: string }) {
           color: inherit;
           background: transparent;
         }
+      }
+      > .save-form,
+      > .select-form {
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       &.hidden {
+         display: none;
+       }
       }
     }
     </style>

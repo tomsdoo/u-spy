@@ -58,7 +58,7 @@ export class CodeEditorElement extends BaseElement {
       e.stopPropagation();
     });
     const textarea = this.querySelector<HTMLTextAreaElement>(
-      `#${this.id} > form > textarea`,
+      `#${this.id} > .editor-form > textarea`,
     );
     if (textarea == null) {
       return;
