@@ -92,7 +92,8 @@ export async function template({ id }: { id: string }) {
           background: transparent;
         }
       }
-      > .save-form {
+      > .save-form,
+      > .select-form {
        position: absolute;
        top: 50%;
        left: 50%;
@@ -100,15 +101,6 @@ export async function template({ id }: { id: string }) {
        &.hidden {
          display: none;
        }
-      }
-      > .select-form {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        &.hidden {
-          display: none;
-        }
       }
     }
     </style>
