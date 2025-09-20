@@ -4,7 +4,6 @@ import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { EntryPointElement } from "@/components/entry-point";
-import { MessageBusElement } from "@/components/message-bus";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
 import { type Replacer, UtilsElement } from "@/components/utils";
@@ -107,7 +106,6 @@ interface InterceptionOptions {
 
 EntryPointElement.ensure();
 StoreElement.ensure();
-MessageBusElement.ensure();
 
 function displaySpyDialog() {
   displayDialog("spy");
