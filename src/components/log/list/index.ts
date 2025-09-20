@@ -1,9 +1,9 @@
 import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
-import { LogItemElement } from "@/components/log/item";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
+import { resetHandlers } from "./on-rendered";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-list";
@@ -50,41 +50,7 @@ export class LogListElement extends BaseElement {
     this.render();
   }
   onRendered() {
-    const form = this.querySelector(`#${this.id} > form`);
-    if (form == null) {
-      return;
-    }
-    form.addEventListener(EventType.SUBMIT, (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    const keyBox = this.querySelector<HTMLInputElement>(
-      `#${this.id} > form > input`,
-    );
-    if (keyBox == null) {
-      return;
-    }
-    keyBox.addEventListener(EventType.KEYDOWN, (e: KeyboardEvent) => {
-      e.stopPropagation();
-      if (e.key === "Escape") {
-        keyBox.blur();
-      }
-    });
-    keyBox.addEventListener(EventType.CHANGE, () => {
-      const keyword = keyBox.value;
-      for (const logItemElement of Array.from(
-        this.querySelectorAll<LogItemElement>(LogItemElement.TAG_NAME),
-      )) {
-        logItemElement.feedKeyword(keyword);
-      }
-    });
-    const logList = this.querySelector(`#${this.id} .log-list`);
-    if (logList == null) {
-      return;
-    }
-    setTimeout(() => {
-      logList.scrollTo(0, this.logItems.length * 120);
-    }, 1);
+    resetHandlers(this);
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
