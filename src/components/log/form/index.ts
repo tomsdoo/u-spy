@@ -3,6 +3,8 @@ import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
 import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
+import { SystemEvent } from "@/constants/system-event";
+import { systemBus } from "@/event-bus";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-form";
@@ -37,7 +39,7 @@ export class LogFormElement extends BaseElement {
         `#${this.controlListId} > li.active > button`,
       )?.click();
     };
-    this.store.addKeyDefinition({
+    systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
       key: "r",
       description: "refresh logs",
     });
@@ -92,7 +94,7 @@ export class LogFormElement extends BaseElement {
     if (this.keyEventHandler == null) {
       return;
     }
-    this.store.removeKeyDefinition("r");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "r");
     window.removeEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
 }

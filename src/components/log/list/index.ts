@@ -2,6 +2,8 @@ import { ControlElement } from "@/components/control-element";
 import { LogItemElement } from "@/components/log/item";
 import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
+import { SystemEvent } from "@/constants/system-event";
+import { systemBus } from "@/event-bus";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-list";
@@ -80,7 +82,10 @@ export class LogListElement extends HTMLElement {
         ?.focus();
     };
     window.addEventListener("keyup", this.keyEventHandler);
-    this.store.addKeyDefinition({ key: "s", description: "focus search box" });
+    systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
+      key: "s",
+      description: "focus search box",
+    });
     setTimeout(() => {
       const logListUl = shadowRoot.querySelector<HTMLUListElement>(
         Selectors.LOG_LIST,
@@ -95,7 +100,7 @@ export class LogListElement extends HTMLElement {
     if (this.keyEventHandler == null) {
       return;
     }
-    this.store.removeKeyDefinition("s");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "s");
     window.removeEventListener("keyup", this.keyEventHandler);
   }
   static create() {

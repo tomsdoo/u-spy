@@ -3,12 +3,11 @@ import { EntryPointElement } from "@/components/entry-point";
 const TAG_NAME = "u-spy-store";
 
 export enum StoreEvent {
-  CHANGE_KEY_DEFINITIONS = "change_key_definitions",
+  DUMMY = "dummy",
 }
 
-type ChangeKeyDefinitionEventData = {
-  value: { key: string; description: string }[];
-  oldValue: { key: string; description: string }[];
+type DummyEventData = {
+  value: string;
 };
 
 declare global {
@@ -17,60 +16,26 @@ declare global {
   }
 
   interface HTMLElementEventMap {
-    [StoreEvent.CHANGE_KEY_DEFINITIONS]: CustomEvent<ChangeKeyDefinitionEventData>;
+    [StoreEvent.DUMMY]: CustomEvent<DummyEventData>;
   }
 }
-
-type ChangeKeyDefinitionHandler = (data: ChangeKeyDefinitionEventData) => void;
-type Handler = ChangeKeyDefinitionHandler;
+type DummyHandler = (data: DummyEventData) => void;
+type Handler = DummyHandler;
 
 export class StoreElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
   // biome-ignore lint/complexity/noBannedTypes: use Function
   eventHandlerMap: Map<StoreEvent, { handler: Handler; wrapper: Function }[]>;
-  _keyDefinitions: { key: string; description: string }[];
   _temporaryDataMap: Map<string, unknown>;
   _freeData: Map<string, ObservableObject>;
   constructor() {
     super();
     this.eventHandlerMap = new Map();
-    this._keyDefinitions = [];
     this._temporaryDataMap = new Map();
     this._freeData = new Map();
   }
-  get keyDefinitions() {
-    return this._keyDefinitions.slice().toSorted((a, b) => {
-      if (a.key === b.key) {
-        return 0;
-      }
-      return a.key > b.key ? 1 : -1;
-    });
-  }
-  set keyDefinitions(value: { key: string; description: string }[]) {
-    const eventDetail = {
-      value: value.slice(),
-      oldValue: this.keyDefinitions,
-    };
-    this._keyDefinitions = value;
-    this.dispatchEvent(
-      new CustomEvent(StoreEvent.CHANGE_KEY_DEFINITIONS, {
-        bubbles: false,
-        detail: eventDetail,
-      }),
-    );
-  }
   get freeData() {
     return this._freeData;
-  }
-  addKeyDefinition(keyDefinition: { key: string; description: string }) {
-    this.keyDefinitions = this.keyDefinitions
-      .filter(({ key }) => keyDefinition.key !== key)
-      .concat([keyDefinition]);
-  }
-  removeKeyDefinition(key: string) {
-    this.keyDefinitions = this.keyDefinitions.filter(
-      (keyDefinition) => keyDefinition.key !== key,
-    );
   }
   getTemporaryData(key: string) {
     return this._temporaryDataMap.get(key) ?? "";
@@ -83,10 +48,6 @@ export class StoreElement extends HTMLElement {
   removeTemporaryData(key: string) {
     this._temporaryDataMap.delete(key);
   }
-  on(
-    event: StoreEvent.CHANGE_KEY_DEFINITIONS,
-    handler: ChangeKeyDefinitionHandler,
-  ): void;
   on(event: StoreEvent, handler: Handler) {
     const existingHandlers = this.eventHandlerMap.get(event) ?? [];
     const exists =
@@ -97,9 +58,9 @@ export class StoreElement extends HTMLElement {
       return;
     }
     switch (event) {
-      case StoreEvent.CHANGE_KEY_DEFINITIONS: {
-        const wrapper = (e: { detail: ChangeKeyDefinitionEventData }) => {
-          (handler as ChangeKeyDefinitionHandler)(e.detail);
+      case StoreEvent.DUMMY: {
+        const wrapper = (e: { detail: DummyEventData }) => {
+          (handler as DummyHandler)(e.detail);
         };
         this.eventHandlerMap.set(
           event,
