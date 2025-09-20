@@ -1,6 +1,6 @@
 import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
-import { LogListElement } from "@/components/log/list-next";
+import { LogListElement } from "@/components/log/list";
 import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
