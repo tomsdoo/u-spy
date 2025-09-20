@@ -40,6 +40,13 @@ export class SelectFormElement extends BaseElement {
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
+    this.addEventListener(EventType.KEYDOWN, (e) => {
+      e.stopPropagation();
+      if (e.key !== "Escape") {
+        return;
+      }
+      this.dispatchEvent(new CustomEvent(CANCEL_EVENT));
+    });
     for (const chooseButton of Array.from(
       this.querySelectorAll<HTMLButtonElement>(
         `#${this.id} ul li button.choose-button`,
@@ -73,6 +80,9 @@ export class SelectFormElement extends BaseElement {
     cancelButton.addEventListener(EventType.CLICK, () => {
       this.dispatchEvent(new CustomEvent(CANCEL_EVENT));
     });
+  }
+  focusFirstButton() {
+    this.querySelector<HTMLButtonElement>(`#${this.id} button`)?.focus();
   }
 }
 

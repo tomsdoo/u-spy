@@ -32,6 +32,13 @@ export class InputFormElement extends BaseElement {
     this.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
     });
+    this.addEventListener(EventType.KEYDOWN, (e) => {
+      e.stopPropagation();
+      if (e.key !== "Escape") {
+        return;
+      }
+      this.dispatchEvent(new CustomEvent(CANCEL_EVENT));
+    });
     const inputBox = this.querySelector<HTMLInputElement>(`#${this.id} input`);
     const okButton = this.querySelector<HTMLButtonElement>(
       `#${this.id} .ok-button`,
@@ -52,6 +59,9 @@ export class InputFormElement extends BaseElement {
     cancelButton.addEventListener(EventType.CLICK, () => {
       this.dispatchEvent(new CustomEvent(CANCEL_EVENT));
     });
+  }
+  focusTextBox() {
+    this.querySelector<HTMLInputElement>(`#${this.id} > input`)?.focus();
   }
 }
 

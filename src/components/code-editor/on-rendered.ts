@@ -3,6 +3,7 @@ import { SelectFormElement } from "@/components/select-form";
 import { UtilsElement } from "@/components/utils";
 import { EventType } from "@/constants/event-type";
 import type { createStorageProxy } from "@/storage";
+import { sleep } from "@/utils";
 
 export function resetHandlers(instance: {
   id: string;
@@ -98,6 +99,7 @@ export function resetHandlers(instance: {
       "typescript",
     );
     textarea.value = instance.codeText;
+    textarea.focus();
   });
   saveButton.addEventListener(EventType.CLICK, () => {
     function clearAndHide() {
@@ -108,6 +110,7 @@ export function resetHandlers(instance: {
       );
       saveForm.removeEventListener(InputFormElement.CANCEL_EVENT, clearAndHide);
       saveForm.classList.add("hidden");
+      textarea.focus();
     }
     function saveHandler(e: { detail: { value: string } }) {
       const nextData = {
@@ -121,8 +124,9 @@ export function resetHandlers(instance: {
     saveForm.addEventListener(InputFormElement.FINISH_INPUT_EVENT, saveHandler);
     saveForm.addEventListener(InputFormElement.CANCEL_EVENT, clearAndHide);
     saveForm.classList.remove("hidden");
+    saveForm.focusTextBox();
   });
-  loadButton.addEventListener(EventType.CLICK, () => {
+  loadButton.addEventListener(EventType.CLICK, async () => {
     const options = Array.from(Object.keys(instance.storageData));
     function clearAndHide() {
       selectForm.classList.add("hidden");
@@ -140,6 +144,7 @@ export function resetHandlers(instance: {
         SelectFormElement.CANCEL_EVENT,
         clearAndHide,
       );
+      textarea.focus();
     }
     function chooseHandler(e: { detail: { value: string } }) {
       textarea.value = instance.storageData[e.detail.value];
@@ -162,6 +167,8 @@ export function resetHandlers(instance: {
     selectForm.addEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
     selectForm.addEventListener(SelectFormElement.CANCEL_EVENT, clearAndHide);
     selectForm.classList.remove("hidden");
+    await sleep(10);
+    selectForm.focusFirstButton();
   });
   executeButton.addEventListener(EventType.CLICK, async () => {
     const scriptTag = document.createElement("script");
@@ -175,5 +182,6 @@ export function resetHandlers(instance: {
     ].join("\n");
     document.body.appendChild(scriptTag);
     window.dispatchEvent(new CustomEvent(eventName));
+    textarea.focus();
   });
 }
