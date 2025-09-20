@@ -5,6 +5,7 @@ import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
+import { createTrustedHtml } from "@/trusted-policy";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-form";
@@ -69,7 +70,7 @@ export class LogFormElement extends BaseElement {
         ele.setAttribute(":control-id", controlId);
         const contentArea = this.querySelector(`#${this.contentId}`);
         if (contentArea != null) {
-          contentArea.innerHTML = "";
+          contentArea.innerHTML = createTrustedHtml("");
           contentArea.appendChild(ele);
         }
         this.querySelectorAll<HTMLLIElement>(

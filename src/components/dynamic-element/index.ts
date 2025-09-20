@@ -1,9 +1,13 @@
+import { createTrustedHtml } from "@/trusted-policy";
+
 export function ensureCustomTemplate(templateId: string, templateHtml: string) {
   document.body.appendChild(
     document
       .createRange()
       .createContextualFragment(
-        `<template id="${templateId}">${templateHtml}</template>`,
+        createTrustedHtml(
+          `<template id="${templateId}">${templateHtml}</template>`,
+        ),
       ),
   );
 }

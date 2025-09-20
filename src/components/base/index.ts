@@ -1,3 +1,5 @@
+import { createTrustedHtml } from "@/trusted-policy";
+
 export class BaseElement extends HTMLElement {
   template: string | ((instance: typeof this) => Promise<string>) = "";
   static get observedAttributes() {
@@ -35,9 +37,11 @@ export class BaseElement extends HTMLElement {
       typeof this.template === "string"
         ? this.template
         : await this.template(this);
-    this.innerHTML = "";
+    this.innerHTML = createTrustedHtml("");
     this.appendChild(
-      document.createRange().createContextualFragment(contentHtml),
+      document
+        .createRange()
+        .createContextualFragment(createTrustedHtml(contentHtml)),
     );
     this.onRendered();
   }

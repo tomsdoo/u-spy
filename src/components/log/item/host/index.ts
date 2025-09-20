@@ -1,4 +1,5 @@
 import { EventType } from "@/constants/event-type";
+import { createTrustedHtml } from "@/trusted-policy";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-item-host";
@@ -13,7 +14,9 @@ export class LogItemHostElement extends HTMLElement {
     shadowRoot.appendChild(
       document
         .createRange()
-        .createContextualFragment(template({ id, url, host })),
+        .createContextualFragment(
+          createTrustedHtml(template({ id, url, host })),
+        ),
     );
     const el = shadowRoot.querySelector(`#${id}`);
     if (el == null) {

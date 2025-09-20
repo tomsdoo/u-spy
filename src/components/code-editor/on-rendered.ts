@@ -3,6 +3,7 @@ import { SelectFormElement } from "@/components/select-form";
 import { UtilsElement } from "@/components/utils";
 import { EventType } from "@/constants/event-type";
 import type { createStorageProxy } from "@/storage";
+import { createTrustedHtml } from "@/trusted-policy";
 import { sleep } from "@/utils";
 
 export function resetHandlers(instance: {
@@ -175,11 +176,13 @@ export function resetHandlers(instance: {
     const eventName = "usc-exec";
     const functionName = `usc${crypto.randomUUID().replace(/-/g, "")}`;
     const codeText = instance.codeText;
-    scriptTag.innerHTML = [
-      `async function ${functionName}() { window.removeEventListener("${eventName}", ${functionName}); ${codeText}}`,
-      `window.addEventListener("${eventName}", ${functionName});`,
-      `document.currentScript.remove();`,
-    ].join("\n");
+    scriptTag.innerHTML = createTrustedHtml(
+      [
+        `async function ${functionName}() { window.removeEventListener("${eventName}", ${functionName}); ${codeText}}`,
+        `window.addEventListener("${eventName}", ${functionName});`,
+        `document.currentScript.remove();`,
+      ].join("\n"),
+    );
     document.body.appendChild(scriptTag);
     window.dispatchEvent(new CustomEvent(eventName));
     textarea.focus();

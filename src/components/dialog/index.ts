@@ -7,6 +7,7 @@ import { StyleEditorElement } from "@/components/style-editor";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
+import { createTrustedHtml } from "@/trusted-policy";
 import { DialogType, template } from "./template";
 
 const TAG_NAME = "u-spy-dialog";
@@ -63,13 +64,15 @@ export class DialogElement extends HTMLElement {
     const that = this;
     const shadowRoot = this.attachShadow({ mode: "open" });
     this.shadowRoot = shadowRoot;
-    this.shadowRoot.innerHTML = "";
+    this.shadowRoot.innerHTML = createTrustedHtml("");
     const _title =
       this.shadowRoot.host.attributes.getNamedItem("title")?.value ?? "u-spy";
     this.shadowRoot.appendChild(
       document
         .createRange()
-        .createContextualFragment(template(this.id, this.dialogType)),
+        .createContextualFragment(
+          createTrustedHtml(template(this.id, this.dialogType)),
+        ),
     );
     this.shadowRoot
       .querySelector(`#${this.id}`)

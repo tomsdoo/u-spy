@@ -1,4 +1,5 @@
 import { EntryPointElement } from "@/components/entry-point";
+import { createTrustedHtml } from "@/trusted-policy";
 
 const TAG_NAME = "u-spy-utils";
 
@@ -118,7 +119,11 @@ export function replaceContent(
       if (changed === false) {
         continue;
       }
-      child.before(document.createRange().createContextualFragment(nextText));
+      child.before(
+        document
+          .createRange()
+          .createContextualFragment(createTrustedHtml(nextText)),
+      );
       child.remove();
     }
   });

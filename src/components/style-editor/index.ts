@@ -1,6 +1,7 @@
 import { BaseElement } from "@/components/base";
 import { EventType } from "@/constants/event-type";
 import { createStorageProxy } from "@/storage";
+import { createTrustedHtml } from "@/trusted-policy";
 import { resetHandlers } from "./on-rendered";
 import { template } from "./template";
 
@@ -66,7 +67,7 @@ export class StyleEditorElement extends BaseElement {
     resetHandlers(this);
   }
   onStyleTextChange() {
-    this.styleTag.innerHTML = this.styleText;
+    this.styleTag.innerHTML = createTrustedHtml(this.styleText);
   }
 }
 
