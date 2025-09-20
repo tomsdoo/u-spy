@@ -1,10 +1,12 @@
+import { CodeEditorElement } from "@/components/code-editor";
 import { CustomFormElement } from "@/components/custom-form";
 import { KeyHelpElement } from "@/components/key-help";
 import { LogFormElement } from "@/components/log/form";
 import { StoreElement } from "@/components/store";
 import { StyleEditorElement } from "@/components/style-editor";
-import { CodeEditorElement } from "@/components/code-editor";
 import { EventType } from "@/constants/event-type";
+import { SystemEvent } from "@/constants/system-event";
+import { systemBus } from "@/event-bus";
 import { DialogType, template } from "./template";
 
 const TAG_NAME = "u-spy-dialog";
@@ -24,6 +26,19 @@ function ref<T = unknown>(initialValue: T) {
     },
   );
 }
+
+type KeyDefinition = {
+  key: string;
+  description: string;
+};
+const keyDefinitionMap = new Map<string, string>();
+systemBus.on(SystemEvent.SET_KEY_DEFINITION, (keyDefinition) => {
+  const { key, description } = keyDefinition as KeyDefinition;
+  keyDefinitionMap.set(key, description);
+});
+systemBus.on(SystemEvent.DELETE_KEY_DEFINITION, (key) => {
+  keyDefinitionMap.delete(key as string);
+});
 
 export class DialogElement extends HTMLElement {
   id: string;
@@ -92,7 +107,16 @@ export class DialogElement extends HTMLElement {
       keyHelpElement.setAttribute("visible", "true");
       keyHelpElement.setAttribute(
         ":key-definitions",
-        JSON.stringify(that.store.keyDefinitions),
+        JSON.stringify(
+          Array.from(keyDefinitionMap.entries())
+            .map(([key, description]) => ({ key, description }))
+            .toSorted((a, b) => {
+              if (a.key === b.key) {
+                return 0;
+              }
+              return a.key > b.key ? 1 : -1;
+            }),
+        ),
       );
       keyHelpElement.focus();
       isDialogOpen.value = true;
@@ -133,7 +157,7 @@ export class DialogElement extends HTMLElement {
     }
     window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
 
-    this.store.addKeyDefinition({
+    systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
       key: "?",
       description: "show help",
     });
@@ -179,7 +203,7 @@ export class DialogElement extends HTMLElement {
     }
   }
   disconnectedCallback() {
-    this.store.removeKeyDefinition("?");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "?");
   }
 }
 
