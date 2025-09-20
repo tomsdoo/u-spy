@@ -23,6 +23,7 @@ export default defineConfig({
           { text: 'Hot Strokes', link: '/hot-strokes' },
           { text: 'Event Bus', link: '/event-bus' },
           { text: 'Container', link: '/container' },
+          { text: 'Storage', link: '/storage' },
           { text: 'Store', link: '/store' },
           { text: 'Ephemeral Messages', link: '/ephemeral-messages' },
           { text: 'Custom Elements', link: '/custom-elements' },
