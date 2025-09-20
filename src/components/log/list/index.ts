@@ -29,15 +29,15 @@ export class LogListElement extends BaseElement {
     return ControlElement.ensure(this.controlId).logItems;
   }
   connectedCallback() {
+    const instance = this;
     this.keyEventHandler = (e: KeyboardEvent) => {
       if (e.key !== "s") {
         return;
       }
-      const keyBox = this.querySelector<HTMLInputElement>(
-        `#${this.id} > form > input`,
+      const keyBox = instance.querySelector<HTMLInputElement>(
+        `#${instance.id} > form > input`,
       );
       if (keyBox == null) {
-        alert("keyBox is null");
         return;
       }
       keyBox.focus();
