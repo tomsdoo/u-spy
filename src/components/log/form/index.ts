@@ -66,7 +66,7 @@ export class LogFormElement extends BaseElement {
         }
         const controlId = li.dataset.controlId;
         const ele = LogListElement.create();
-        ele.setAttribute("control-id", controlId);
+        ele.setAttribute(":control-id", controlId);
         const contentArea = this.querySelector(`#${this.contentId}`);
         if (contentArea != null) {
           contentArea.innerHTML = "";

@@ -1,107 +1,64 @@
+import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
-import { LogItemElement } from "@/components/log/item";
-import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
+import { resetHandlers } from "./on-rendered";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-log-list";
 
-export class LogListElement extends HTMLElement {
-  store: StoreElement = StoreElement.ensure();
-  shadowRoot: ShadowRoot | null = null;
-  keyEventHandler: ((e: KeyboardEvent) => void) | null = null;
+export class LogListElement extends BaseElement {
+  id: string;
+  controlId: string;
+  keyEventHandler: ((e: KeyboardEvent) => void) | null;
+  static get observedAttributes() {
+    return [":control-id"];
+  }
+  constructor() {
+    super();
+    this.template = (instance) => template(instance);
+    this.id = `usll-${crypto.randomUUID()}`;
+    this.controlId = "";
+    this.keyEventHandler = null;
+  }
+  get logItems() {
+    if (this.controlId === "") {
+      return [];
+    }
+    return ControlElement.ensure(this.controlId).logItems;
+  }
   connectedCallback() {
-    const id = `u-spy-${crypto.randomUUID().replace(/-/g, "")}`;
-    const formId = `usf-${crypto.randomUUID().replace(/-/g, "")}`;
-    const keyBoxId = `uskb-${crypto.randomUUID().replace(/-/g, "")}`;
-    const logListId = `usl-${crypto.randomUUID().replace(/-/g, "")}`;
-    const ids = {
-      formId,
-      keyBoxId,
-      logListId,
-    };
-    const Selectors = {
-      SEARCH_FORM: `#${formId}`,
-      SEARCH_KEY_BOX: `#${keyBoxId}`,
-      LOG_LIST: `#${logListId}`,
-    };
-    const shadowRoot = this.attachShadow({ mode: "open" });
-    this.shadowRoot = shadowRoot;
-    const controlId =
-      shadowRoot.host.attributes.getNamedItem("control-id")?.value ?? "";
-    const controlElement = ControlElement.ensure(controlId);
-    shadowRoot.appendChild(
-      document
-        .createRange()
-        .createContextualFragment(
-          template(id, controlId, controlElement.logItems, ids),
-        ),
-    );
-    shadowRoot
-      .querySelector(Selectors.SEARCH_FORM)
-      ?.addEventListener("submit", (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
-    shadowRoot
-      .querySelector(Selectors.SEARCH_KEY_BOX)
-      ?.addEventListener(EventType.KEYDOWN, (e: KeyboardEvent) => {
-        e.stopPropagation();
-        if (e.key === "Escape") {
-          if (e.target instanceof HTMLInputElement === false) {
-            return;
-          }
-          e.target.blur();
-        }
-      });
-    shadowRoot
-      .querySelector(Selectors.SEARCH_KEY_BOX)
-      ?.addEventListener("change", (e) => {
-        if (e.target == null) {
-          return;
-        }
-        if (e.target instanceof HTMLInputElement === false) {
-          return;
-        }
-
-        const keyword = e.target.value;
-        shadowRoot
-          .querySelectorAll<LogItemElement>(LogItemElement.TAG_NAME)
-          .forEach((logItemElement) => {
-            logItemElement.feedKeyword(keyword);
-          });
-      });
     this.keyEventHandler = (e: KeyboardEvent) => {
       if (e.key !== "s") {
         return;
       }
-      shadowRoot
-        .querySelector<HTMLInputElement>(Selectors.SEARCH_KEY_BOX)
-        ?.focus();
+      const keyBox = this.querySelector<HTMLInputElement>(
+        `#${this.id} > form > input`,
+      );
+      if (keyBox == null) {
+        alert("keyBox is null");
+        return;
+      }
+      keyBox.focus();
     };
-    window.addEventListener("keyup", this.keyEventHandler);
+    window.addEventListener(EventType.KEYUP, this.keyEventHandler);
     systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
       key: "s",
       description: "focus search box",
     });
-    setTimeout(() => {
-      const logListUl = shadowRoot.querySelector<HTMLUListElement>(
-        Selectors.LOG_LIST,
-      );
-      if (logListUl == null) {
-        return;
-      }
-      logListUl.scrollTo(0, controlElement.logItems.length * 120);
-    }, 1);
+    this.render();
+  }
+  onRendered() {
+    resetHandlers(this);
   }
   disconnectedCallback() {
     if (this.keyEventHandler == null) {
       return;
     }
     systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "s");
-    window.removeEventListener("keyup", this.keyEventHandler);
+    window.removeEventListener(EventType.KEYUP, this.keyEventHandler);
+    this.keyEventHandler = null;
   }
   static create() {
     return document.createElement(TAG_NAME);
