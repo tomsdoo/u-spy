@@ -21,6 +21,7 @@ const {
 |1|spy|shows spy log dialog|
 |2|style|shows ad hoc style editor|
 |3|code|shows ad hoc code editor|
+|4|life|shows life game|
 
 ### How to change the hot strokes
 

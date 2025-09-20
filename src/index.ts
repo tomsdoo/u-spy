@@ -4,6 +4,7 @@ import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { EntryPointElement } from "@/components/entry-point";
+import { LifeGameElement } from "@/components/life-game";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
 import { type Replacer, UtilsElement } from "@/components/utils";
@@ -119,6 +120,13 @@ function displayCodeDialog() {
   displayDialog("code");
 }
 
+function displayLifeGame() {
+  const lifeGameElement = LifeGameElement.create();
+  lifeGameElement.setAttribute(":board-width", "50");
+  lifeGameElement.setAttribute(":board-height", "30");
+  document.body.appendChild(lifeGameElement);
+}
+
 const unregisterHotStrokeMap = new Map<string, () => void>();
 
 for (const { stroke, display } of [
@@ -133,6 +141,10 @@ for (const { stroke, display } of [
   {
     stroke: "code",
     display: displayCodeDialog,
+  },
+  {
+    stroke: "life",
+    display: displayLifeGame,
   },
 ]) {
   const { unregisterHotStroke } = registerHotStroke(stroke, () => {
