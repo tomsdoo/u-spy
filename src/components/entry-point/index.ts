@@ -1,3 +1,4 @@
+import { createTrustedHtml } from "@/trusted-policy";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-entry-point";
@@ -7,7 +8,9 @@ export class EntryPointElement extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template),
+      document
+        .createRange()
+        .createContextualFragment(createTrustedHtml(template)),
     );
   }
   static create() {

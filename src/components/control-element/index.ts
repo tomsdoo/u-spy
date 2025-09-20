@@ -1,4 +1,5 @@
 import { EntryPointElement } from "@/components/entry-point";
+import { createTrustedHtml } from "@/trusted-policy";
 import { template } from "./template";
 
 const TAG_NAME = "u-spy-control-element";
@@ -124,7 +125,9 @@ export class ControlElement extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template),
+      document
+        .createRange()
+        .createContextualFragment(createTrustedHtml(template)),
     );
     const [anchor, hrefAttr] = [
       shadowRoot.querySelector("a"),

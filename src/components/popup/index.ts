@@ -1,3 +1,4 @@
+import { createTrustedHtml } from "@/trusted-policy";
 import { sleep } from "@/utils";
 import { template } from "./template";
 
@@ -19,7 +20,9 @@ export class PopupElement extends HTMLElement {
     const id = `usid-${crypto.randomUUID()}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
-      document.createRange().createContextualFragment(template(id)),
+      document
+        .createRange()
+        .createContextualFragment(createTrustedHtml(template(id))),
     );
     this.id = id;
     this.shadowRoot = shadowRoot;

@@ -1,3 +1,5 @@
+import { createTrustedHtml } from "@/trusted-policy";
+
 export function ensureCustomIterator(customIteratorTagName?: string) {
   const localCustomIteratorTagName = customIteratorTagName ?? "custom-iterator";
   if (customElements.get(localCustomIteratorTagName)) {
@@ -17,7 +19,9 @@ export function ensureCustomIterator(customIteratorTagName?: string) {
         super();
         this.shadowRoot = this.attachShadow({ mode: "closed" });
         this.shadowRoot.appendChild(
-          document.createRange().createContextualFragment(`<slot></slot>`),
+          document
+            .createRange()
+            .createContextualFragment(createTrustedHtml(`<slot></slot>`)),
         );
         this.isTemplateReady = false;
         this.contentTags = [];
