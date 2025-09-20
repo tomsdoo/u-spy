@@ -48,9 +48,12 @@ export async function template({
       }
     }
     ul {
+      display: grid;
+      gap: 8px;
       li {
         display: grid;
         grid-template-columns: 1fr repeat(2, max-content);
+        gap: 4px;
         align-items: center;
       }
     }
