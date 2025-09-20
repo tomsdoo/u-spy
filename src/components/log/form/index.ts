@@ -1,6 +1,6 @@
 import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
-import { LogListElement } from "@/components/log/list";
+import { LogListElement } from "@/components/log/list-next";
 import { StoreElement } from "@/components/store";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
@@ -66,7 +66,7 @@ export class LogFormElement extends BaseElement {
         }
         const controlId = li.dataset.controlId;
         const ele = LogListElement.create();
-        ele.setAttribute("control-id", controlId);
+        ele.setAttribute(":control-id", controlId);
         const contentArea = this.querySelector(`#${this.contentId}`);
         if (contentArea != null) {
           contentArea.innerHTML = "";
