@@ -51,6 +51,19 @@ export function getRegisteredHotStroke(wantedText: string) {
 export function registerHotStroke(wantedText: string, handler: () => void) {
   const keyWaiter = new KeyWaiter(wantedText.toLowerCase());
   function keyHandler(e: KeyboardEvent) {
+    if (
+      e.target != null &&
+      /(input|textarea)/i.test((e.target as HTMLElement).tagName)
+    ) {
+      return;
+    }
+    if (
+      e.target != null &&
+      (e.target as HTMLElement)?.getAttribute("contenteditable") === "true"
+    ) {
+      return;
+    }
+
     keyWaiter.feed(e.key);
     if (keyWaiter.isSatisfied) {
       keyWaiter.clear();
