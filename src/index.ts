@@ -56,31 +56,6 @@ interface Spy {
   };
 }
 
-// deprecated methods
-// biome-ignore lint/correctness/noUnusedVariables: divided
-interface Spy {
-  registerHotStroke: typeof registerHotStroke;
-  getRegisteredHotStrokes: typeof getRegisteredHotStrokes;
-  getRegisteredHotStroke: typeof getRegisteredHotStroke;
-  changeHotStrokeSpy(
-    nextStroke: string,
-  ): ReturnType<typeof registerHotStroke> | null;
-  changeHotStrokeStyle(
-    nextStroke: string,
-  ): ReturnType<typeof registerHotStroke> | null;
-  unregisterHotStrokes(): void;
-  unregisterHotStroke(stroke: string): void;
-
-  displaySpyDialog(): void;
-  displayStyleDialog(): void;
-  displayDialog(callback: (dialogElement: HTMLElement) => void): void;
-
-  ensureStore: typeof ensureStore;
-
-  ensureCustomElement: typeof ensureCustomElement;
-  ensureCustomIterator: typeof ensureCustomIterator;
-}
-
 interface Spy {
   intercept(
     id: string,
@@ -127,8 +102,6 @@ function displayLifeGame() {
   document.body.appendChild(lifeGameElement);
 }
 
-const unregisterHotStrokeMap = new Map<string, () => void>();
-
 for (const { stroke, display } of [
   {
     stroke: "spy",
@@ -147,104 +120,10 @@ for (const { stroke, display } of [
     display: displayLifeGame,
   },
 ]) {
-  const { unregisterHotStroke } = registerHotStroke(stroke, () => {
+  registerHotStroke(stroke, () => {
     display();
   });
-  unregisterHotStrokeMap.set(stroke, unregisterHotStroke);
 }
-
-const deprecatedSpy = {
-  registerHotStroke(stroke: string, callback: () => void) {
-    console.warn(
-      "_spy.registerHotStroke is deprecated. Use _spy.stroke.register instead.",
-    );
-    return registerHotStroke(stroke, callback);
-  },
-  getRegisteredHotStrokes() {
-    console.warn(
-      "_spy.getRegisteredHotStrokes is deprecated. Use _spy.stroke.keys instead.",
-    );
-    return getRegisteredHotStrokes();
-  },
-  getRegisteredHotStroke(stroke: string) {
-    console.warn(
-      "_spy.getRegisteredHotStroke is deprecated. Use _spy.stroke.get instead.",
-    );
-    return getRegisteredHotStroke(stroke);
-  },
-  changeHotStrokeSpy(nextStroke: string) {
-    console.warn(
-      "_spy.changeHotStrokeSpy is deprecated. Use _spy.stroke.replace instead.",
-    );
-    return _spy.stroke.replace("spy", nextStroke);
-  },
-  changeHotStrokeStyle(nextStroke: string) {
-    console.warn(
-      "_spy.changeHotStrokeStyle is deprecated. Use _spy.stroke.replace instead.",
-    );
-    return _spy.stroke.replace("style", nextStroke);
-  },
-  unregisterHotStrokes() {
-    console.warn(
-      "_spy.unregisterHotStrokes is deprecated. Use _spy.stroke.unregisterAll instead.",
-    );
-    for (const unregisterAHotStroke of unregisterHotStrokeMap.values()) {
-      unregisterAHotStroke();
-    }
-  },
-  unregisterHotStroke(stroke: string) {
-    console.warn(
-      "_spy.unregisterHotStroke is deprecated. Use _spy.stroke.unregister instead.",
-    );
-    getRegisteredHotStroke(stroke)?.unregisterHotStroke();
-  },
-
-  displaySpyDialog() {
-    console.warn(
-      "_spy.displaySpyDialog is deprecated. Use _spy.dialog.displaySpy instead.",
-    );
-    displaySpyDialog();
-  },
-  displayStyleDialog() {
-    console.warn(
-      "_spy.displayStyleDialog is deprecated. Use _spy.dialog.displayStyle instead.",
-    );
-    displayStyleDialog();
-  },
-  displayDialog(callback: (dialogElement: HTMLElement) => void) {
-    console.warn(
-      "_spy.displayDialog is deprecated. Use _spy.dialog.display instead.",
-    );
-    displayDialog(callback);
-  },
-
-  ensureStore(key: string) {
-    console.warn(
-      "_spy.ensureStore is deprecated. Use _spy.store.ensure instead.",
-    );
-    return ensureStore(key);
-  },
-  ensureCustomElement(
-    tagName: string,
-    config: {
-      templateId?: string;
-      templateHtml?: string;
-      // biome-ignore lint/suspicious/noExplicitAny: accept any
-      eventHandlers?: Record<string, (e: any) => void>;
-    },
-  ) {
-    console.warn(
-      "_spy.ensureCustomElement is deprecated. Use _spy.customElement.ensure instead.",
-    );
-    ensureCustomElement(tagName, config);
-  },
-  ensureCustomIterator(customIteratorTagName?: string) {
-    console.warn(
-      "_spy.ensureCustomIterator is deprecated. Use _spy.customElement.ensureIterator instead.",
-    );
-    ensureCustomIterator(customIteratorTagName);
-  },
-};
 
 globalThis._spy = {
   intercept(id: string, options?: InterceptionOptions) {
@@ -327,7 +206,6 @@ globalThis._spy = {
       return registerHotStroke(afterKey, handler);
     },
   },
-  ...deprecatedSpy,
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
     UtilsElement.ensure().replaceContent(selector ?? "*", replacers);
