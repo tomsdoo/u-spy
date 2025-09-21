@@ -120,22 +120,6 @@ const {
 });
 ```
 
-## change hot strokes that've been set as default
-
-``` js
-// spy -> myspy
-_spy.stroke.replace("spy", "myspy");
-
-// style -> mystyle
-_spy.stroke.replace("style", "mystyle");
-```
-
-## unregister all hot strokes
-
-``` js
-_spy.stroke.unregisterAll();
-```
-
 ## Event Bus
 
 ``` js
@@ -161,29 +145,6 @@ _spy.eventBus.emit(SOME_EVENT, {
 _spy.container.set("some", "thing");
 
 _spy.c.some // thing
-```
-
-## store
-
-``` js
-// in a block
-{
-  const store = _spy.store.ensure("my-store");
-  store.some = "thing";
-
-  function logChange(prop, value) {
-    console.log(`${prop}: ${value}`);
-    store.offChange(logChange);
-  }
-  store.onChange(logChange);
-}
-
-// in another block
-{
-  _spy.store.ensure("my-store").another = "test"; // "another: test" will be output on console
-
-  _spy.store.ensure("my-store").another = "test2"; // no output on console because the callback had been off
-}
 ```
 
 ## custom elements
@@ -216,42 +177,4 @@ div {
 ``` html
 <my-element name="alice" message="this is a test"></my-element>
 <my-element name="bob" class="gray"></my-element>
-```
-
-## iteration of custom elements
-
-``` js
-_spy.customElement.ensure("person-info", {
-  templateHtml: `
-  <div>
-    <span :value="name"></span>
-    <span :value="message"></span>
-  </div>
-  `,
-});
-_spy.customElement.ensureIterator();
-```
-``` html
-<custom-iterator id="persons" items="[]">
-  <person-info></person-info>
-  <span>friend: </span><person-info :item="item.friends[0]"></person-info>
-</custom-iterator>
-<script>
-  document.querySelector("#persons").items = [
-    {
-      name: "alice",
-      message: "hi",
-      friends: [
-        { name: "charlie", message: "a friend"},
-      ]
-    },
-    {
-      name: "bob",
-      message: "hello",
-      friends: [
-        { name: "david", message: "hey" }
-      ]
-    },
-  ];
-</script>
 ```
