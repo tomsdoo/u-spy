@@ -10,85 +10,46 @@ export function resetHandlers(instance: {
   styleText: string;
   storageData: Record<string, string>;
   _storage: ReturnType<typeof createStorageProxy>;
+  copyButton: HTMLButtonElement | null;
+  formatButton: HTMLButtonElement | null;
+  downloadButton: HTMLButtonElement | null;
+  loadButton: HTMLButtonElement | null;
+  saveButton: HTMLButtonElement | null;
+  saveForm: HTMLFormElement | null;
+  selectForm: HTMLFormElement | null;
+  textarea: HTMLTextAreaElement | null;
 }) {
   const {
-    error,
-    result: {
-      textarea,
-      formatButton,
-      copyButton,
-      downloadButton,
-      saveButton,
-      saveForm,
-      loadButton,
-      selectForm,
-    },
-  } = [
-    {
-      name: "saveButton",
-      selector: `#${instance.id} .save-button`,
-    },
-    {
-      name: "saveForm",
-      selector: `#${instance.id} .save-form`,
-    },
-    {
-      name: "loadButton",
-      selector: `#${instance.id} .load-button`,
-    },
-    {
-      name: "selectForm",
-      selector: `#${instance.id} .select-form`,
-    },
-    {
-      name: "textarea",
-      selector: `#${instance.id} > .editor-form > textarea`,
-    },
-    {
-      name: "downloadButton",
-      selector: `#${instance.id} .download-button`,
-    },
-    {
-      name: "copyButton",
-      selector: `#${instance.id} .copy-button`,
-    },
-    {
-      name: "formatButton",
-      selector: `#${instance.id} .format-button`,
-    },
-  ].reduce(
-    (acc, { name, selector }) => {
-      const element = (instance as unknown as HTMLElement).querySelector(
-        selector,
-      );
-      return {
-        error: acc.error || element == null,
-        result: {
-          ...acc.result,
-          [name]: element,
-        },
-      };
-    },
-    { error: false, result: {} as Record<string, Element | null> },
-  ) as unknown as {
-    error: boolean;
-    result: {
-      saveButton: HTMLButtonElement;
-      saveForm: HTMLFormElement;
-      loadButton: HTMLButtonElement;
-      selectForm: HTMLFormElement;
-      textarea: HTMLTextAreaElement;
-      downloadButton: HTMLButtonElement;
-      copyButton: HTMLButtonElement;
-      formatButton: HTMLButtonElement;
-    };
-  };
-  if (error) {
+    copyButton,
+    formatButton,
+    downloadButton,
+    loadButton,
+    saveButton,
+    saveForm,
+    selectForm,
+    textarea,
+  } = instance;
+  function isNull(el: unknown): el is null {
+    return el == null;
+  }
+  if (
+    isNull(copyButton) ||
+    isNull(formatButton) ||
+    isNull(downloadButton) ||
+    isNull(loadButton) ||
+    isNull(saveButton) ||
+    isNull(saveForm) ||
+    isNull(selectForm) ||
+    isNull(textarea)
+  ) {
     return;
   }
 
   textarea.value = instance.styleText;
-  textarea.addEventListener("keydown", (e) => {
+  textarea.addEventListener(EventType.KEYUP, (e) => {
+    e.stopPropagation();
+  });
+  textarea.addEventListener(EventType.KEYDOWN, (e) => {
     e.stopPropagation();
     setTimeout(() => {
       instance.styleText = textarea.value;
@@ -130,14 +91,17 @@ export function resetHandlers(instance: {
         InputFormElement.FINISH_INPUT_EVENT,
         saveHandler,
       );
-      saveForm.removeEventListener(InputFormElement.CANCEL_EVENT, clearAndHide);
-      saveForm.classList.add("hidden");
-      textarea.focus();
+      saveForm?.removeEventListener(
+        InputFormElement.CANCEL_EVENT,
+        clearAndHide,
+      );
+      saveForm?.classList.add("hidden");
+      textarea?.focus();
     }
     function saveHandler(e: { detail: { value: string } }) {
       const nextData = {
         ...instance.storageData,
-        [e.detail.value]: textarea.value,
+        [e.detail.value]: textarea?.value ?? "",
       };
       instance._storage.data = JSON.stringify(nextData);
       clearAndHide();
@@ -151,7 +115,7 @@ export function resetHandlers(instance: {
   loadButton.addEventListener(EventType.CLICK, async () => {
     const options = Array.from(Object.keys(instance.storageData));
     function clearAndHide() {
-      selectForm.classList.add("hidden");
+      selectForm?.classList.add("hidden");
       // @ts-expect-error handler type will be resolved
       selectForm.removeEventListener(
         SelectFormElement.CHOOSE_EVENT,
@@ -162,14 +126,15 @@ export function resetHandlers(instance: {
         SelectFormElement.REMOVE_EVENT,
         removeHandler,
       );
-      selectForm.removeEventListener(
+      selectForm?.removeEventListener(
         SelectFormElement.CANCEL_EVENT,
         clearAndHide,
       );
-      textarea.focus();
+      textarea?.focus();
     }
     function chooseHandler(e: { detail: { value: string } }) {
-      textarea.value = instance.storageData[e.detail.value];
+      // biome-ignore lint/style/noNonNullAssertion: exists
+      textarea!.value = instance.storageData[e.detail.value];
       instance.styleText = instance.storageData[e.detail.value];
       clearAndHide();
     }

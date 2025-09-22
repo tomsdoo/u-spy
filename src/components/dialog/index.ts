@@ -4,6 +4,7 @@ import { KeyHelpElement } from "@/components/key-help";
 import { LogFormElement } from "@/components/log/form";
 import { StoreElement } from "@/components/store";
 import { StyleEditorElement } from "@/components/style-editor";
+import { SpecialChar } from "@/constants/char";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
@@ -137,7 +138,7 @@ export class DialogElement extends HTMLElement {
     }
 
     function helpHandler(e: KeyboardEvent) {
-      if (e.key !== "?") {
+      if (e.key !== SpecialChar.QUESTION) {
         return;
       }
       showDialog();
@@ -161,7 +162,7 @@ export class DialogElement extends HTMLElement {
     window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
 
     systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
-      key: "?",
+      key: SpecialChar.QUESTION,
       description: "show help",
     });
   }
@@ -206,7 +207,7 @@ export class DialogElement extends HTMLElement {
     }
   }
   disconnectedCallback() {
-    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "?");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, SpecialChar.QUESTION);
   }
 }
 
