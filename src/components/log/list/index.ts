@@ -1,5 +1,6 @@
 import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
+import { LowerChar } from "@/constants/char";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
@@ -29,13 +30,12 @@ export class LogListElement extends BaseElement {
     return ControlElement.ensure(this.controlId).logItems;
   }
   connectedCallback() {
-    const instance = this;
     this.keyEventHandler = (e: KeyboardEvent) => {
-      if (e.key !== "s") {
+      if (e.key !== LowerChar.S) {
         return;
       }
-      const keyBox = instance.querySelector<HTMLInputElement>(
-        `#${instance.id} > form > input`,
+      const keyBox = this.querySelector<HTMLInputElement>(
+        `#${this.id} > form > input`,
       );
       if (keyBox == null) {
         return;
@@ -44,7 +44,7 @@ export class LogListElement extends BaseElement {
     };
     window.addEventListener(EventType.KEYUP, this.keyEventHandler);
     systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
-      key: "s",
+      key: LowerChar.S,
       description: "focus search box",
     });
     this.render();
@@ -56,7 +56,7 @@ export class LogListElement extends BaseElement {
     if (this.keyEventHandler == null) {
       return;
     }
-    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "s");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, LowerChar.S);
     window.removeEventListener(EventType.KEYUP, this.keyEventHandler);
     this.keyEventHandler = null;
   }

@@ -46,7 +46,10 @@ export function resetHandlers(instance: {
   }
 
   textarea.value = instance.styleText;
-  textarea.addEventListener("keydown", (e) => {
+  textarea.addEventListener(EventType.KEYUP, (e) => {
+    e.stopPropagation();
+  });
+  textarea.addEventListener(EventType.KEYDOWN, (e) => {
     e.stopPropagation();
     setTimeout(() => {
       instance.styleText = textarea.value;

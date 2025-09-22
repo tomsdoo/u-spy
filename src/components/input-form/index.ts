@@ -49,7 +49,15 @@ export class InputFormElement extends BaseElement {
     if (inputBox == null || okButton == null || cancelButton == null) {
       return;
     }
+    for (const el of [inputBox, okButton, cancelButton]) {
+      el.addEventListener(EventType.KEYUP, (e) => {
+        e.stopPropagation();
+      });
+    }
     okButton.addEventListener(EventType.CLICK, () => {
+      if (inputBox.value === "") {
+        return;
+      }
       this.dispatchEvent(
         new CustomEvent(FINISH_INPUT_EVENT, {
           detail: { value: inputBox.value },

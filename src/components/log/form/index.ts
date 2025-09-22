@@ -2,6 +2,7 @@ import { BaseElement } from "@/components/base";
 import { ControlElement } from "@/components/control-element";
 import { LogListElement } from "@/components/log/list";
 import { StoreElement } from "@/components/store";
+import { LowerChar } from "@/constants/char";
 import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
@@ -33,7 +34,7 @@ export class LogFormElement extends BaseElement {
       e.stopPropagation();
     });
     this.keyEventHandler = (e: KeyboardEvent) => {
-      if (e.key !== "r") {
+      if (e.key !== LowerChar.R) {
         return;
       }
       this.querySelector<HTMLButtonElement>(
@@ -41,7 +42,7 @@ export class LogFormElement extends BaseElement {
       )?.click();
     };
     systemBus.emit(SystemEvent.SET_KEY_DEFINITION, {
-      key: "r",
+      key: LowerChar.R,
       description: "refresh logs",
     });
     window.addEventListener(EventType.KEYDOWN, this.keyEventHandler);
@@ -95,7 +96,7 @@ export class LogFormElement extends BaseElement {
     if (this.keyEventHandler == null) {
       return;
     }
-    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, "r");
+    systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, LowerChar.R);
     window.removeEventListener(EventType.KEYDOWN, this.keyEventHandler);
   }
 }

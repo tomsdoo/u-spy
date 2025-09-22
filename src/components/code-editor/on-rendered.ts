@@ -11,78 +11,43 @@ export function resetHandlers(instance: {
   codeText: string;
   storageData: Record<string, string>;
   _storage: ReturnType<typeof createStorageProxy>;
+  executeButton: HTMLButtonElement | null;
+  formatButton: HTMLButtonElement | null;
+  loadButton: HTMLButtonElement | null;
+  saveButton: HTMLButtonElement | null;
+  saveForm: HTMLFormElement | null;
+  selectForm: HTMLFormElement | null;
+  textarea: HTMLTextAreaElement | null;
 }) {
   const {
-    error,
-    result: {
-      textarea,
-      formatButton,
-      saveButton,
-      saveForm,
-      loadButton,
-      selectForm,
-      executeButton,
-    },
-  } = [
-    {
-      name: "textarea",
-      selector: `#${instance.id} > .editor-form > textarea`,
-    },
-    {
-      name: "formatButton",
-      selector: `#${instance.id} .format-button`,
-    },
-    {
-      name: "saveButton",
-      selector: `#${instance.id} .save-button`,
-    },
-    {
-      name: "saveForm",
-      selector: `#${instance.id} .save-form`,
-    },
-    {
-      name: "loadButton",
-      selector: `#${instance.id} .load-button`,
-    },
-    {
-      name: "selectForm",
-      selector: `#${instance.id} .select-form`,
-    },
-    {
-      name: "executeButton",
-      selector: `#${instance.id} .execute-button`,
-    },
-  ].reduce(
-    (acc, { name, selector }) => {
-      const element = (instance as unknown as HTMLElement).querySelector(
-        selector,
-      );
-      return {
-        error: acc.error || element == null,
-        result: {
-          ...acc.result,
-          [name]: element,
-        },
-      };
-    },
-    { error: false, result: {} as Record<string, Element | null> },
-  ) as unknown as {
-    error: boolean;
-    result: {
-      textarea: HTMLTextAreaElement;
-      formatButton: HTMLButtonElement;
-      saveButton: HTMLButtonElement;
-      saveForm: HTMLFormElement;
-      loadButton: HTMLButtonElement;
-      selectForm: HTMLFormElement;
-      executeButton: HTMLButtonElement;
-    };
-  };
-  if (error) {
+    executeButton,
+    formatButton,
+    loadButton,
+    saveButton,
+    saveForm,
+    selectForm,
+    textarea,
+  } = instance;
+  function isNull(el: unknown): el is null {
+    return el == null;
+  }
+  if (
+    isNull(executeButton) ||
+    isNull(formatButton) ||
+    isNull(loadButton) ||
+    isNull(saveButton) ||
+    isNull(saveForm) ||
+    isNull(selectForm) ||
+    isNull(textarea)
+  ) {
     return;
   }
+
   textarea.value = instance.codeText;
-  textarea.addEventListener("keydown", (e) => {
+  textarea.addEventListener(EventType.KEYUP, (e) => {
+    e.stopPropagation();
+  });
+  textarea.addEventListener(EventType.KEYDOWN, (e) => {
     e.stopPropagation();
     setTimeout(() => {
       instance.codeText = textarea.value;
@@ -109,14 +74,18 @@ export function resetHandlers(instance: {
         InputFormElement.FINISH_INPUT_EVENT,
         saveHandler,
       );
-      saveForm.removeEventListener(InputFormElement.CANCEL_EVENT, clearAndHide);
-      saveForm.classList.add("hidden");
-      textarea.focus();
+      saveForm?.removeEventListener(
+        InputFormElement.CANCEL_EVENT,
+        clearAndHide,
+      );
+      saveForm?.classList.add("hidden");
+      textarea?.focus();
     }
     function saveHandler(e: { detail: { value: string } }) {
       const nextData = {
         ...instance.storageData,
-        [e.detail.value]: textarea.value,
+        // biome-ignore lint/style/noNonNullAssertion: textarea exists
+        [e.detail.value]: textarea!.value,
       };
       instance._storage.data = JSON.stringify(nextData);
       clearAndHide();
@@ -130,7 +99,7 @@ export function resetHandlers(instance: {
   loadButton.addEventListener(EventType.CLICK, async () => {
     const options = Array.from(Object.keys(instance.storageData));
     function clearAndHide() {
-      selectForm.classList.add("hidden");
+      selectForm?.classList.add("hidden");
       // @ts-expect-error handler type will be resolved
       selectForm.removeEventListener(
         SelectFormElement.CHOOSE_EVENT,
@@ -141,14 +110,15 @@ export function resetHandlers(instance: {
         SelectFormElement.REMOVE_EVENT,
         removeHandler,
       );
-      selectForm.removeEventListener(
+      selectForm?.removeEventListener(
         SelectFormElement.CANCEL_EVENT,
         clearAndHide,
       );
-      textarea.focus();
+      textarea?.focus();
     }
     function chooseHandler(e: { detail: { value: string } }) {
-      textarea.value = instance.storageData[e.detail.value];
+      // biome-ignore lint/style/noNonNullAssertion: textarea exists
+      textarea!.value = instance.storageData[e.detail.value];
       instance.codeText = instance.storageData[e.detail.value];
       clearAndHide();
     }

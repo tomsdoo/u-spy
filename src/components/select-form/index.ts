@@ -52,6 +52,9 @@ export class SelectFormElement extends BaseElement {
         `#${this.id} ul li button.choose-button`,
       ),
     )) {
+      chooseButton.addEventListener(EventType.KEYUP, (e) => {
+        e.stopPropagation();
+      });
       chooseButton.addEventListener(EventType.CLICK, (e) => {
         const value = (e.target as HTMLButtonElement).dataset.value;
         this.dispatchEvent(
@@ -64,6 +67,9 @@ export class SelectFormElement extends BaseElement {
         `#${this.id} ul li button.remove-button`,
       ),
     )) {
+      removeButton.addEventListener(EventType.KEYUP, (e) => {
+        e.stopPropagation();
+      });
       removeButton.addEventListener(EventType.CLICK, (e) => {
         const value = (e.target as HTMLButtonElement).dataset.value;
         this.dispatchEvent(
@@ -77,6 +83,9 @@ export class SelectFormElement extends BaseElement {
     if (cancelButton == null) {
       return;
     }
+    cancelButton.addEventListener(EventType.KEYUP, (e) => {
+      e.stopPropagation();
+    });
     cancelButton.addEventListener(EventType.CLICK, () => {
       this.dispatchEvent(new CustomEvent(CANCEL_EVENT));
     });

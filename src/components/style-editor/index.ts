@@ -127,6 +127,7 @@ export class StyleEditorElement extends BaseElement {
       return;
     }
     window.removeEventListener(EventType.KEYUP, this.keyEventHandler);
+    this.keyEventHandler = null;
   }
 }
 
