@@ -29,6 +29,7 @@ export default defineConfig({
           { text: 'Custom Elements', link: '/custom-elements' },
           { text: 'Custom Iterator', link: '/custom-iterator' },
           { text: 'Replacings', link: '/replacings' },
+          { text: 'Inline frames', link: '/iframe' },
         ]
       },
       {

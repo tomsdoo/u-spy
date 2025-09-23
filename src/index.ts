@@ -4,6 +4,7 @@ import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { EntryPointElement } from "@/components/entry-point";
+import { IframeModalElement } from "@/components/iframe-modal";
 import { LifeGameElement } from "@/components/life-game";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
@@ -39,6 +40,9 @@ interface Spy {
     displayCode(): void;
   };
   eventBus: typeof eventBus;
+  iframe: {
+    display: (url: string) => void;
+  };
   store: {
     keys: string[];
     ensure(key: string): ReturnType<typeof ensureStore>;
@@ -102,6 +106,12 @@ function displayLifeGame() {
   document.body.appendChild(lifeGameElement);
 }
 
+function displayReference() {
+  const iframeModalElement = IframeModalElement.create();
+  iframeModalElement.setAttribute(":src", "https://tomsdoo.github.io/u-spy/");
+  document.body.appendChild(iframeModalElement);
+}
+
 for (const { stroke, display } of [
   {
     stroke: "spy",
@@ -118,6 +128,10 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
+  },
+  {
+    stroke: "help",
+    display: displayReference,
   },
 ]) {
   registerHotStroke(stroke, () => {
@@ -168,6 +182,13 @@ globalThis._spy = {
     },
     displayCode() {
       displayCodeDialog();
+    },
+  },
+  iframe: {
+    display(url: string) {
+      const iframeModalElement = IframeModalElement.create();
+      iframeModalElement.setAttribute(":src", url);
+      document.body.appendChild(iframeModalElement);
     },
   },
   eventBus,
