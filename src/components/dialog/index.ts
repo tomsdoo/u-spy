@@ -9,6 +9,7 @@ import { EventType } from "@/constants/event-type";
 import { SystemEvent } from "@/constants/system-event";
 import { systemBus } from "@/event-bus";
 import { createTrustedHtml } from "@/trusted-policy";
+import { sleep } from "@/utils";
 import { DialogType, template } from "./template";
 
 const TAG_NAME = "u-spy-dialog";
@@ -60,6 +61,11 @@ export class DialogElement extends HTMLElement {
     return {
       DIALOG: `${KeyHelpElement.TAG_NAME}`,
     };
+  }
+  get customFormElement() {
+    return this.shadowRoot?.querySelector<CustomFormElement>(
+      `${CustomFormElement.TAG_NAME}`,
+    );
   }
   connectedCallback() {
     const that = this;
@@ -178,6 +184,7 @@ export class DialogElement extends HTMLElement {
       LogFormElement.TAG_NAME,
       StyleEditorElement.TAG_NAME,
       CodeEditorElement.TAG_NAME,
+      CustomFormElement.TAG_NAME,
     ]) {
       spyDiv.querySelectorAll(`${tagName}`).forEach((el) => {
         el.remove();
@@ -211,10 +218,17 @@ export class DialogElement extends HTMLElement {
   }
 }
 
-export function displayDialog(dialogTypeName: string): void;
-export function displayDialog(callback: (element: HTMLElement) => void): void;
+export function displayDialog(
+  dialogTypeName: string,
+  options?: { title?: string },
+): void;
+export function displayDialog(
+  callback: (element: HTMLElement) => void,
+  options?: { title?: string },
+): void;
 export function displayDialog(
   params: string | ((element: HTMLElement) => void),
+  options?: { title?: string },
 ) {
   const dialogTag =
     document.querySelector<DialogElement>(TAG_NAME) ??
@@ -234,7 +248,11 @@ export function displayDialog(
         dialogTag.changeType(DialogType.LOG_LIST);
         break;
     }
-    return;
+    return {
+      close() {
+        dialogTag.remove();
+      },
+    };
   }
   const callback = params;
   dialogTag
@@ -242,6 +260,23 @@ export function displayDialog(
     ?.addEventListener("load", (e) => {
       callback(e.detail.element.querySelector("div > div"));
     });
+
+  if (options?.title != null) {
+    const title = options.title;
+    void (async () => {
+      await sleep(1);
+      dialogTag.customFormElement?.changeTitle(title);
+    })();
+  }
+
+  return {
+    close() {
+      dialogTag.remove();
+    },
+    changeTitle(title: string) {
+      dialogTag.customFormElement?.changeTitle(title);
+    },
+  };
 }
 
 try {

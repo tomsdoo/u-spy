@@ -88,15 +88,15 @@ EntryPointElement.ensure();
 StoreElement.ensure();
 
 function displaySpyDialog() {
-  displayDialog("spy");
+  return displayDialog("spy");
 }
 
 function displayStyleDialog() {
-  displayDialog("style");
+  return displayDialog("style");
 }
 
 function displayCodeDialog() {
-  displayDialog("code");
+  return displayDialog("code");
 }
 
 function displayLifeGame() {
@@ -171,17 +171,20 @@ globalThis._spy = {
     ensureIterator: ensureCustomIterator,
   },
   dialog: {
-    display(callback: (dialogElement: HTMLElement) => void) {
-      displayDialog(callback);
+    display(
+      callback: (dialogElement: HTMLElement) => void,
+      options?: { title?: string },
+    ) {
+      return displayDialog(callback, options);
     },
     displaySpy() {
-      displaySpyDialog();
+      return displaySpyDialog();
     },
     displayStyle() {
-      displayStyleDialog();
+      return displayStyleDialog();
     },
     displayCode() {
-      displayCodeDialog();
+      return displayCodeDialog();
     },
   },
   iframe: {
