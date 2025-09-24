@@ -21,6 +21,7 @@ export default defineConfig({
           { text: 'Interceptions', link: '/interceptions' },
           { text: 'Mockings', link: '/mockings' },
           { text: 'Hot Strokes', link: '/hot-strokes' },
+          { text: 'Dialog', link: '/dialog' },
           { text: 'Event Bus', link: '/event-bus' },
           { text: 'Container', link: '/container' },
           { text: 'Storage', link: '/storage' },

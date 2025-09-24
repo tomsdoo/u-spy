@@ -15,6 +15,9 @@ export class CustomFormElement extends BaseElement {
     this.template = (instance) => template(instance);
     this.id = `uscf-${crypto.randomUUID()}`;
   }
+  get titleElement() {
+    return this.querySelector(`#${this.id} h1`);
+  }
   connectedCallback() {
     this.render();
   }
@@ -28,6 +31,12 @@ export class CustomFormElement extends BaseElement {
         detail: { element: this },
       }),
     );
+  }
+  changeTitle(title: string) {
+    if (this.titleElement == null) {
+      return;
+    }
+    this.titleElement.textContent = title;
   }
 }
 
