@@ -31,7 +31,7 @@ export async function template({
         display: grid;
         grid-template-rows: auto auto 1fr;
         gap: 16px;
-        background: rgb(0 0 0 / 90%);
+        background: rgb(0 0 0 / 60%);
         width: 90vw;
         height: 90vh;
         max-width: 90vw;
@@ -39,6 +39,12 @@ export async function template({
         padding: 16px 32px;
         border-radius: 8px;
         box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
+        color: inherit;
+
+        * {
+          background: inherit;
+          color: inherit;
+        }
 
         > h1 {
           margin: 0;
@@ -46,12 +52,16 @@ export async function template({
           text-align: center;
           font-size: 1em;
           line-height: 1;
+          background: transparent;
+          color: inherit;
          }
 
          > #${controlListId} {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
           gap: 16px;
+          background: transparent;
+          color: inherit;
 
           > li {
             &.active {
@@ -80,6 +90,7 @@ export async function template({
         }
 
         #${contentId} {
+          background: transparent;
           overflow: auto;
         }
       }

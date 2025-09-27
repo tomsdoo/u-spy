@@ -11,7 +11,7 @@ export enum DialogType {
   CUSTOM_FORM = "custom-form",
 }
 
-export function template(id: string, dialogType: DialogType) {
+export async function template({id, dialogType}: {id: string, dialogType: DialogType}) {
   return `
     <div id="${id}">
       ${
@@ -38,6 +38,14 @@ export function template(id: string, dialogType: DialogType) {
       background: rgb(0 0 0 / 80%);
       z-index: calc(infinity);
 
+      ${LogFormElement.TAG_NAME},
+      ${StyleEditorElement.TAG_NAME},
+      ${CodeEditorElement.TAG_NAME},
+      ${CustomFormElement.TAG_NAME} {
+        background: transparent;
+        color: inherit;
+      }
+
       ul,
       ol {
         margin-block-start: 0;
@@ -51,6 +59,8 @@ export function template(id: string, dialogType: DialogType) {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        background: transparent;
+        color: inherit;
 
         &[visible="false"] {
           display: none;

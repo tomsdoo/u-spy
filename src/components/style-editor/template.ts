@@ -52,6 +52,12 @@ export async function template({ id }: { id: string }) {
       border-radius: 8px;
       box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
       box-sizing: border-box;
+      color: inherit;
+
+      * {
+        background: inherit;
+        color: inherit;
+      }
 
       > h1 {
         margin: 0;
@@ -59,6 +65,8 @@ export async function template({ id }: { id: string }) {
         text-align: center;
         font-size: 1em;
         line-height: 1;
+        background: transparent;
+        color: inherit;
       }
 
       > ul {
@@ -67,6 +75,8 @@ export async function template({ id }: { id: string }) {
         align-items: center;
         grid-template-columns: repeat(5, max-content);
         gap: 16px;
+        background: transparent;
+        color: inherit;
         > li {
           button {
             display: grid;
@@ -86,6 +96,8 @@ export async function template({ id }: { id: string }) {
 
       > .editor-form {
         display: grid;
+        background: transparent;
+        color: inherit;
 
         > textarea {
           width: 100%;
@@ -95,6 +107,7 @@ export async function template({ id }: { id: string }) {
           box-sizing: border-box;
           color: inherit;
           background: transparent;
+          border: 1px solid;
         }
       }
       > .save-form,

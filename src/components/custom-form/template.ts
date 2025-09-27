@@ -10,7 +10,7 @@ export async function template({ id }: { id: string }) {
       display: grid;
       grid-template-rows: auto auto 1fr;
       gap: 16px;
-      background: rgb(0 0 0 / 90%);
+      background: transparent;
       width: 90vw;
       height: 90vh;
       max-width: 90vw;
@@ -19,6 +19,12 @@ export async function template({ id }: { id: string }) {
       border-radius: 8px;
       box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
       box-sizing: border-box;
+      color: inherit;
+
+      * {
+        background: transparent;
+        color: inherit;
+      }
 
       > h1 {
         margin: 0;
