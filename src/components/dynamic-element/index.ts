@@ -128,7 +128,7 @@ export function ensureCustomElement(
         this.boundData = new Proxy(data, {
           get(target, prop, receiver) {
             return typeof prop === "string"
-              ? that.shadowRoot.host.getAttribute(prop)
+              ? that.shadowRoot.host.getAttribute(camelToKebab(prop))
               : Reflect.get(target, prop, receiver);
           },
           set(target, prop, value, _receiver) {
