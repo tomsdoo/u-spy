@@ -1,6 +1,6 @@
 import { interceptSendBeacon } from "@/beacon";
 import { ControlElement } from "@/components/control-element";
-import { displayDialog } from "@/components/dialog-next";
+import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { EntryPointElement } from "@/components/entry-point";
