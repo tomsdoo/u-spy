@@ -38,14 +38,25 @@ export async function template({
     backdrop-filter: blur(16px);
     background: rgb(0 0 0 / 80%);
     box-shadow: inset 0 0 10px rgb(255 255 255 / 20%), inset 0 0 16px rgb(255 255 255 / 30%);
+    color: inherit;
     > div {
       text-align: center;
+      background: transparent;
+      color: inherit;
     }
     > ul {
+      background: transparent;
+      color: inherit;
       > li {
         display: grid;
         grid-template-columns: auto 1fr;
         gap: 16px;
+        background: transparent;
+        color: inherit;
+        * {
+          background: transparent;
+          color: inherit;
+        }
       }
     }
   }

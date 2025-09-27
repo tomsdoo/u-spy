@@ -10,7 +10,7 @@ export async function template({ id }: { id: string }) {
       display: grid;
       grid-template-rows: auto auto 1fr;
       gap: 16px;
-      background: rgb(0 0 0 / 90%);
+      background: transparent;
       width: 90vw;
       height: 90vh;
       max-width: 90vw;
