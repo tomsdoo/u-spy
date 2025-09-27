@@ -7,7 +7,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "pre-build": "tsx pre-build",
+    "build-only": "tsup",
+    "build": "run-s pre-build build-only",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "lint": "biome check src",
@@ -34,8 +36,10 @@
     "@types/node": "24.5.2",
     "@vitest/browser": "3.2.4",
     "@vitest/coverage-v8": "3.2.4",
+    "npm-run-all2": "8.0.4",
     "playwright": "1.55.0",
     "tsup": "8.5.0",
+    "tsx": "4.20.6",
     "typescript": "5.9.2",
     "vitepress": "1.6.4",
     "vitest": "3.2.4"
