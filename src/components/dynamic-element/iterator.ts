@@ -41,7 +41,7 @@ export function ensureCustomIterator(customIteratorTagName?: string) {
         if (JSON.stringify(value) === JSON.stringify(this.items)) {
           return;
         }
-        this.shadowRoot.host.setAttribute("items", JSON.stringify(value));
+        this.setAttribute("items", JSON.stringify(value));
       }
       getReadyTemplate() {
         if (this.isTemplateReady) {

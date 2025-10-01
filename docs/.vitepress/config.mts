@@ -34,6 +34,12 @@ export default defineConfig({
         ]
       },
       {
+        text: 'examples',
+        items: [
+          { text: 'GA log list', link: '/examples/ga-log' },
+        ],
+      },
+      {
         text: 'migrations',
         items: [
           { text: 'v0.4.0 to v0.5.0', link: '/migrations/v0.4.0-to-v0.5.0' },
