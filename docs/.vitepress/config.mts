@@ -37,6 +37,7 @@ export default defineConfig({
         text: 'examples',
         items: [
           { text: 'GA log list', link: '/examples/ga-log' },
+          { text: 'link list', link: '/examples/links' },
         ],
       },
       {
