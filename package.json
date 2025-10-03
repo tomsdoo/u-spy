@@ -1,6 +1,6 @@
 {
   "name": "u-spy",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "type": "module",
   "main": "dist/index.global.js",
   "files": [
