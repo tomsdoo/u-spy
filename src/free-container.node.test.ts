@@ -25,7 +25,7 @@ describe("freeContainer", () => {
       freeContainer.set(key, value);
       expect(freeContainer[key]).toBe(value);
     });
-    it.each(["set", "delete", "keys"])(
+    it.each(["new", "set", "delete", "keys"])(
       "throws if key is reserved, key: %s",
       (key) => {
         expect(() => freeContainer.set(key, "dummyValue")).throws(
