@@ -4,14 +4,18 @@ export function createFreeContainer() {
   const keyTokenMap = new Map<string, string>();
 
   type Container = Record<string, unknown> & {
+    new: () => ReturnType<typeof createFreeContainer>;
     set: (key: string, value: unknown, token?: string) => string;
     delete: (key: string, token: string) => void;
   };
 
-  const reservedProps = ["set", "delete", "keys"];
+  const reservedProps = ["new", "set", "delete", "keys"];
 
   return new Proxy(
     {
+      new() {
+        return createFreeContainer();
+      },
       set(key: string, value: unknown, token?: string) {
         if (reservedProps.includes(key)) {
           throw new Error(`${key} is reserved`);
