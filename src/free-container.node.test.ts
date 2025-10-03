@@ -9,6 +9,16 @@ function generateRandomKeyValue() {
 }
 
 describe("freeContainer", () => {
+  describe("new()", () => {
+    it("creates new container", () => {
+      const { key, value } = generateRandomKeyValue();
+      freeContainer.set(key, value);
+      const anotherContainer = freeContainer.new();
+      expect(freeContainer[key]).toBe(value);
+      expect(anotherContainer[key]).toBeUndefined();
+      expect(anotherContainer.keys).toEqual([]);
+    });
+  });
   describe("set()", () => {
     it("succeeds if no matched key", () => {
       const { key, value } = generateRandomKeyValue();

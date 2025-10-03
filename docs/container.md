@@ -75,6 +75,15 @@ We can get the keys registered with `container.keys`.
 _spy.c.keys // ["key1", "key2"]
 ```
 
+## creating new container
+
+We can crate another container with `container.new()`.
+
+``` js
+const anotherContainer = _spy.container.new();
+```
+
+
 ## shorthand alias
 
 `_spy.c` is an alias of `_spy.container`, for shorthand. We can use both of them as mixed since that which of them is same with each other.
