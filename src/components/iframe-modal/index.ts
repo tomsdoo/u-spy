@@ -1,4 +1,5 @@
 import { BaseElement } from "@/components/base";
+import { useEscapeKeyRemoval } from "@/composables/escape-key-removal";
 import { EventType } from "@/constants/event-type";
 import { template } from "./template";
 
@@ -18,18 +19,7 @@ export class IframeModalElement extends BaseElement {
     this.src = "";
   }
   connectedCallback() {
-    const instance = this;
-    function removalKeyHandler(e: KeyboardEvent) {
-      if (e.key !== "Escape") {
-        return;
-      }
-
-      try {
-        instance.remove();
-        window.removeEventListener(EventType.KEYDOWN, removalKeyHandler);
-      } catch {}
-    }
-    window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
+    useEscapeKeyRemoval(this);
     this.render();
   }
   onRendered() {
