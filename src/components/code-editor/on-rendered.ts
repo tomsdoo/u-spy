@@ -151,7 +151,7 @@ export function resetHandlers(instance: {
         `async function ${functionName}() { window.removeEventListener("${eventName}", ${functionName}); ${codeText}}`,
         `window.addEventListener("${eventName}", ${functionName});`,
         `document.currentScript.remove();`,
-      ].join("\n"),
+      ].join(" "),
     );
     document.body.appendChild(scriptTag);
     window.dispatchEvent(new CustomEvent(eventName));
