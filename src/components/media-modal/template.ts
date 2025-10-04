@@ -12,7 +12,7 @@ export async function template({
         (image, imageIndex) => `
         <img src="${image}" class="${imageIndex === 0 ? "active" : "hidden"}" />
       `,
-      )}
+      ).join("")}
     </div>
   </div>
   <style>
