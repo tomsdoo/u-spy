@@ -6,6 +6,7 @@ import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
 import { EntryPointElement } from "@/components/entry-point";
 import { IframeModalElement } from "@/components/iframe-modal";
 import { LifeGameElement } from "@/components/life-game";
+import { MediaModalElement } from "@/components/media-modal";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
 import { type Replacer, UtilsElement } from "@/components/utils";
@@ -42,6 +43,9 @@ interface Spy {
   eventBus: typeof eventBus;
   iframe: {
     display: (url: string) => void;
+  };
+  images: {
+    display: (imageUrls: string[]) => void;
   };
   store: {
     keys: string[];
@@ -112,6 +116,16 @@ function displayReference() {
   document.body.appendChild(iframeModalElement);
 }
 
+function displayImages(imageUrls: string | string[]) {
+  const typedImageUrls = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
+  if (typedImageUrls.length === 0) {
+    return;
+  }
+  const mediaModalElement = MediaModalElement.create();
+  mediaModalElement.setAttribute(":images", JSON.stringify(typedImageUrls));
+  document.body.appendChild(mediaModalElement);
+}
+
 for (const { stroke, display } of [
   {
     stroke: "spy",
@@ -169,6 +183,9 @@ globalThis._spy = {
   customElement: {
     ensure: ensureCustomElement,
     ensureIterator: ensureCustomIterator,
+  },
+  images: {
+    display: displayImages,
   },
   dialog: {
     display(

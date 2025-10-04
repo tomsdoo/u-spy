@@ -1,5 +1,5 @@
 import { BaseElement } from "@/components/base";
-import { EventType } from "@/constants/event-type";
+import { useEscapeKeyRemoval } from "@/composables/escape-key-removal";
 import { resetHandlers } from "./on-rendered";
 import { template } from "./template";
 
@@ -39,18 +39,7 @@ export class LifeGameElement extends BaseElement {
     return Number(this.boardHeight);
   }
   connectedCallback() {
-    const instance = this;
-    function removalKeyHandler(e: KeyboardEvent) {
-      if (e.key !== "Escape") {
-        return;
-      }
-
-      try {
-        instance.remove();
-        window.removeEventListener(EventType.KEYDOWN, removalKeyHandler);
-      } catch {}
-    }
-    window.addEventListener(EventType.KEYDOWN, removalKeyHandler);
+    useEscapeKeyRemoval(this);
     this.render();
   }
   onRendered() {
