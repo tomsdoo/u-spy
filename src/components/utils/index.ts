@@ -63,11 +63,13 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
     // @ts-expect-error prettier cannot be found since it will be loaded dynamically
     return prettier.format(text, { parser, plugins: prettierPlugins });
   } catch (_) {
-    const NEW_LINE_CHAR = "\n";
+    function getNewLineChar(nl: number = 10) {
+      return String.fromCharCode(nl);
+    }
     const formatted = text
-      .replace(/;\s*/g, `;${NEW_LINE_CHAR}`)
-      .replace(/\s+{\s*/g, ` {${NEW_LINE_CHAR}`)
-      .replace(/\s*}\s*/g, `${NEW_LINE_CHAR}}${NEW_LINE_CHAR}`);
+      .replace(/;\s*/g, `;${getNewLineChar()}`)
+      .replace(/\s+{\s*/g, ` {${getNewLineChar()}`)
+      .replace(/\s*}\s*/g, `${getNewLineChar()}}${getNewLineChar()}`);
     const lines = formatted.split(/\n/);
     const nextLines: string[] = [];
     const indentChars: string[] = [];
@@ -88,7 +90,7 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
         indentChars.splice(-1, 0, " ", " ");
       }
     }
-    return nextLines.join(NEW_LINE_CHAR) + NEW_LINE_CHAR;
+    return nextLines.join(getNewLineChar()) + getNewLineChar();
   }
 }
 
