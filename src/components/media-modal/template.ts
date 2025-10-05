@@ -42,12 +42,23 @@ export async function template({
         filter: grayscale(1);
         transition: opacity 2s, transform 0.5s, filter 2s;
         transform: scale(0.9);
+        &.to-leave {
+          transition: opacity 0.5s, transform 0.5s;
+          opacity: 0;
+          transform: rotateY(90deg) scale(1);
+        }
+        &.from-enter {
+          transition: opacity 0.5s, transform 0.5s;
+          opacity: 0;
+          transform: rotateY(-90deg) scale(1);
+        }
         &.active {
+          transition: opacity 0.5s, transform 0.5s, filter 0.5s;
           opacity: 1;
           filter: grayscale(0.5);
-          transform: scale(1);
+          transform: rotateY(0deg) scale(1);
           &:hover {
-            transition: opacity 2s, transform 0.5s, filter 0.2s;
+            transition: opacity 0.5s, transform 0.5s, filter 0.2s;
             filter: grayscale(0);
           }
         }

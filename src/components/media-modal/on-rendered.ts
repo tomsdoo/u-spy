@@ -29,13 +29,17 @@ export function resetHandlers(
       (_, index) => index !== nextIndex,
     )) {
       imageElement.classList.remove("active");
-      void sleep(1).then(() => {
+      imageElement.classList.add("to-leave");
+      void sleep(500).then(() => {
         imageElement.classList.add("hidden");
+      imageElement.classList.remove("to-leave");
       });
     }
     const imageElement = getImageElements()[nextIndex];
+    imageElement.classList.add("from-enter");
     imageElement.classList.remove("hidden");
-    await sleep(1);
+    await sleep(500);
+    imageElement.classList.remove("from-enter");
     imageElement.classList.add("active");
   }
   async function startCycle() {
