@@ -164,7 +164,7 @@ for (const { stroke, display } of [
   });
 }
 
-globalThis._spy = {
+const _spy = {
   intercept(id: string, options?: InterceptionOptions) {
     const receiver = ControlElement.ensure(id);
     const { restoreXMLHttpRequest } = interceptXMLHttpRequest(
@@ -263,3 +263,17 @@ globalThis._spy = {
     UtilsElement.ensure().replaceContent(selector ?? "*", replacers);
   },
 };
+
+Object.freeze(_spy);
+Object.freeze(_spy.customElement);
+Object.freeze(_spy.dialog);
+Object.freeze(_spy.iframe);
+Object.freeze(_spy.images);
+Object.freeze(_spy.store);
+Object.freeze(_spy.stroke);
+
+Object.defineProperty(globalThis, "_spy", {
+  value: _spy,
+  writable: false,
+  configurable: false,
+});
