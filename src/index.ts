@@ -45,7 +45,10 @@ interface Spy {
     display: (url: string) => void;
   };
   images: {
-    display: (imageUrls: string[]) => void;
+    display: (
+      imageUrls: string | string[],
+      options?: { interval?: number },
+    ) => void;
   };
   store: {
     keys: string[];
@@ -116,14 +119,22 @@ function displayReference() {
   document.body.appendChild(iframeModalElement);
 }
 
-function displayImages(imageUrls: string | string[]) {
+function displayImages(
+  imageUrls: string | string[],
+  options?: { interval?: number },
+) {
   const typedImageUrls = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
   if (typedImageUrls.length === 0) {
     return;
   }
   const mediaModalElement = MediaModalElement.create();
+  mediaModalElement.setAttribute(":state", "paused");
+  if (options?.interval != null) {
+    mediaModalElement.setAttribute(":cycle-interval", String(options.interval));
+  }
   mediaModalElement.setAttribute(":images", JSON.stringify(typedImageUrls));
   document.body.appendChild(mediaModalElement);
+  mediaModalElement.setAttribute(":state", "running");
 }
 
 for (const { stroke, display } of [
