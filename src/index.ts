@@ -271,6 +271,7 @@ Object.freeze(_spy.iframe);
 Object.freeze(_spy.images);
 Object.freeze(_spy.store);
 Object.freeze(_spy.stroke);
+Object.freeze(_spy.eventBus);
 
 Object.defineProperty(globalThis, "_spy", {
   value: _spy,
