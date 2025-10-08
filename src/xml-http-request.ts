@@ -86,7 +86,7 @@ function getXMLHttpRequestClassDefinition(
       password?: string,
     ): void {
       super.open(method, url, async ?? true, user, password);
-      super.addEventListener("load", (e) => {
+      super.addEventListener("load", (e: any) => {
         if (e.target == null) {
           return;
         }
@@ -165,12 +165,14 @@ function getXMLHttpRequestClassDefinition(
         });
 
         if (typeof this.onload === "function") {
+          // @ts-expect-error spreading this
           this.onload({
             ...this,
             target: this,
           });
         }
         if (typeof this.onreadystatechange === "function") {
+          // @ts-expect-error spreading this
           this.onreadystatechange({
             ...this,
             target: this,
