@@ -2,6 +2,7 @@
   "name": "u-spy",
   "version": "0.24.0",
   "type": "module",
+  "main": "dist/index.global.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
