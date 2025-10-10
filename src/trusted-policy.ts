@@ -1,13 +1,20 @@
-// @ts-expect-error trustedTypes interface
-const transparentPolicy = trustedTypes.createPolicy("us-policy", {
-  createHTML(value: string) {
-    return value;
-  },
-});
+const policy = (() => {
+  const htmlCreator = {
+    createHTML(value: string) {
+      return value;
+    },
+  };
+  try {
+    // @ts-expect-error trustedTypes interface
+    return trustedTypes.createPolicy("us-policy", htmlCreator);
+  } catch {
+    return htmlCreator;
+  }
+})();
 
 export function createTrustedHtml(value: string) {
   try {
-    return transparentPolicy.createHTML(value);
+    return policy.createHTML(value);
   } catch {
     return value;
   }
