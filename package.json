@@ -2,7 +2,14 @@
   "name": "u-spy",
   "version": "0.23.9",
   "type": "module",
-  "main": "dist/index.global.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.global.js",
+      "import": "./dist/index.global.js",
+      "require": "./dist/index.global.js"
+    }
+  },
   "files": [
     "dist"
   ],

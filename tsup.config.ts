@@ -5,7 +5,7 @@ import { templateMinify } from "./template-minify";
 export default defineConfig({
   entry: ["src/index.ts"],
   clean: true,
-  dts: false,
+  dts: true,
   splitting: false,
   minify: true,
   format: "iife",

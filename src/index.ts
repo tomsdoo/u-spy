@@ -278,3 +278,5 @@ Object.defineProperty(globalThis, "_spy", {
   writable: false,
   configurable: false,
 });
+
+export {_spy };
