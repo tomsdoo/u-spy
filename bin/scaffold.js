@@ -35,7 +35,7 @@ export async function scaffold() {
 
   const pathRegExp = new RegExp(`^scaffold/${scaffoldType}/`);
 
-  const branchName = "scaffold-chrome-extension";
+  const branchName = "main";
   const {
     commit: {
       commit: {
