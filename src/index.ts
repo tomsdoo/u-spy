@@ -35,7 +35,10 @@ interface Spy {
     ensureIterator: typeof ensureCustomIterator;
   };
   dialog: {
-    display(callback: (dialogElement: HTMLElement) => void): void;
+    display(
+      callback: (dialogElement: HTMLElement) => void,
+      options?: { title?: string },
+    ): void;
     displaySpy(): void;
     displayStyle(): void;
     displayCode(): void;
@@ -279,4 +282,4 @@ Object.defineProperty(globalThis, "_spy", {
   configurable: false,
 });
 
-export {_spy };
+export { _spy };
