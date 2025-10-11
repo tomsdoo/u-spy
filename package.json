@@ -3,7 +3,7 @@
   "version": "0.24.1",
   "type": "module",
   "bin": {
-    "scaffold": "bin/scaffold.js"
+    "u-spy": "bin/u-spy.js"
   },
   "main": "dist/index.global.js",
   "exports": {

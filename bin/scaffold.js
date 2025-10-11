@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { mkdir, writeFile, readFile } from "fs/promises";
 import { dirname } from "path";
 import { promisify } from "util";
@@ -18,7 +17,7 @@ function logBlankLine() {
   process.stdout.write("\n");
 }
 
-void (async () => {
+export async function scaffold() {
   const scaffoldType = (() => {
     const [_command, scaffoldType] = process.argv.slice(2);
     return scaffoldType || "chrome-extension";
@@ -75,4 +74,4 @@ void (async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   process.stdout.write(` 🚀🚀\n\n`);
-})();
+}
