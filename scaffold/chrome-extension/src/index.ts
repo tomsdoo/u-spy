@@ -25,9 +25,14 @@ const { unregisterHotStroke } = _spy.stroke.register("restore", () => {
 });
 
 _spy.stroke.register("hello", () => {
-  _spy.dialog.display((dialogElement) => {
-    const div = document.createElement("div");
-    div.textContent = "world";
-    dialogElement.appendChild(div);
-  });
+  _spy.dialog.display(
+    (dialogElement) => {
+      const div = document.createElement("div");
+      div.textContent = "world";
+      dialogElement.appendChild(div);
+    },
+    {
+      title: "my dialog",
+    },
+  );
 });
