@@ -6,7 +6,9 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["index.global.js"]
+      "js": ["loader.js"]
     }
-  ]
+  ],
+  "web_accessible_resources": ["index.global.js"],
+  "permissions": ["<all_urls>"]
 }
