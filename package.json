@@ -2,6 +2,9 @@
   "name": "u-spy",
   "version": "0.24.1",
   "type": "module",
+  "bin": {
+    "scaffold": "bin/scaffold.js"
+  },
   "main": "dist/index.global.js",
   "exports": {
     ".": {
@@ -12,6 +15,7 @@
     }
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
