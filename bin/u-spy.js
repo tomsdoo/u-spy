@@ -2,13 +2,15 @@
 import { scaffold } from "./scaffold.js";
 
 function showHelp() {
-  console.log([
-    "u-spy [command] [...params]",
-    "",
-    "commands:",
-    "\tscaffold",
-    "\t\tprepare scaffolding code",
-  ].join("\n"));
+  console.log(
+    [
+      "u-spy [command] [...params]",
+      "",
+      "commands:",
+      "\tscaffold",
+      "\t\tprepare scaffolding code",
+    ].join("\n"),
+  );
 }
 
 void (async () => {
@@ -17,9 +19,11 @@ void (async () => {
   switch (command) {
     case "scaffold":
       await scaffold();
-      process.exit();
+      return;
     default:
       showHelp();
-      process.exit();
+      return;
   }
-})();
+})().finally(() => {
+  process.exit();
+});
