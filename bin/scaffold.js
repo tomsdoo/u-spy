@@ -17,7 +17,7 @@ function logBlankLine() {
   process.stdout.write("\n");
 }
 
-export async function scaffold() {
+export async function scaffold(packageVersion) {
   const scaffoldType = (() => {
     const [_command, scaffoldType] = process.argv.slice(2);
     return scaffoldType || "chrome-extension";
@@ -35,16 +35,18 @@ export async function scaffold() {
 
   const pathRegExp = new RegExp(`^scaffold/${scaffoldType}/`);
 
-  const branchName = "main";
+  const tagName = `v${packageVersion}`;
   const {
-    commit: {
-      commit: {
-        tree: { url: treeUrl },
-      },
-    },
+    object: { url: tagReferenceUrl },
   } = await fetch(
-    `https://api.github.com/repos/tomsdoo/u-spy/branches/${branchName}`,
+    `https://api.github.com/repos/tomsdoo/u-spy/git/ref/tags/${tagName}`,
   ).then((r) => r.json());
+  const {
+    object: { url: tagCommitUrl },
+  } = await fetch(tagReferenceUrl).then((r) => r.json());
+  const {
+    tree: { url: treeUrl },
+  } = await fetch(tagCommitUrl).then((r) => r.json());
   const { tree } = await fetch(`${treeUrl}?recursive=true`).then((r) =>
     r.json(),
   );
@@ -54,7 +56,7 @@ export async function scaffold() {
   for (const { path } of files) {
     const filePath = path.replace(pathRegExp, "");
     const contentText = await fetch(
-      `https://raw.githubusercontent.com/tomsdoo/u-spy/refs/heads/${branchName}/scaffold/${scaffoldType}/${filePath}`,
+      `https://raw.githubusercontent.com/tomsdoo/u-spy/refs/tags/${tagName}/scaffold/${scaffoldType}/${filePath}`,
     ).then((r) => r.text());
     await logWithStatus(`📁 Creating file: ${filePath}... `, async () => {
       const dirPath = dirname(filePath);
