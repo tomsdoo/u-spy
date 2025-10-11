@@ -283,3 +283,5 @@ Object.defineProperty(globalThis, "_spy", {
 });
 
 export { _spy };
+
+document.currentScript?.remove();
