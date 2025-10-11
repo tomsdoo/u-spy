@@ -1,9 +1,12 @@
 #!/usr/bin/env node
+import packageJson from "../package.json" with { type: "json" };
 import { scaffold } from "./scaffold.js";
 
 function showHelp() {
   console.log(
     [
+      `u-spy@${packageJson.version}`,
+      "",
       "u-spy [command] [...params]",
       "",
       "commands:",
@@ -18,7 +21,7 @@ void (async () => {
 
   switch (command) {
     case "scaffold":
-      await scaffold();
+      await scaffold(packageJson.version);
       return;
     default:
       showHelp();
