@@ -9,6 +9,31 @@ const packageInfo = ref();
 const versions = computed(() => 
   Array.from(Object.values(packageInfo.value?.versions ?? {}))
 );
+const versionsExtended = computed(() => versions.value.map(version => {
+  const [major, minor, patch] = version.version.split(/\./).slice(0, 3).map(Number);
+  return {
+    ...version,
+    detailedVersion: {
+      major,
+      minor,
+      patch,
+    },
+  };
+}));
+const sortedVersions = computed(() => versionsExtended.value.toSorted((aVer,bVer) => {
+  if (aVer.version === bVer.version) {
+    return 0;
+  }
+  const a = aVer.detailedVersion;
+  const b = bVer.detailedVersion;
+  if (a.major === b.major) {
+    if (a.minor === b.minor) {
+      return a.patch > b.patch ? -1 : 1;
+    }
+    return a.minor > b.minor ? -1 : 1;
+  }
+  return a.major > b.major ? -1 : 1;
+}));
 
 void (async () => {
   packageInfo.value = await fetch("https://registry.npmjs.org/u-spy")
@@ -19,7 +44,7 @@ void (async () => {
 # versions
 
 <ul class="version-list">
-  <li class="version-list-item" v-for="({ version }, index) of versions" :key="index">
+  <li class="version-list-item" v-for="({ version }, index) of sortedVersions" :key="index">
     <a :href="`https://github.com/tomsdoo/u-spy/releases/tag/v${version}`" target="_blank">{{ version }}</a>
   </li>
 </ul>
