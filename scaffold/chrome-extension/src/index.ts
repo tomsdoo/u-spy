@@ -33,7 +33,10 @@ receiver.on(
   },
 );
 
-_spy.stroke.register("restore", () => {
+const {
+  unregisterHotStroke,
+} = _spy.stroke.register("restore", () => {
+  unregisterHotStroke();
   restore();
   _spy.showEphemeralMessage("restored interceptions");
 });
