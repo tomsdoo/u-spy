@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { scaffold } from "./scaffold";
+import { scaffold } from "./scaffold.js";
 
 void (async () => {
   const [command] = process.argv.slice(2);
