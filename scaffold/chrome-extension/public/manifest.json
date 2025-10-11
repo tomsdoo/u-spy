@@ -9,6 +9,14 @@
       "js": ["loader.js"]
     }
   ],
-  "web_accessible_resources": ["index.global.js"],
-  "permissions": ["<all_urls>"]
+  "web_accessible_resources": [
+    {
+      "resources": ["index.global.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": [
+    "scripting",
+    "tabs"
+  ]
 }
