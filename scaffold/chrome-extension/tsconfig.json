@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@@/*": ["./*"]
+    },
+    "types": ["u-spy"]
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
