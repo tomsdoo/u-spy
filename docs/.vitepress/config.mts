@@ -42,6 +42,12 @@ export default defineConfig({
         ],
       },
       {
+        text: 'scaffolds',
+        items: [
+          { text: 'chrome extension', link: 'scaffolds/chrome-extension' },
+        ],
+      },
+      {
         text: 'migrations',
         items: [
           { text: 'v0.4.0 to v0.5.0', link: '/migrations/v0.4.0-to-v0.5.0' },
