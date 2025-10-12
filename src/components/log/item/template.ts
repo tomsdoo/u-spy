@@ -2,7 +2,7 @@ import type { ControlElement } from "@/components/control-element";
 import { CopyableTextElement } from "@/components/copyable-text";
 import { LogItemHostElement } from "@/components/log/item/host";
 import { transformLogItem } from "@/components/log/list/util";
-import { UtilsElement } from "@/components/utils";
+import { formatTime } from "@/utils";
 
 export async function template({
   id,
@@ -13,8 +13,6 @@ export async function template({
   logId: string;
   logItem: (ControlElement["logItems"] extends (infer T)[] ? T : never) | null;
 }) {
-  const { formatTime } = UtilsElement.ensure();
-
   if (logItem == null) {
     return ``;
   }
