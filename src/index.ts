@@ -9,7 +9,7 @@ import { LifeGameElement } from "@/components/life-game";
 import { MediaModalElement } from "@/components/media-modal";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
-import { type Replacer, UtilsElement } from "@/components/utils";
+import { type Replacer, replaceContent } from "@/utils";
 import { eventBus } from "@/event-bus";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { freeContainer } from "@/free-container";
@@ -263,7 +263,7 @@ const _spy = {
   },
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
-    UtilsElement.ensure().replaceContent(selector ?? "*", replacers);
+    replaceContent(selector ?? "*", replacers);
   },
 };
 
