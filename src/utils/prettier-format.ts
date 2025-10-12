@@ -1,7 +1,4 @@
-import { EntryPointElement } from "@/components/entry-point";
 import { loadScript } from "@/utils";
-
-const TAG_NAME = "u-spy-utils";
 
 async function loadPrettier() {
   return Promise.all([
@@ -12,7 +9,10 @@ async function loadPrettier() {
   ]);
 }
 
-async function prettierFormat(text: string, parser: string): Promise<string> {
+export async function prettierFormat(
+  text: string,
+  parser: string,
+): Promise<string> {
   try {
     await loadPrettier();
     // @ts-expect-error prettier cannot be found since it will be loaded dynamically
@@ -48,31 +48,3 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
     return nextLines.join(getNewLineChar()) + getNewLineChar();
   }
 }
-
-export class UtilsElement extends HTMLElement {
-  static TAG_NAME = TAG_NAME;
-
-  prettierFormat(text: string, parser: string) {
-    return prettierFormat(text, parser);
-  }
-
-  static create() {
-    const ele = document.createElement(UtilsElement.TAG_NAME);
-    ele.style.display = "none";
-    EntryPointElement.ensure().appendChild(ele);
-    return ele as UtilsElement;
-  }
-  static ensure() {
-    const existing = document.querySelector<UtilsElement>(
-      UtilsElement.TAG_NAME,
-    );
-    if (existing != null) {
-      return existing;
-    }
-    return UtilsElement.create();
-  }
-}
-
-try {
-  globalThis.customElements.define(TAG_NAME, UtilsElement);
-} catch {}

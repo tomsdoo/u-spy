@@ -1,10 +1,9 @@
 import { InputFormElement } from "@/components/input-form";
 import { SelectFormElement } from "@/components/select-form";
-import { UtilsElement } from "@/components/utils";
 import { EventType } from "@/constants/event-type";
 import type { createStorageProxy } from "@/storage";
 import { createTrustedHtml } from "@/trusted-policy";
-import { sleep } from "@/utils";
+import { prettierFormat, sleep } from "@/utils";
 
 export function resetHandlers(instance: {
   id: string;
@@ -60,10 +59,7 @@ export function resetHandlers(instance: {
     textarea.focus();
   }, 1);
   formatButton.addEventListener(EventType.CLICK, async () => {
-    instance.codeText = await UtilsElement.ensure().prettierFormat(
-      instance.codeText,
-      "typescript",
-    );
+    instance.codeText = await prettierFormat(instance.codeText, "typescript");
     textarea.value = instance.codeText;
     textarea.focus();
   });
