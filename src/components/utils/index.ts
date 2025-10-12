@@ -11,28 +11,6 @@ const logTimeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 });
 
-function download({
-  data,
-  filename,
-}: {
-  data: string | object;
-  filename: string;
-}) {
-  const BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
-  const blob =
-    typeof data === "string"
-      ? new Blob([BOM, data], { type: "text/plain" })
-      : new Blob([BOM, JSON.stringify(data, null, 2)], {
-          type: "application/json",
-        });
-  const url = URL.createObjectURL(blob);
-  const anc = document.body.appendChild(document.createElement("a"));
-  anc.setAttribute("download", filename);
-  anc.setAttribute("href", url);
-  anc.click();
-  anc.remove();
-}
-
 function loadScript(src: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const scriptTag = document.createElement("script");
@@ -98,10 +76,6 @@ export class UtilsElement extends HTMLElement {
 
   formatTime(dateValue: Date) {
     return logTimeFormatter.format(dateValue);
-  }
-
-  download({ data, filename }: { data: string | object; filename: string }) {
-    return download({ data, filename });
   }
 
   prettierFormat(text: string, parser: string) {

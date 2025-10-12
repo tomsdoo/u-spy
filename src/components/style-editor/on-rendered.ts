@@ -3,7 +3,7 @@ import { SelectFormElement } from "@/components/select-form";
 import { UtilsElement } from "@/components/utils";
 import { EventType } from "@/constants/event-type";
 import type { createStorageProxy } from "@/storage";
-import { sleep } from "@/utils";
+import { download, sleep } from "@/utils";
 
 export function resetHandlers(instance: {
   id: string;
@@ -63,7 +63,7 @@ export function resetHandlers(instance: {
   }, 1);
 
   downloadButton.addEventListener(EventType.CLICK, async () => {
-    UtilsElement.ensure().download({
+    download({
       data: instance.styleText,
       filename: "style.css",
     });
