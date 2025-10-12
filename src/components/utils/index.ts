@@ -1,21 +1,7 @@
 import { EntryPointElement } from "@/components/entry-point";
+import { loadScript } from "@/utils";
 
 const TAG_NAME = "u-spy-utils";
-
-
-function loadScript(src: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const scriptTag = document.createElement("script");
-    scriptTag.src = src;
-    scriptTag.addEventListener("load", () => {
-      resolve(src);
-    });
-    scriptTag.addEventListener("error", (e) => {
-      reject(e);
-    });
-    document.head.appendChild(scriptTag);
-  });
-}
 
 async function loadPrettier() {
   return Promise.all([
