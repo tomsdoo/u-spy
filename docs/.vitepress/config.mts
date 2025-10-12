@@ -44,7 +44,7 @@ export default defineConfig({
       {
         text: 'scaffolds',
         items: [
-          { text: 'chrome extension', link: 'scaffolds/chrome-extension' },
+          { text: 'chrome extension', link: '/scaffolds/chrome-extension' },
         ],
       },
       {
