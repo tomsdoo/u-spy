@@ -2,14 +2,6 @@ import { EntryPointElement } from "@/components/entry-point";
 
 const TAG_NAME = "u-spy-utils";
 
-const logTimeFormatter = new Intl.DateTimeFormat("en-US", {
-  hour12: false,
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  fractionalSecondDigits: 3,
-  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-});
 
 function loadScript(src: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -73,10 +65,6 @@ async function prettierFormat(text: string, parser: string): Promise<string> {
 
 export class UtilsElement extends HTMLElement {
   static TAG_NAME = TAG_NAME;
-
-  formatTime(dateValue: Date) {
-    return logTimeFormatter.format(dateValue);
-  }
 
   prettierFormat(text: string, parser: string) {
     return prettierFormat(text, parser);
