@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadScript } from "@/utils/load-script";
 
 describe("loadScript()", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("success", async () => {
     const spy = vi
       .spyOn(document.head, "appendChild")
