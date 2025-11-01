@@ -7,10 +7,14 @@ export function template(id: string) {
       z-index: calc(Infinity);
       top: 10vh;
       left: 50%;
+      display: grid;
+      gap: 16px;
       transform: translate(-50%, 0);
       margin-block: 0;
       padding-inline: 0;
       list-style: none;
+      max-height: 80vh;
+      overflow-y: auto;
 
       li {
         background: rgb(0 0 0 / 80%);
@@ -26,6 +30,7 @@ export function template(id: string) {
           word-break: break-all;
           white-space: pre-wrap;
           margin-block: 0;
+          line-height: 1.2;
         }
 
         &.visible {
