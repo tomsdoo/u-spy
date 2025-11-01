@@ -1,6 +1,7 @@
 import { createTrustedHtml } from "@/trusted-policy";
 import { sleep } from "@/utils";
 import { template } from "./template";
+import { EventType } from "@/constants/event-type";
 
 const TAG_NAME = "u-spy-popup";
 
@@ -40,8 +41,23 @@ export class PopupElement extends HTMLElement {
     // biome-ignore lint/style/noNonNullAssertion: certainly exists
     const ul = this.shadowRoot.querySelector(`#${this.id}`)!;
     const li = ul.appendChild(document.createElement("li"));
-    li.textContent =
-      typeof message === "string" ? message : JSON.stringify(message);
+    const textValue = typeof message === "string"
+      ? message
+      : JSON.stringify(message, null, 2);
+    li.addEventListener(EventType.CLICK, async () => {
+      if (li.classList.contains("copied")) {
+        return;
+      }
+      await navigator.clipboard.writeText(textValue);
+      li.classList.add("copied");
+      await sleep(1000);
+      li.classList.remove("copied");
+    });
+    try {
+      li.appendChild(document.createElement("pre")).innerHTML = textValue;
+    } catch {
+      li.textContent = textValue;
+    }
     await new Promise((resolve) => setTimeout(resolve, 1));
     li.classList.add("visible");
     await sleep(TRANSITION_DURATION_MS + displayMs);
