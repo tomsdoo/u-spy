@@ -24,6 +24,7 @@ import {
   interceptXMLHttpRequest,
   type MockXHRHandler,
 } from "@/xml-http-request";
+import { download, formatTime, loadScript, prettierFormat, sleep } from "@/utils";
 
 // biome-ignore lint/correctness/noUnusedVariables: divided
 interface Spy {
@@ -67,6 +68,13 @@ interface Spy {
       beforeKey: string,
       afterKey: string,
     ): ReturnType<typeof registerHotStroke> | null;
+  };
+  utils: {
+    download: typeof download;
+    formatTime: typeof formatTime;
+    loadScript: typeof loadScript;
+    prettierFormat: typeof prettierFormat;
+    sleep: typeof sleep;
   };
 }
 
@@ -261,6 +269,13 @@ const _spy = {
       return registerHotStroke(afterKey, handler);
     },
   },
+  utils: {
+    download,
+    formatTime,
+    loadScript,
+    prettierFormat,
+    sleep,
+  },
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
     replaceContent(selector ?? "*", replacers);
@@ -275,6 +290,7 @@ Object.freeze(_spy.images);
 Object.freeze(_spy.store);
 Object.freeze(_spy.stroke);
 Object.freeze(_spy.eventBus);
+Object.freeze(_spy.utils);
 
 Object.defineProperty(globalThis, "_spy", {
   value: _spy,
