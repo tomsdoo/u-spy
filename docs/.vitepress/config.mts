@@ -32,6 +32,17 @@ export default defineConfig({
           { text: 'Replacings', link: '/replacings' },
           { text: 'Inline frames', link: '/iframe' },
           { text: 'Images', link: '/images' },
+          {
+            text: "utils",
+            link: "/utils/index",
+            items: [
+              { text: "download", link: '/utils/download' },
+              { text: "formatTime", link: '/utils/format-time' },
+              { text: "loadScript", link: '/utils/load-script' },
+              { text: "prettierFormat", link: '/utils/prettier-format' },
+              { text: "sleep", link: '/utils/sleep' },
+            ],
+          },
         ]
       },
       {
