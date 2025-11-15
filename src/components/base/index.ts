@@ -1,9 +1,14 @@
 import { createTrustedHtml } from "@/trusted-policy";
+import { shadowHostStyle } from "./template";
 
 export class BaseElement extends HTMLElement {
   template: string | ((instance: typeof this) => Promise<string>) = "";
   static get observedAttributes() {
     return [] as string[];
+  }
+  shadowHostStyle: string = shadowHostStyle;
+  get usingShadow() {
+    return false;
   }
   attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (/:/.test(name) === false) {
@@ -37,8 +42,11 @@ export class BaseElement extends HTMLElement {
       typeof this.template === "string"
         ? this.template
         : await this.template(this);
-    this.innerHTML = createTrustedHtml("");
-    this.appendChild(
+    const root = this.usingShadow
+      ? (this.shadowRoot ?? this.attachShadow({ mode: "open" }))
+      : this;
+    root.innerHTML = createTrustedHtml("");
+    root.appendChild(
       document
         .createRange()
         .createContextualFragment(createTrustedHtml(contentHtml)),

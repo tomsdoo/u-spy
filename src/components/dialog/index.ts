@@ -1,12 +1,11 @@
-import { KeyHelpElement } from "@/components/key-help";
-import { CustomFormElement } from "@/components/custom-form";
-import { SystemEvent } from "@/constants/system-event";
-import { systemBus } from "@/event-bus";
 import { BaseElement } from "@/components/base";
-import { DialogType, template } from "./template";
+import { CustomFormElement } from "@/components/custom-form";
+import { KeyHelpElement } from "@/components/key-help";
 import { SpecialChar } from "@/constants/char";
 import { EventType } from "@/constants/event-type";
-
+import { SystemEvent } from "@/constants/system-event";
+import { systemBus } from "@/event-bus";
+import { DialogType, template } from "./template";
 
 const TAG_NAME = "u-spy-dialog";
 
@@ -53,13 +52,18 @@ export class DialogElement extends BaseElement {
     this.dialogType = DialogType.LOG_LIST;
     this.keyEventHandler = null;
   }
+  get usingShadow() {
+    return true;
+  }
   get customFormElement() {
-    return this.querySelector<CustomFormElement>(
+    return this.shadowRoot?.querySelector<CustomFormElement>(
       `${CustomFormElement.TAG_NAME}`,
     );
   }
   get keyHelpElement() {
-    return this.querySelector<KeyHelpElement>(`${KeyHelpElement.TAG_NAME}`);
+    return this.shadowRoot?.querySelector<KeyHelpElement>(
+      `${KeyHelpElement.TAG_NAME}`,
+    );
   }
   get HIDDEN_CLASS_NAME() {
     return "hidden";
@@ -73,16 +77,19 @@ export class DialogElement extends BaseElement {
   }
   showKeyHelp() {
     this.keyHelpElement?.setAttribute("visible", "true");
-    this.keyHelpElement?.setAttribute(":key-definitions", JSON.stringify(
-      Array.from(keyDefinitionMap.entries())
-        .map(([key, description]) => ({ key, description }))
-        .toSorted((a, b) => {
-          if (a.key === b.key) {
-            return 0;
-          }
-          return a.key > b.key ? 1 : -1;
-        }),
-    ));
+    this.keyHelpElement?.setAttribute(
+      ":key-definitions",
+      JSON.stringify(
+        Array.from(keyDefinitionMap.entries())
+          .map(([key, description]) => ({ key, description }))
+          .toSorted((a, b) => {
+            if (a.key === b.key) {
+              return 0;
+            }
+            return a.key > b.key ? 1 : -1;
+          }),
+      ),
+    );
     this.keyHelpElement?.classList.remove(this.HIDDEN_CLASS_NAME);
     this.keyHelpElement?.focus();
   }
@@ -117,32 +124,42 @@ export class DialogElement extends BaseElement {
     });
   }
   onRendered() {
-    this.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
-      e.stopPropagation();
-      this.remove();
-    });
+    this.shadowRoot
+      ?.querySelector(`#${this.id}`)
+      ?.addEventListener(EventType.CLICK, (e) => {
+        e.stopPropagation();
+        this.remove();
+      });
     this.keyHelpElement?.addEventListener(EventType.BLUR, (e) => {
       this.hideKeyHelp();
     });
-    this.dispatchEvent(new CustomEvent(RENDER_EVENT, { detail: {
-      customFormElement: this.customFormElement,
-    }}));
+    this.dispatchEvent(
+      new CustomEvent(RENDER_EVENT, {
+        detail: {
+          customFormElement: this.customFormElement,
+        },
+      }),
+    );
   }
   disconnectedCallback() {
     systemBus.emit(SystemEvent.DELETE_KEY_DEFINITION, SpecialChar.QUESTION);
   }
   static create() {
-    return document.body.appendChild(document.createElement(DialogElement.TAG_NAME)) as DialogElement;
+    return document.body.appendChild(
+      document.createElement(DialogElement.TAG_NAME),
+    ) as DialogElement;
   }
   static ensure(dialogType: DialogType) {
-    const dialogTag = document.querySelector<DialogElement>(DialogElement.TAG_NAME) ?? DialogElement.create();
+    const dialogTag =
+      document.querySelector<DialogElement>(DialogElement.TAG_NAME) ??
+      DialogElement.create();
     dialogTag.setAttribute(":dialog-type", dialogType);
     return dialogTag;
   }
 }
 
 function resolveDialogType(dialogTypeName: string) {
-  switch(dialogTypeName) {
+  switch (dialogTypeName) {
     case "style":
       return DialogType.STYLE_EDITOR;
     case "code":
@@ -152,9 +169,7 @@ function resolveDialogType(dialogTypeName: string) {
   }
 }
 
-export function displayDialog(
-  displayTypeName: string,
-): {
+export function displayDialog(displayTypeName: string): {
   close: () => void;
 };
 export function displayDialog(
@@ -178,16 +193,26 @@ export function displayDialog(
   }
   const callback = params;
   const dialogElement = DialogElement.ensure(DialogType.CUSTOM_FORM);
-  dialogElement.addEventListener(RENDER_EVENT, (e: { detail: { customFormElement: CustomFormElement }}) => {
-    const customFormElement = e.detail.customFormElement;
-    customFormElement.addEventListener(CustomFormElement.LOADED_EVENT, (e) => {
-      if (options?.title != null) {
-        const title = options.title;
-        customFormElement.changeTitle(title);
-      }
-      callback((e as CustomEvent<{ element: CustomFormElement }>).detail.element.querySelector("div > div")!);
-    });
-  });
+  dialogElement.addEventListener(
+    RENDER_EVENT,
+    (e: { detail: { customFormElement: CustomFormElement } }) => {
+      const customFormElement = e.detail.customFormElement;
+      customFormElement.addEventListener(
+        CustomFormElement.LOADED_EVENT,
+        (e) => {
+          if (options?.title != null) {
+            const title = options.title;
+            customFormElement.changeTitle(title);
+          }
+          callback(
+            (
+              e as CustomEvent<{ element: CustomFormElement }>
+            ).detail.element.querySelector("div > div")!,
+          );
+        },
+      );
+    },
+  );
 
   return {
     close() {
