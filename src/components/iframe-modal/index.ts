@@ -26,9 +26,11 @@ export class IframeModalElement extends BaseElement {
     this.render();
   }
   onRendered() {
-    this.shadowRoot?.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, () => {
-      this.remove();
-    });
+    this.shadowRoot
+      ?.querySelector(`#${this.id}`)
+      ?.addEventListener(EventType.CLICK, () => {
+        this.remove();
+      });
   }
   static create() {
     return document.createElement(TAG_NAME);
