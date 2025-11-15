@@ -1,7 +1,14 @@
-export function template(id: string) {
+export function template({
+  id,
+  shadowHostStyle,
+}: {
+  id: string;
+  shadowHostStyle: string;
+}) {
   return `
   <ul id="${id}">
     <style>
+    ${shadowHostStyle}
     #${id} {
       position: fixed;
       z-index: calc(Infinity);
