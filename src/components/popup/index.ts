@@ -1,7 +1,8 @@
+import { shadowHostStyle } from "@/components/base/template";
+import { EventType } from "@/constants/event-type";
 import { createTrustedHtml } from "@/trusted-policy";
 import { sleep } from "@/utils";
 import { template } from "./template";
-import { EventType } from "@/constants/event-type";
 
 const TAG_NAME = "u-spy-popup";
 
@@ -17,13 +18,16 @@ export class PopupElement extends HTMLElement {
   id: string = "";
   shadowRoot: ShadowRoot | null = null;
   messageMap: Map<string, Json> = new Map();
+  shadowHostStyle: string = shadowHostStyle;
   connectedCallback() {
     const id = `usid-${crypto.randomUUID()}`;
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(
       document
         .createRange()
-        .createContextualFragment(createTrustedHtml(template(id))),
+        .createContextualFragment(
+          createTrustedHtml(template({ id, shadowHostStyle })),
+        ),
     );
     this.id = id;
     this.shadowRoot = shadowRoot;
@@ -41,9 +45,8 @@ export class PopupElement extends HTMLElement {
     // biome-ignore lint/style/noNonNullAssertion: certainly exists
     const ul = this.shadowRoot.querySelector(`#${this.id}`)!;
     const li = ul.appendChild(document.createElement("li"));
-    const textValue = typeof message === "string"
-      ? message
-      : JSON.stringify(message, null, 2);
+    const textValue =
+      typeof message === "string" ? message : JSON.stringify(message, null, 2);
     li.addEventListener(EventType.CLICK, async () => {
       if (li.classList.contains("copied")) {
         return;
