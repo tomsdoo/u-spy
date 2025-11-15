@@ -1,9 +1,11 @@
 export async function template({
   id,
   imageSrcs,
+  shadowHostStyle,
 }: {
   id: string;
   imageSrcs: string[];
+  shadowHostStyle: string;
 }) {
   return `
   <div id="${id}">
@@ -16,6 +18,7 @@ export async function template({
     </div>
   </div>
   <style>
+  ${shadowHostStyle}
   #${id} {
     position: fixed;
     inset: 0;

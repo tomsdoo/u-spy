@@ -26,6 +26,9 @@ export class MediaModalElement extends BaseElement {
     this.cycleInterval = "";
     this.state = "running";
   }
+  get usingShadow() {
+    return true;
+  }
   get imageSrcs() {
     try {
       return JSON.parse(this.images) as string[];
@@ -41,9 +44,9 @@ export class MediaModalElement extends BaseElement {
   }
   get imageElements() {
     return Array.from(
-      this.querySelectorAll<HTMLImageElement>(
+      this.shadowRoot?.querySelectorAll<HTMLImageElement>(
         `#${this.id} .image-container img`,
-      ),
+      ) ?? [],
     );
   }
   get activeImageIndex() {
