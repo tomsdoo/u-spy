@@ -53,13 +53,16 @@ export class DialogElement extends BaseElement {
     this.dialogType = DialogType.LOG_LIST;
     this.keyEventHandler = null;
   }
+  get usingShadow() {
+    return true;
+  }
   get customFormElement() {
-    return this.querySelector<CustomFormElement>(
+    return this.shadowRoot?.querySelector<CustomFormElement>(
       `${CustomFormElement.TAG_NAME}`,
     );
   }
   get keyHelpElement() {
-    return this.querySelector<KeyHelpElement>(`${KeyHelpElement.TAG_NAME}`);
+    return this.shadowRoot?.querySelector<KeyHelpElement>(`${KeyHelpElement.TAG_NAME}`);
   }
   get HIDDEN_CLASS_NAME() {
     return "hidden";
@@ -117,7 +120,7 @@ export class DialogElement extends BaseElement {
     });
   }
   onRendered() {
-    this.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
+    this.shadowRoot?.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, (e) => {
       e.stopPropagation();
       this.remove();
     });

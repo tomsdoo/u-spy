@@ -11,7 +11,15 @@ export enum DialogType {
   CUSTOM_FORM = "custom-form",
 }
 
-export async function template({id, dialogType}: {id: string, dialogType: DialogType}) {
+export async function template({
+  id,
+  dialogType,
+  shadowHostStyle,
+}: {
+  id: string;
+  dialogType: DialogType;
+  shadowHostStyle: string;
+}) {
   return `
     <div id="${id}">
       ${
@@ -25,6 +33,7 @@ export async function template({id, dialogType}: {id: string, dialogType: Dialog
       <${KeyHelpElement.TAG_NAME} role="dialog" visible="false" tabindex="-1" :key-definitions="[]"></${KeyHelpElement.TAG_NAME}>
     </div>
     <style>
+    ${shadowHostStyle}
     #${id} {
       position: fixed;
       display: grid;
@@ -34,7 +43,6 @@ export async function template({id, dialogType}: {id: string, dialogType: Dialog
       left: 0;
       width: 100vw;
       height: 100vh;
-      color: #eeeeee;
       background: rgb(0 0 0 / 80%);
       z-index: calc(infinity);
 

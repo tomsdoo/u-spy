@@ -18,12 +18,15 @@ export class IframeModalElement extends BaseElement {
     this.id = `usr-${crypto.randomUUID()}`;
     this.src = "";
   }
+  get usingShadow() {
+    return true;
+  }
   connectedCallback() {
     useEscapeKeyRemoval(this);
     this.render();
   }
   onRendered() {
-    this.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, () => {
+    this.shadowRoot?.querySelector(`#${this.id}`)?.addEventListener(EventType.CLICK, () => {
       this.remove();
     });
   }

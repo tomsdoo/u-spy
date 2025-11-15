@@ -1,9 +1,10 @@
-export async function template({ id, src }: { id: string; src: string }) {
+export async function template({ id, src, shadowHostStyle }: { id: string; src: string; shadowHostStyle: string; }) {
   return `
   <div id="${id}">
     <iframe src="${src}"></iframe>
   </div>
   <style>
+  ${shadowHostStyle}
   #${id} {
     position: fixed;
     inset: 0;
