@@ -2,10 +2,12 @@ export async function template({
   id,
   boardWidthValue,
   boardHeightValue,
+  shadowHostStyle,
 }: {
   id: string;
   boardWidthValue: number;
   boardHeightValue: number;
+  shadowHostStyle: string;
 }) {
   const cells = [];
   for (const y of Array.from({ length: boardHeightValue }, (_, i) => i)) {
@@ -38,6 +40,7 @@ export async function template({
     </div>
   </div>
   <style>
+  ${shadowHostStyle}
   #${id} {
     position: fixed;
     inset: 0;
