@@ -24,9 +24,11 @@ export function resetHandlers(instance: {
     return `${x}-${y}`;
   }
   for (const cellElement of Array.from(
-    (instance as unknown as HTMLElement).querySelectorAll<HTMLElement>(
+    (
+      instance as unknown as HTMLElement
+    ).shadowRoot?.querySelectorAll<HTMLElement>(
       `#${instance.id} .board .cell[data-x][data-y][data-alive]`,
-    ),
+    ) ?? [],
   )) {
     const x = Number(cellElement.dataset.x);
     const y = Number(cellElement.dataset.y);

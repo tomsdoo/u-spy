@@ -26,6 +26,9 @@ export class LifeGameElement extends BaseElement {
     this.boardHeight = "";
     this.cells = [];
   }
+  get usingShadow() {
+    return true;
+  }
   get boardWidthValue() {
     if (/\d+/.test(this.boardWidth) === false) {
       return 0;
