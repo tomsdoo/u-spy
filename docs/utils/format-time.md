@@ -20,5 +20,6 @@ formatTime(
 ::: warning about format
 formatTime() currently supports below as format string
 
-- `hh:mm:ss.fff`
+- `HH:mm:ss.fff`
+- `yyyy/MM/dd HH:mm:ss.fff`
 :::

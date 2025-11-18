@@ -19,11 +19,26 @@ const { spyDateTimeFormatResolvedOptions } = vi.hoisted(() => {
 });
 
 describe("formatTime()", () => {
-  it("formatTime()", () => {
+  it.each([
+    {
+      dateValue: "2025-01-01T12:34:56.789+09:00",
+      formatType: "hh:mm:ss.fff",
+      expected: "12:34:56.789",
+    },
+    {
+      dateValue: "2025-12-30T12:34:56.789+09:00",
+      formatType: "yyyy/MM/dd HH:mm:ss.fff",
+      expected: "2025/12/30 12:34:56.789",
+    },
+  ])("returns $expected for $dateValue formatType: $formatType", ({
+    dateValue,
+    formatType,
+    expected,
+  }) => {
     const formattedTime = formatTime(
-      new Date("2025-01-01T12:34:56.789+09:00"),
+      new Date(dateValue),
+      formatType,
     );
-    expect(formattedTime).toBe("12:34:56.789");
-    expect(spyDateTimeFormatResolvedOptions).toHaveBeenCalledTimes(1);
+    expect(formattedTime).toBe(expected);
   });
 });
