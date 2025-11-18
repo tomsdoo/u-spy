@@ -30,14 +30,49 @@ const formatterMap = new Map([
 ]);
 
 export function formatTime(dateValue: Date, format: string = FormatType.HH_MM_SS_FFF) {
-  const formatName = (() => {
+  const {
+    formatName,
+    isFreeFormat,
+  } = (() => {
     switch (format) {
       case FormatType.YYYY_MM_DD_HH_MM_SS_FFF:
-        return FormatType.YYYY_MM_DD_HH_MM_SS_FFF;
+        return {
+          formatName: FormatType.YYYY_MM_DD_HH_MM_SS_FFF,
+          isFreeFormat: false,
+        };
+      case FormatType.HH_MM_SS_FFF:
+        return {
+          formatName: FormatType.HH_MM_SS_FFF,
+          isFreeFormat: false,
+        };
       default:
-        return FormatType.HH_MM_SS_FFF;
+        return {
+          formatName: FormatType.YYYY_MM_DD_HH_MM_SS_FFF,
+          isFreeFormat: true,
+        };
     }
   })();
   const formatter = formatterMap.get(formatName) ?? logTimeFormatterHhMmSsFff;
-  return formatter.format(dateValue);
+  const result = formatter.format(dateValue);
+  if (!isFreeFormat) {
+    return result;
+  }
+  const [ymd,hmsf] = result.split(/\s/);
+  const [
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second,
+    millisecond,
+  ] = [...ymd.split(/\//), ...hmsf.split(/[:.]/)];
+  return format
+    .replace(/yyyy/g, year)
+    .replace(/MM/g, month)
+    .replace(/dd/g, day)
+    .replace(/HH/g, hour)
+    .replace(/mm/g, minute)
+    .replace(/ss/g, second)
+    .replace(/fff/g, millisecond);
 }
