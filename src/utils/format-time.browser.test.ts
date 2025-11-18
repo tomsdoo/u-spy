@@ -22,13 +22,33 @@ describe("formatTime()", () => {
   it.each([
     {
       dateValue: "2025-01-01T12:34:56.789+09:00",
-      formatType: "hh:mm:ss.fff",
+      formatType: undefined,
+      expected: "12:34:56.789",
+    },
+    {
+      dateValue: "2025-01-01T12:34:56.789+09:00",
+      formatType: "HH:mm:ss.fff",
       expected: "12:34:56.789",
     },
     {
       dateValue: "2025-12-30T12:34:56.789+09:00",
       formatType: "yyyy/MM/dd HH:mm:ss.fff",
       expected: "2025/12/30 12:34:56.789",
+    },
+    {
+      dateValue: "2025-12-30T12:34:56.789+09:00",
+      formatType: "yyyy-MM-dd HH:mm:ss.fff",
+      expected: "2025-12-30 12:34:56.789",
+    },
+    {
+      dateValue: "2025-12-30T12:34:56.789+09:00",
+      formatType: "yyyy-MM-dd HH:mm:ss",
+      expected: "2025-12-30 12:34:56",
+    },
+    {
+      dateValue: "2025-12-30T12:34:56.789+09:00",
+      formatType: "yyyy-MM-dd",
+      expected: "2025-12-30",
     },
   ])("returns $expected for $dateValue formatType: $formatType", ({
     dateValue,
