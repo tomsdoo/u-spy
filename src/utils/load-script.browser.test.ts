@@ -1,6 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadScript } from "@/utils/load-script";
 
+const {
+  jsUrl,
+} = vi.hoisted(() => ({
+  jsUrl: "http://localhost:3333/dummy.js",
+}));
+
 describe("loadScript()", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -13,8 +19,8 @@ describe("loadScript()", () => {
         scriptTag.dispatchEvent(new Event("load"));
         return scriptTag;
       });
-    const result = await loadScript("http://localhost:3333/dummy.js");
-    expect(result).toBe("http://localhost:3333/dummy.js");
+    const result = await loadScript(jsUrl);
+    expect(result).toBe(jsUrl);
     expect(spy).toHaveBeenCalledTimes(1);
   });
   it("error", async () => {
@@ -24,7 +30,29 @@ describe("loadScript()", () => {
         scriptTag.dispatchEvent(new Event("error"));
         return scriptTag;
       });
-    expect(loadScript("http://localhost:3333/dummy.js")).rejects.toThrowError();
+    expect(loadScript(jsUrl)).rejects.toThrowError();
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+  describe.for([
+    {
+      type: undefined,
+    },
+    {
+      type: "module",
+    },
+  ])("type: $type", ({type}) => {
+    it("reflects params correctly", async () => {
+      const spy = vi
+        .spyOn(document.head, "appendChild")
+        .mockImplementation((scriptTag) => {
+          expect(scriptTag).toSatisfy(function aa(scriptTag) {
+            return scriptTag.getAttribute("type") === (type ?? null) &&
+            scriptTag.getAttribute("src") === jsUrl;
+          });
+          scriptTag.dispatchEvent(new Event("load"));
+          return scriptTag;
+        });
+      await loadScript(jsUrl, { type });
+    });
   });
 });
