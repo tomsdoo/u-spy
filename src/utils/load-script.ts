@@ -1,8 +1,8 @@
 export function loadScript(
   src: string,
-  {
-    type = undefined,
-  }: {
+  options: {
+    async?: boolean;
+    defer?: boolean;
     type?: string;
   } = {},
 ): Promise<string> {
@@ -10,9 +10,12 @@ export function loadScript(
     const scriptTag = document.createElement("script");
     scriptTag.src = src;
 
-    if (type != null) {
-      scriptTag.setAttribute("type", type);
+    if (options?.type != null) {
+      scriptTag.setAttribute("type", options.type);
     }
+
+    scriptTag.toggleAttribute("async", options?.async === true);
+    scriptTag.toggleAttribute("defer", options?.defer === true);
 
     scriptTag.addEventListener("load", () => {
       resolve(src);
