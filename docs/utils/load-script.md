@@ -15,6 +15,8 @@ loadScript(
   src: string,
   options?: {
     type?: string;
+    async?: boolean;
+    defer?: boolean;
   },
 ): Promise<string>;
 ```
