@@ -36,6 +36,7 @@ export default defineConfig({
             text: "utils",
             link: "/utils/index",
             items: [
+              { text: "deflate", link: '/utils/deflate' },
               { text: "download", link: '/utils/download' },
               { text: "formatTime", link: '/utils/format-time' },
               { text: "loadScript", link: '/utils/load-script' },
