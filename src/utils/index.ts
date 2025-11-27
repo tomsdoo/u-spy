@@ -1,3 +1,4 @@
+export { deflate } from "@/utils/deflate";
 export { download } from "@/utils/download";
 export { formatTime } from "@/utils/format-time";
 export { loadScript } from "@/utils/load-script";

@@ -9,7 +9,6 @@ import { LifeGameElement } from "@/components/life-game";
 import { MediaModalElement } from "@/components/media-modal";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
-import { type Replacer, replaceContent } from "@/utils";
 import { eventBus } from "@/event-bus";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { freeContainer } from "@/free-container";
@@ -19,12 +18,21 @@ import {
   registerHotStroke,
 } from "@/key-event";
 import { storage } from "@/storage";
+import {
+  deflate,
+  download,
+  formatTime,
+  loadScript,
+  prettierFormat,
+  type Replacer,
+  replaceContent,
+  sleep,
+} from "@/utils";
 import { interceptWindowMessage } from "@/window-message";
 import {
   interceptXMLHttpRequest,
   type MockXHRHandler,
 } from "@/xml-http-request";
-import { download, formatTime, loadScript, prettierFormat, sleep } from "@/utils";
 
 // biome-ignore lint/correctness/noUnusedVariables: divided
 interface Spy {
@@ -70,6 +78,7 @@ interface Spy {
     ): ReturnType<typeof registerHotStroke> | null;
   };
   utils: {
+    deflate: typeof deflate;
     download: typeof download;
     formatTime: typeof formatTime;
     loadScript: typeof loadScript;
@@ -270,6 +279,7 @@ const _spy = {
     },
   },
   utils: {
+    deflate,
     download,
     formatTime,
     loadScript,
