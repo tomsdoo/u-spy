@@ -31,5 +31,8 @@ _spy.utils.deflate({
 ```
 
 ``` ts
-deflate(value: object): object;
+deflate(value: unknown): Record<
+  string,
+  PrimitiveValue | Date | RegExp
+>;
 ```

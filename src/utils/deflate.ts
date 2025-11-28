@@ -1,3 +1,22 @@
+type PrimitiveValue = boolean | number | string | null | undefined | symbol | bigint;
+
+function isPrimitive(value: unknown): value is PrimitiveValue {
+  if (value === null) {
+    return true;
+  }
+  switch (typeof value) {
+    case "string":
+    case "number":
+    case "boolean":
+    case "bigint":
+    case "symbol":
+    case "undefined":
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function deflate(value: unknown) {
   if (
     typeof value !== "object" ||
@@ -14,7 +33,7 @@ export function deflate(value: unknown) {
   ) {
     throw new Error("invalid input");
   }
-  const record: Record<string, unknown> = {};
+  const record: Record<string, PrimitiveValue | Date | RegExp> = {};
   (function getKeyValue(obj: unknown, keyPrefix: string = "") {
     if (Array.isArray(obj)) {
       obj.forEach((value, index) => {
@@ -58,7 +77,7 @@ export function deflate(value: unknown) {
       });
       return;
     }
-    if (keyPrefix !== "") {
+    if (keyPrefix !== "" && isPrimitive(obj)) {
       record[keyPrefix] = obj;
     }
   })(value);
