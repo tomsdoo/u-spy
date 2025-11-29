@@ -69,10 +69,11 @@ export function ensureTemplateView(customTagName?: string) {
           if (propName == null) {
             continue;
           }
-          const embeddingValue = deflatedValue[propName];
-          if (embeddingValue == null) {
+          if (propName in deflatedValue === false) {
+            el.textContent = "";
             continue;
           }
+          const embeddingValue = deflatedValue[propName];
           el.textContent = String(embeddingValue);
         }
         this.isRefreshRequired = false;
