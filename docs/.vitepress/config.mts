@@ -27,8 +27,15 @@ export default defineConfig({
           { text: 'Storage', link: '/storage' },
           { text: 'Store', link: '/store' },
           { text: 'Ephemeral Messages', link: '/ephemeral-messages' },
-          { text: 'Custom Elements', link: '/custom-elements' },
-          { text: 'Custom Iterator', link: '/custom-iterator' },
+          {
+            text: "Custom Elements",
+            link: "/custom-elements/index",
+            items: [
+              { text: 'Custom Elements', link: '/custom-elements/custom-elements' },
+              { text: 'Custom Iterator', link: '/custom-elements/custom-iterator' },
+              { text: 'Template View', link: '/custom-elements/template-view' },
+            ],
+          },
           { text: 'Replacings', link: '/replacings' },
           { text: 'Inline frames', link: '/iframe' },
           { text: 'Images', link: '/images' },
