@@ -3,6 +3,7 @@ import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
 import { ensureCustomIterator } from "@/components/dynamic-element/iterator";
+import { ensureTemplateView } from "@/components/dynamic-element/template-view";
 import { EntryPointElement } from "@/components/entry-point";
 import { IframeModalElement } from "@/components/iframe-modal";
 import { LifeGameElement } from "@/components/life-game";
@@ -42,6 +43,7 @@ interface Spy {
   customElement: {
     ensure: typeof ensureCustomElement;
     ensureIterator: typeof ensureCustomIterator;
+    ensureTemplateView: typeof ensureTemplateView;
   };
   dialog: {
     display(
@@ -214,6 +216,7 @@ const _spy = {
   customElement: {
     ensure: ensureCustomElement,
     ensureIterator: ensureCustomIterator,
+    ensureTemplateView,
   },
   images: {
     display: displayImages,
