@@ -7,6 +7,7 @@ describe("deflate", () => {
       {
         value: ["a", 1],
         expectedValue: {
+          "": ["a", 1],
           "[0]": "a",
           "[1]": 1,
         },
@@ -21,7 +22,7 @@ describe("deflate", () => {
       },
       {
         value: { a: ["a", 1] },
-        expectedValue: { "a[0]": "a", "a[1]": 1 },
+        expectedValue: { a: ["a", 1], "a[0]": "a", "a[1]": 1 },
       },
       {
         value: { a: new Date("2000-01-23T01:23:45Z") },
@@ -49,7 +50,9 @@ describe("deflate", () => {
           "a.b": 1,
           b: 2,
           "c.d.e": 3,
+          d: [{ e: 1 }, { f: { g: [2] } }],
           "d[0].e": 1,
+          "d[1].f.g": [2],
           "d[1].f.g[0]": 2,
         },
       },

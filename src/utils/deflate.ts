@@ -1,4 +1,11 @@
-type PrimitiveValue = boolean | number | string | null | undefined | symbol | bigint;
+type PrimitiveValue =
+  | boolean
+  | number
+  | string
+  | null
+  | undefined
+  | symbol
+  | bigint;
 
 function isPrimitive(value: unknown): value is PrimitiveValue {
   if (value === null) {
@@ -33,9 +40,13 @@ export function deflate(value: unknown) {
   ) {
     throw new Error("invalid input");
   }
-  const record: Record<string, PrimitiveValue | Date | RegExp> = {};
+  const record: Record<
+    string,
+    PrimitiveValue | Date | RegExp | Array<PrimitiveValue | Date | RegExp>
+  > = {};
   (function getKeyValue(obj: unknown, keyPrefix: string = "") {
     if (Array.isArray(obj)) {
+      record[keyPrefix] = obj;
       obj.forEach((value, index) => {
         const nextKey = `${keyPrefix}[${index}]`;
         getKeyValue(value, nextKey);
