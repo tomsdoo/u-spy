@@ -10,7 +10,7 @@ export function ensureTemplateView(customTagName?: string) {
     localTagName,
     class extends HTMLElement {
       static get observedAttributes() {
-        return ["value"];
+        return ["item"];
       }
       isTemplateReady: boolean;
       isRefreshRequired: boolean;
@@ -22,9 +22,9 @@ export function ensureTemplateView(customTagName?: string) {
         this.contentTags = [];
         this.isRefreshRequired = true;
       }
-      get value() {
+      get item() {
         try {
-          const itemStr = this.getAttribute("value");
+          const itemStr = this.getAttribute("item");
           if (itemStr == null) {
             return {};
           }
@@ -33,12 +33,12 @@ export function ensureTemplateView(customTagName?: string) {
           return {};
         }
       }
-      set value(v) {
-        if (JSON.stringify(v) === JSON.stringify(this.value)) {
+      set item(v) {
+        if (JSON.stringify(v) === JSON.stringify(this.item)) {
           return;
         }
         this.isRefreshRequired = true;
-        this.setAttribute("value", JSON.stringify(v));
+        this.setAttribute("item", JSON.stringify(v));
       }
       getReadyTemplate() {
         if (this.isTemplateReady) {
@@ -61,7 +61,7 @@ export function ensureTemplateView(customTagName?: string) {
         if (this.isRefreshRequired !== true) {
           return;
         }
-        const deflatedValue = deflate(this.value);
+        const deflatedItem = deflate(this.item);
         for (const el of Array.from(
           this.shadowRoot?.querySelectorAll(`[\\:text]`) ?? [],
         )) {
@@ -69,11 +69,11 @@ export function ensureTemplateView(customTagName?: string) {
           if (propName == null) {
             continue;
           }
-          if (propName in deflatedValue === false) {
+          if (propName in deflatedItem === false) {
             el.textContent = "";
             continue;
           }
-          const embeddingValue = deflatedValue[propName];
+          const embeddingValue = deflatedItem[propName];
           el.textContent = String(embeddingValue);
         }
         this.isRefreshRequired = false;
@@ -86,10 +86,10 @@ export function ensureTemplateView(customTagName?: string) {
         _ondValue: string,
         newValue: string,
       ) {
-        if (name !== "value") {
+        if (name !== "item") {
           return;
         }
-        this.value = (() => {
+        this.item = (() => {
           try {
             return JSON.parse(newValue);
           } catch {
