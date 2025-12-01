@@ -77,7 +77,7 @@ watch(
     );
     document.querySelector(
       `#${templateId.value}`
-    ).value = JSON.parse(valueJsonText.value);
+    ).item = JSON.parse(valueJsonText.value);
   },
   {
     immediate: true,
@@ -91,7 +91,7 @@ watch(valueJsonText, (valueJsonText) => {
   if (tv == null) {
     return;
   }
-  tv.value = JSON.parse(valueJsonText);
+  tv.item = JSON.parse(valueJsonText);
 });
 
 onMounted(() => {
@@ -150,7 +150,7 @@ _spy.customElement.ensureTemplateView();
 <script>
   document
     .querySelector("#my-template-view")
-    .value = {
+    .item = {
       person: {
         name: "alice",
       },
@@ -171,7 +171,7 @@ _spy.customElement.ensureTemplateView();
         <textarea v-model="codeText"></textarea>
         <div>&lt;/template-view&gt;</div>
         <div>&lt;script&gt;</div>
-        <div>document.querySelector("#my-template").value = JSON.parse(`</div>
+        <div>document.querySelector("#my-template").item = JSON.parse(`</div>
         <textarea v-model="valueJsonText"></textarea>
         <div>`);</div>
         <div>&lt;/script&gt;</div>
