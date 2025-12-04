@@ -19,6 +19,12 @@ function makeTag(tagName, isEnd) {
 const defaultCodeText = `<div class="wrapper">
   <div :text="person.name"></div>
   <div class="team" :text="team.name"></div>
+  <ul class="fruit-list">
+    <li :for="fruits">
+      <div>fruit</div>
+      <div :text="name"></div>
+    </li>
+  </ul>
 </div>
 ${makeTag("style")}
 :host {
@@ -27,6 +33,18 @@ ${makeTag("style")}
 .wrapper {
   .team {
     color: red;
+  }
+  .fruit-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    color: blue;
+    > li {
+      display: grid;
+      grid-template-columns: 1fr;
+      > div:nth-child(1) {
+        font-size: 0.8em;
+      }
+    }
   }
 }
 ${makeTag("style", true)}
@@ -40,6 +58,14 @@ const _valueJsonText = ref(JSON.stringify({
   team: {
     name: "team A",
   },
+  fruits: [
+    {
+      name: "strawberry",
+    },
+    {
+      name: "banana",
+    },
+  ],
 }, null, 2));
 const valueJsonText = computed({
   get() {
@@ -215,9 +241,11 @@ _spy.customElement.ensureTemplateView();
 textarea {
   display: block;
   width: calc(100% - 2em);
-  margin: 0 auto;
-  height: 8em;
+  margin: 1em auto;
+  height: 20em;
   line-height: 1;
+  outline: 1px dotted;
+  outline-offset: 0.5em;
 }
 .result-area {
 }
