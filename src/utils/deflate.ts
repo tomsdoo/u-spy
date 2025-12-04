@@ -7,6 +7,8 @@ type PrimitiveValue =
   | symbol
   | bigint;
 
+type DeflatedValue = PrimitiveValue | Date | RegExp;
+
 function isPrimitive(value: unknown): value is PrimitiveValue {
   if (value === null) {
     return true;
@@ -42,7 +44,7 @@ export function deflate(value: unknown) {
   }
   const record: Record<
     string,
-    PrimitiveValue | Date | RegExp | Array<PrimitiveValue | Date | RegExp>
+    DeflatedValue | Array<Record<string, DeflatedValue> | DeflatedValue>
   > = {};
   (function getKeyValue(obj: unknown, keyPrefix: string = "") {
     if (Array.isArray(obj)) {
