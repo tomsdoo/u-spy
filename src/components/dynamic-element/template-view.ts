@@ -15,11 +15,13 @@ export function ensureTemplateView(customTagName?: string) {
       isTemplateReady: boolean;
       isRefreshRequired: boolean;
       contentTags: Node[];
+      eventHandlers: Record<string, (e: Event, item?: ReturnType<typeof deflate>) => void>;
       constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this.isTemplateReady = false;
         this.contentTags = [];
+        this.eventHandlers = {};
         this.isRefreshRequired = true;
       }
       get item() {
@@ -64,9 +66,26 @@ export function ensureTemplateView(customTagName?: string) {
           return;
         }
         const deflatedItem = deflate(this.item);
+        const instance = this;
         (function embed(node: Node | null, item: ReturnType<typeof deflate>) {
           if (node == null) {
             return;
+          }
+
+          if (node instanceof HTMLElement) {
+            const handledEventNames = node
+              .getAttributeNames()
+              .filter(attributeName => /^@/.test(attributeName))
+              .map(attributeName => attributeName.replace(/^@/, ""));
+            for (const handledEventName of handledEventNames) {
+              const handlerName = node.getAttribute(`@${handledEventName}`);
+              if (handlerName == null || handlerName in instance.eventHandlers === false) {
+                continue;
+              }
+              node.addEventListener(handledEventName, (e) => {
+                instance.eventHandlers[handlerName](e, item);
+              });
+            }
           }
 
           if (node instanceof HTMLElement && node.hasAttribute(":text")) {
