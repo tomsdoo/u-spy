@@ -65,7 +65,6 @@ export function ensureTemplateView(customTagName?: string) {
         }
         const deflatedItem = deflate(this.item);
         (function embed(node: Node | null, item: ReturnType<typeof deflate>) {
-          console.log("embed start", { node });
           if (node == null) {
             return;
           }
@@ -89,20 +88,9 @@ export function ensureTemplateView(customTagName?: string) {
           }
 
           for (const childNode of Array.from(node.childNodes)) {
-            console.log("embed", {
-              childNode,
-              instanceofHTMLElement: childNode instanceof HTMLElement,
-            });
             if (childNode instanceof HTMLElement === false) {
               continue;
             }
-            console.log("it is HTMLElement", {
-              childNode,
-              instanceofHTMLElement: childNode instanceof HTMLElement,
-              attr: childNode.attributes,
-              textAttr: childNode.attributes.getNamedItem(":text"),
-              hasText: childNode.hasAttribute(":text"),
-            });
             if (childNode.hasAttribute(":for")) {
               const propName = childNode.getAttribute(":for");
               if (propName == null) {
