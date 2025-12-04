@@ -33,15 +33,22 @@ _spy.utils.deflate({
 ```
 
 ``` ts
-deflate(value: unknown): Record<
-  string,
+type PrimitiveValue =
+  | boolean
+  | number
+  | string
+  | null
+  | undefined
+  | symbol
+  | bigint;
+
+type DeflatedValue =
   | PrimitiveValue
   | Date
-  | RegExp
-  | Array<
-    | PrimitiveValue
-    | Date
-    | RegExp
-  >
+  | RegExp;
+
+deflate(value: unknown): Record<
+  string,
+  DeflatedValue | (DeflatedValue | Record<string, DeflatedValue>)[]
 >;
 ```
