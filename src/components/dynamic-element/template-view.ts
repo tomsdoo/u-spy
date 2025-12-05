@@ -1,7 +1,10 @@
 import { deflate } from "@/utils/deflate";
 
 function createEventHandlersProxy(
-  handlers: Record<string, (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void>,
+  handlers: Record<
+    string,
+    (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void
+  >,
   onChanged: (prop: string) => void,
 ) {
   return new Proxy(handlers, {
@@ -31,7 +34,14 @@ export function ensureTemplateView(customTagName?: string) {
       isTemplateReady: boolean;
       isRefreshRequired: boolean;
       contentTags: Node[];
-      _eventHandlers: Record<string, (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void>;
+      _eventHandlers: Record<
+        string,
+        (
+          e: Event,
+          item?: ReturnType<typeof deflate>,
+          wholeItem?: unknown,
+        ) => void
+      >;
       constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -82,7 +92,7 @@ export function ensureTemplateView(customTagName?: string) {
               return clonedTag;
             });
         }
-        for(const childNode of Array.from(this.shadowRoot?.childNodes ?? [])) {
+        for (const childNode of Array.from(this.shadowRoot?.childNodes ?? [])) {
           childNode.remove();
         }
         for (const contentTag of this.contentTags) {
@@ -106,11 +116,14 @@ export function ensureTemplateView(customTagName?: string) {
           if (node instanceof HTMLElement) {
             const handledEventNames = node
               .getAttributeNames()
-              .filter(attributeName => /^@/.test(attributeName))
-              .map(attributeName => attributeName.replace(/^@/, ""));
+              .filter((attributeName) => /^@/.test(attributeName))
+              .map((attributeName) => attributeName.replace(/^@/, ""));
             for (const handledEventName of handledEventNames) {
               const handlerName = node.getAttribute(`@${handledEventName}`);
-              if (handlerName == null || handlerName in instance.eventHandlers === false) {
+              if (
+                handlerName == null ||
+                handlerName in instance.eventHandlers === false
+              ) {
                 continue;
               }
               node.addEventListener(handledEventName, (e) => {
