@@ -46,6 +46,14 @@ export function ensureTemplateView(customTagName?: string) {
       get eventHandlers() {
         return this._eventHandlers;
       }
+      set eventHandlers(v) {
+        this._eventHandlers = createEventHandlersProxy(v, () => {
+          this.isRefreshRequired = true;
+          this.render();
+        });
+        this.isRefreshRequired = true;
+        this.render();
+      }
       get item() {
         try {
           const itemStr = this.getAttribute("item");

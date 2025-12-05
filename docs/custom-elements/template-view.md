@@ -104,16 +104,16 @@ watch(
     );
     document.querySelector(
       `#${templateId.value}`
-    ).eventHandlers.onClick = (_, item) => {
-      console.log(item);
-    };
-    document.querySelector(
-      `#${templateId.value}`
     ).item = JSON.parse(valueJsonText.value);
     document.querySelector(
       `#${templateId.value}`
-    ).eventHandlers.onInput = (e, item) => {
-      console.log(e.target.value, item);
+    ).eventHandlers = {
+      onClick (_, item) {
+        console.log(item);
+      },
+      onInput (e, item) {
+        console.log(e.target.value, item);
+      },
     };
   },
   {
@@ -204,6 +204,9 @@ _spy.customElement.ensureTemplateView();
     <div class="titled-box">
       <div>input</div>
       <div class="box">
+        <div>&lt;script&gt;</div>
+        <div>_spy.customElement.ensureTemplateView();</div>
+        <div>&lt;/script&gt;</div>
         <div>&lt;template-view id="my-template"&gt;</div>
         <textarea v-model="codeText"></textarea>
         <div>&lt;/template-view&gt;</div>
@@ -211,11 +214,13 @@ _spy.customElement.ensureTemplateView();
         <div>document.querySelector("#my-template").item = JSON.parse(`</div>
         <textarea v-model="valueJsonText"></textarea>
         <div>`);</div>
-        <div>document.querySelector("#my-template").eventHandlers.onClick = (_, item) => {</div>
-        <div>&nbsp;&nbsp;console.log(item);</div>
-        <div>};</div>
-        <div>document.querySelector("#my-template").eventHandlers.onInput = (e, item) => {</div>
-        <div>&nbsp;&nbsp;console.log(e.target.value, item);</div>
+        <div>document.querySelector("#my-template").eventHandlers = {</div>
+        <div>&nbsp;&nbsp;onClick (_, item) {</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;console.log(item);</div>
+        <div>&nbsp;&nbsp;},</div>
+        <div>&nbsp;&nbsp;onInput (e, item) {</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;console.log(e.target.value, item);</div>
+        <div>&nbsp;&nbsp;},</div>
         <div>};</div>
         <div>&lt;/script&gt;</div>
       </div>
