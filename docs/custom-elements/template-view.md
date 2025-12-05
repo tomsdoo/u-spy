@@ -21,10 +21,11 @@ const defaultCodeText = `<div class="wrapper">
   <div class="team" :text="team.name"></div>
   <ul class="fruit-list">
     <li :for="fruits">
-      <div>fruit</div>
+      <div @click="onClick">fruit</div>
       <div :text="name"></div>
     </li>
   </ul>
+  <input @input="onInput" />
 </div>
 ${makeTag("style")}
 :host {
@@ -103,7 +104,17 @@ watch(
     );
     document.querySelector(
       `#${templateId.value}`
+    ).eventHandlers.onClick = (_, item) => {
+      console.log(item);
+    };
+    document.querySelector(
+      `#${templateId.value}`
     ).item = JSON.parse(valueJsonText.value);
+    document.querySelector(
+      `#${templateId.value}`
+    ).eventHandlers.onInput = (e, item) => {
+      console.log(e.target.value, item);
+    };
   },
   {
     immediate: true,
@@ -200,6 +211,12 @@ _spy.customElement.ensureTemplateView();
         <div>document.querySelector("#my-template").item = JSON.parse(`</div>
         <textarea v-model="valueJsonText"></textarea>
         <div>`);</div>
+        <div>document.querySelector("#my-template").eventHandlers.onClick = (_, item) => {</div>
+        <div>&nbsp;&nbsp;console.log(item);</div>
+        <div>};</div>
+        <div>document.querySelector("#my-template").eventHandlers.onInput = (e, item) => {</div>
+        <div>&nbsp;&nbsp;console.log(e.target.value, item);</div>
+        <div>};</div>
         <div>&lt;/script&gt;</div>
       </div>
     </div>

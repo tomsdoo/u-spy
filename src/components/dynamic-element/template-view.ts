@@ -1,5 +1,21 @@
 import { deflate } from "@/utils/deflate";
 
+function createEventHandlersProxy(
+  handlers: Record<string, (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void>,
+  onChanged: (prop: string) => void,
+) {
+  return new Proxy(handlers, {
+    set(target, prop, value) {
+      if (typeof value !== "function") {
+        throw new Error("event handler must be a function");
+      }
+      target[String(prop)] = value;
+      onChanged(String(prop));
+      return true;
+    },
+  });
+}
+
 export function ensureTemplateView(customTagName?: string) {
   const localTagName = customTagName ?? "template-view";
   if (customElements.get(localTagName)) {
@@ -15,12 +31,20 @@ export function ensureTemplateView(customTagName?: string) {
       isTemplateReady: boolean;
       isRefreshRequired: boolean;
       contentTags: Node[];
+      _eventHandlers: Record<string, (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void>;
       constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this.isTemplateReady = false;
         this.contentTags = [];
+        this._eventHandlers = createEventHandlersProxy({}, () => {
+          this.isRefreshRequired = true;
+          this.render();
+        });
         this.isRefreshRequired = true;
+      }
+      get eventHandlers() {
+        return this._eventHandlers;
       }
       get item() {
         try {
@@ -63,10 +87,28 @@ export function ensureTemplateView(customTagName?: string) {
         if (this.isRefreshRequired !== true) {
           return;
         }
-        const deflatedItem = deflate(this.item);
+        const wholeItem = this.item;
+        const deflatedItem = deflate(wholeItem);
+        const instance = this;
         (function embed(node: Node | null, item: ReturnType<typeof deflate>) {
           if (node == null) {
             return;
+          }
+
+          if (node instanceof HTMLElement) {
+            const handledEventNames = node
+              .getAttributeNames()
+              .filter(attributeName => /^@/.test(attributeName))
+              .map(attributeName => attributeName.replace(/^@/, ""));
+            for (const handledEventName of handledEventNames) {
+              const handlerName = node.getAttribute(`@${handledEventName}`);
+              if (handlerName == null || handlerName in instance.eventHandlers === false) {
+                continue;
+              }
+              node.addEventListener(handledEventName, (e) => {
+                instance.eventHandlers[handlerName](e, item, wholeItem);
+              });
+            }
           }
 
           if (node instanceof HTMLElement && node.hasAttribute(":text")) {
