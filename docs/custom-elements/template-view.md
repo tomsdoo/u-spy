@@ -214,14 +214,14 @@ _spy.customElement.ensureTemplateView();
         <div>document.querySelector("#my-template").item = JSON.parse(`</div>
         <textarea v-model="valueJsonText"></textarea>
         <div>`);</div>
-        <div>document.querySelector("#my-template").eventHandlers = {</div>
-        <div>&nbsp;&nbsp;onClick (_, item) {</div>
-        <div>&nbsp;&nbsp;&nbsp;&nbsp;console.log(item);</div>
-        <div>&nbsp;&nbsp;},</div>
-        <div>&nbsp;&nbsp;onInput (e, item) {</div>
-        <div>&nbsp;&nbsp;&nbsp;&nbsp;console.log(e.target.value, item);</div>
-        <div>&nbsp;&nbsp;},</div>
-        <div>};</div>
+        <pre>document.querySelector("#my-template").eventHandlers = {
+  onClick (_, item) {
+    console.log(item);
+  },
+  onInput (e, item) {
+    console.log(e.target.value, item);
+  },
+};</pre>
         <div>&lt;/script&gt;</div>
       </div>
     </div>
@@ -254,6 +254,10 @@ _spy.customElement.ensureTemplateView();
     .box {
       padding: 1em;
       div {
+        font-size: 0.8rem;
+        line-height: 1.2;
+      }
+      pre {
         font-size: 0.8rem;
         line-height: 1.2;
       }
