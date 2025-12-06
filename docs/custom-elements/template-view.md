@@ -17,33 +17,79 @@ function makeTag(tagName, isEnd) {
   return `<${isEnd ? "/" : ""}${tagName}>`;
 }
 const defaultCodeText = `<div class="wrapper">
-  <div :text="person.name"></div>
-  <div class="team" :text="team.name"></div>
+  <div class="title" :text="title"></div>
+  <div class="user-info">
+    hi, <span :text="login.name"></span>!
+  </div>
+  <form onsubmit="return false" @submit="filterFruits">
+    <input @input="onInput" placeholder="keyword.." />
+  </form>
   <ul class="fruit-list">
-    <li :for="fruits">
-      <div @click="onClick">fruit</div>
+    <li :for="fruits" @click="addToCart">
       <div :text="name"></div>
+      <div :text="price"></div>
     </li>
   </ul>
-  <input @input="onInput" />
+  <ul class="cart-item-list">
+    <li :for="cart.items">
+      <div :text="name"></div>
+      <div :text="quantity"></div>
+      <div :text="amount"></div>
+    </li>
+  </ul>
 </div>
 ${makeTag("style")}
 :host {
   color: green;
 }
+ul {
+  padding-inline: 0;
+}
 .wrapper {
-  .team {
+  .title {
+    font-size: 1.2rem;
     color: red;
+    text-align: center;
+  }
+  .user-info {
+    text-align: right;
+  }
+  form {
+    display: grid;
+    justify-content: end;
   }
   .fruit-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-    color: blue;
     > li {
       display: grid;
-      grid-template-columns: 1fr;
-      > div:nth-child(1) {
+      grid-template-columns: 1fr auto;
+      padding: 1em;
+      border-radius: 0.5em;
+      box-shadow: inset 0 0 1px;
+      cursor: pointer;
+      > div:nth-child(2) {
         font-size: 0.8em;
+      }
+      &:hover {
+        box-shadow: inset 0 0 2px;
+      }
+    }
+  }
+  .cart-item-list {
+    display: grid;
+    > li {
+      display: grid;
+      grid-template-columns: 1fr 3em 5em;
+      gap: 1rem;
+      > div:nth-child(2) {
+        text-align: right;
+      }
+      > div:nth-child(2)::before {
+        content: "x";
+      }
+      > div:nth-child(3) {
+        text-align: right;
       }
     }
   }
@@ -53,18 +99,32 @@ ${makeTag("style", true)}
 const codeText = ref(defaultCodeText);
 
 const _valueJsonText = ref(JSON.stringify({
-  person: {
+  title: "temp cart page",
+  login: {
+    id: 1,
     name: "alice",
   },
-  team: {
-    name: "team A",
+  cart: {
+    items: [],
   },
   fruits: [
     {
-      name: "strawberry",
+      name: "apple",
+      price: 100,
     },
     {
       name: "banana",
+      price: 50,
+    },
+  ],
+  allFruits: [
+    {
+      name: "apple",
+      price: 100,
+    },
+    {
+      name: "banana",
+      price: 50,
     },
   ],
 }, null, 2));
@@ -108,8 +168,52 @@ watch(
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
-      onClick (_, item) {
-        console.log(item);
+      filterFruits (e, item, wholeItem) {
+        const keyword = e.target.querySelector("input")?.value ?? "";
+        const regExps = keyword.split(/\s+/)
+          .filter(Boolean)
+          .map(s => new RegExp(s, "i"));
+        const nextItem = {
+          ...wholeItem,
+        };
+        nextItem.fruits = wholeItem.allFruits.filter(
+          ({name}) => regExps.length === 0
+            ? true
+            : regExps.every(regExp => regExp.test(name))
+        );
+        document.querySelector(`#${templateId.value}`).item = nextItem;
+      },
+      addToCart (_, item, wholeItem) {
+        const itemName = item.name;
+        const fruit = wholeItem.fruits
+          .find(({ name }) => name === itemName);
+        if (fruit == null) {
+          return;
+        }
+
+        const nextItem = {
+          ...wholeItem,
+        };
+        const cartItem = (() => {
+          const quantity = (
+            wholeItem.cart.items.find(
+              ({ name }) => name === itemName
+            )?.quantity ?? 0
+          ) + 1;
+          return {
+            name: fruit.name,
+            quantity,
+            amount: quantity * fruit.price,
+          };
+        })();
+        nextItem.cart.items = [
+          ...nextItem.cart.items
+            .filter(({ name }) => name !== itemName),
+          cartItem,
+        ].toSorted(
+          (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
+        );
+        document.querySelector(`#${templateId.value}`).item = nextItem;
       },
       onInput (e, item) {
         console.log(e.target.value, item);
@@ -148,6 +252,60 @@ onMounted(() => {
   scriptTag.src = scriptUrl;
   document.head.appendChild(scriptTag);
 });
+
+
+const dummyScriptText = `document.querySelector("#my-template").eventHandlers = {
+  filterFruits (e, item, wholeItem) {
+    const keyword = e.target.querySelector("input")?.value ?? "";
+    const regExps = keyword.split(/\s+/)
+      .filter(Boolean)
+      .map(s => new RegExp(s, "i"));
+    const nextItem = {
+      ...wholeItem,
+    };
+    nextItem.fruits = wholeItem.allFruits.filter(
+      ({name}) => regExps.length === 0
+        ? true
+        : regExps.every(regExp => regExp.test(name))
+    );
+    document.querySelector("#my-template").item = nextItem;
+  },
+  addToCart (_, item, wholeItem) {
+    const itemName = item.name;
+    const fruit = wholeItem.fruits
+      .find(({ name }) => name === itemName);
+    if (fruit == null) {
+      return;
+    }
+
+    const nextItem = {
+      ...wholeItem,
+    };
+    const cartItem = (() => {
+      const quantity = (
+        wholeItem.cart.items.find(
+          ({ name }) => name === itemName
+        )?.quantity ?? 0
+      ) + 1;
+      return {
+        name: fruit.name,
+        quantity,
+        amount: quantity * fruit.price,
+      };
+    })();
+    nextItem.cart.items = [
+      ...nextItem.cart.items
+        .filter(({ name }) => name !== itemName),
+      cartItem,
+    ].toSorted(
+      (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
+    );
+    document.querySelector("my-template").item = nextItem;
+  },
+  onInput (e, item) {
+    console.log(e.target.value, item);
+  },
+};`;
 </script>
 
 # Template View
@@ -160,27 +318,10 @@ _spy.customElement.ensureTemplateView();
 
 ``` html
 <template-view id="my-template-view">
-  <div class="wrapper">
-    <div class="person">
-      <div class="name" :text="person.name"></div>
-    </div>
-    <div class="team">
-      <div class="name" :text="team.name"></div>
-    </div>
-  </div>
+  <div class="my-element" :text="name"></div>
   <style>
-    :host {
-      color: red;
-      background: green;
-    }
-    .wrapper {
-      display: grid;
-      grid-template-columns: repeat(2, auto);
-      .team {
-        .name {
-          color: blue;
-        }
-      }
+    .my-element {
+      color: blue;
     }
   </style>
 </template-view>
@@ -188,12 +329,7 @@ _spy.customElement.ensureTemplateView();
   document
     .querySelector("#my-template-view")
     .item = {
-      person: {
-        name: "alice",
-      },
-      team: {
-        name: "team A",
-      },
+      name: "alice",
     };
 </script>
 ```
@@ -214,14 +350,7 @@ _spy.customElement.ensureTemplateView();
         <div>document.querySelector("#my-template").item = JSON.parse(`</div>
         <textarea v-model="valueJsonText"></textarea>
         <div>`);</div>
-        <pre>document.querySelector("#my-template").eventHandlers = {
-  onClick (_, item) {
-    console.log(item);
-  },
-  onInput (e, item) {
-    console.log(e.target.value, item);
-  },
-};</pre>
+        <pre v-html="dummyScriptText"></pre>
         <div>&lt;/script&gt;</div>
       </div>
     </div>
@@ -246,6 +375,7 @@ _spy.customElement.ensureTemplateView();
     gap: 1rem;
     padding: 1rem;
     box-shadow: 0 0 1px;
+    overflow-x: auto;
 
     > div:nth-child(1) {
       font-size: 1.2em;
