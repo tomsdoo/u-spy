@@ -194,16 +194,13 @@ watch(
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
-      filterFruits (e, item, wholeItem) {
-        const keyword = e.target.querySelector("input")?.value ?? "";
-
-        const nextItem = {
+      filterFruits (e, item, wholeItem, reflux) {
+        reflux({
           ...wholeItem,
-          keyword,
-        };
-        document.querySelector(`#${templateId.value}`).item = nextItem;
+          keyword: e.target.querySelector("input")?.value ?? "",
+        });
       },
-      addToCart (_, item, wholeItem) {
+      addToCart (_, item, wholeItem, reflux) {
         const itemName = item.name;
         const fruit = wholeItem.filteredFruits
           .find(({ name }) => name === itemName);
@@ -233,7 +230,7 @@ watch(
         ].toSorted(
           (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
         );
-        document.querySelector(`#${templateId.value}`).item = nextItem;
+        reflux(nextItem);
       },
       onInput (e, item) {
         console.log(e.target.value, item);
@@ -304,18 +301,13 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
   },
 ];
 document.querySelector("#my-template").eventHandlers = {
-  filterFruits (e, item, wholeItem) {
-    const keyword = e.target.querySelector("input")?.value ?? "";
-    const nextItem = {
+  filterFruits (e, item, wholeItem, reflux) {
+    reflux({
       ...wholeItem,
-    };
-    const nextItem = {
-      ...wholeItem,
-      keyword,
-    };
-    document.querySelector("#my-template").item = nextItem;
+      keyword: e.target.querySelector("input")?.value ?? "",
+    });
   },
-  addToCart (_, item, wholeItem) {
+  addToCart (_, item, wholeItem, reflux) {
     const itemName = item.name;
     const fruit = wholeItem.fruits
       .find(({ name }) => name === itemName);
@@ -345,7 +337,7 @@ document.querySelector("#my-template").eventHandlers = {
     ].toSorted(
       (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
     );
-    document.querySelector("my-template").item = nextItem;
+    reflux(nextItem);
   },
   onInput (e, item) {
     console.log(e.target.value, item);
