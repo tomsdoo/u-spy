@@ -37,7 +37,7 @@ const defaultCodeText = `<div class="wrapper">
       <div :text="amount"></div>
     </li>
   </ul>
-  <div class="cart-amount" :text="cart.amount"></div>
+  <div :if="cart.isAmountVisible" class="cart-amount" :text="cart.amount"></div>
 </div>
 ${makeTag("style")}
 :host {
@@ -182,6 +182,7 @@ watch(
             (summaryAmount, { amount }) => summaryAmount + amount, 0
           );
         nextItem.cart.amount = amount;
+        nextItem.cart.isAmountVisible = amount > 0;
         return nextItem;
       },
     ];
@@ -284,6 +285,7 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
         (summaryAmount, { amount }) => summaryAmount + amount, 0
       );
     nextItem.cart.amount = amount;
+    nextItem.cart.isAmountVisible = amount > 0;
     return nextItem;
   },
 ];
