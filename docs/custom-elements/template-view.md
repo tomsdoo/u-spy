@@ -22,10 +22,10 @@ const defaultCodeText = `<div class="wrapper">
     hi, <span :text="login.name"></span>!
   </div>
   <form onsubmit="return false" @submit="filterFruits">
-    <input @input="onInput" placeholder="keyword.." />
+    <input :value="keyword" @input="onInput" placeholder="keyword.." />
   </form>
   <ul class="fruit-list">
-    <li :for="fruits" @click="addToCart">
+    <li :for="filteredFruits" @click="addToCart">
       <div :text="name"></div>
       <div :text="price"></div>
     </li>
@@ -114,16 +114,6 @@ const _valueJsonText = ref(JSON.stringify({
   cart: {
     items: [],
   },
-  fruits: [
-    {
-      name: "apple",
-      price: 100,
-    },
-    {
-      name: "banana",
-      price: 50,
-    },
-  ],
   allFruits: [
     {
       name: "apple",
@@ -185,28 +175,37 @@ watch(
         nextItem.cart.isAmountVisible = amount > 0;
         return nextItem;
       },
+      (item) => {
+        const nextItem = {
+          ...item,
+        };
+        const regExps = (item.keyword ?? "").split(/\s+/)
+          .filter(Boolean)
+          .map(s => new RegExp(s, "i"));
+        nextItem.filteredFruits = item.allFruits
+          .filter(({ name }) =>
+            regExps.length === 0
+              ? true
+              : regExps.every(regExp => regExp.test(name))
+          );
+        return nextItem;
+      },
     ];
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
       filterFruits (e, item, wholeItem) {
         const keyword = e.target.querySelector("input")?.value ?? "";
-        const regExps = keyword.split(/\s+/)
-          .filter(Boolean)
-          .map(s => new RegExp(s, "i"));
+
         const nextItem = {
           ...wholeItem,
+          keyword,
         };
-        nextItem.fruits = wholeItem.allFruits.filter(
-          ({name}) => regExps.length === 0
-            ? true
-            : regExps.every(regExp => regExp.test(name))
-        );
         document.querySelector(`#${templateId.value}`).item = nextItem;
       },
       addToCart (_, item, wholeItem) {
         const itemName = item.name;
-        const fruit = wholeItem.fruits
+        const fruit = wholeItem.filteredFruits
           .find(({ name }) => name === itemName);
         if (fruit == null) {
           return;
@@ -288,21 +287,32 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
     nextItem.cart.isAmountVisible = amount > 0;
     return nextItem;
   },
+  (item) => {
+    const nextItem = {
+      ...item,
+    };
+    const regExps = (item.keyword ?? "").split(/\s+/)
+      .filter(Boolean)
+      .map(s => new RegExp(s, "i"));
+    nextItem.filteredFruits = item.allFruits
+      .filter(({ name }) =>
+        regExps.length === 0
+          ? true
+          : regExps.every(regExp => regExp.test(name))
+      );
+    return nextItem;
+  },
 ];
 document.querySelector("#my-template").eventHandlers = {
   filterFruits (e, item, wholeItem) {
     const keyword = e.target.querySelector("input")?.value ?? "";
-    const regExps = keyword.split(/\s+/)
-      .filter(Boolean)
-      .map(s => new RegExp(s, "i"));
     const nextItem = {
       ...wholeItem,
     };
-    nextItem.fruits = wholeItem.allFruits.filter(
-      ({name}) => regExps.length === 0
-        ? true
-        : regExps.every(regExp => regExp.test(name))
-    );
+    const nextItem = {
+      ...wholeItem,
+      keyword,
+    };
     document.querySelector("#my-template").item = nextItem;
   },
   addToCart (_, item, wholeItem) {
