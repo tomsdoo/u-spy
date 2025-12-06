@@ -1,4 +1,5 @@
 import { deflate } from "@/utils/deflate";
+import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
 
 function createEventHandlersProxy(
   handlers: Record<
@@ -42,6 +43,7 @@ export function ensureTemplateView(customTagName?: string) {
           wholeItem?: unknown,
         ) => void
       >;
+      _reducers: Array<(value: unknown) => unknown>;
       constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -51,6 +53,7 @@ export function ensureTemplateView(customTagName?: string) {
           this.isRefreshRequired = true;
           this.render();
         });
+        this._reducers = [];
         this.isRefreshRequired = true;
       }
       get eventHandlers() {
@@ -61,6 +64,14 @@ export function ensureTemplateView(customTagName?: string) {
           this.isRefreshRequired = true;
           this.render();
         });
+        this.isRefreshRequired = true;
+        this.render();
+      }
+      get reducers() {
+        return this._reducers;
+      }
+      set reducers(v) {
+        this._reducers = v;
         this.isRefreshRequired = true;
         this.render();
       }
@@ -105,7 +116,7 @@ export function ensureTemplateView(customTagName?: string) {
         if (this.isRefreshRequired !== true) {
           return;
         }
-        const wholeItem = this.item;
+        const wholeItem = combineSimpleReducers(this.reducers)(this.item);
         const deflatedItem = deflate(wholeItem);
         const instance = this;
         (function embed(node: Node | null, item: ReturnType<typeof deflate>) {

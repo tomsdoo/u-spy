@@ -37,6 +37,7 @@ const defaultCodeText = `<div class="wrapper">
       <div :text="amount"></div>
     </li>
   </ul>
+  <div class="cart-amount" :text="cart.amount"></div>
 </div>
 ${makeTag("style")}
 :host {
@@ -93,13 +94,19 @@ ul {
       }
     }
   }
+  .cart-amount {
+    text-align: right;
+    &::before {
+      content: "amount: ";
+    }
+  }
 }
 ${makeTag("style", true)}
 `;
 const codeText = ref(defaultCodeText);
 
 const _valueJsonText = ref(JSON.stringify({
-  title: "temp cart page",
+  title: "sample cart page",
   login: {
     id: 1,
     name: "alice",
@@ -165,6 +172,19 @@ watch(
     document.querySelector(
       `#${templateId.value}`
     ).item = JSON.parse(valueJsonText.value);
+    document.querySelector(`#${templateId.value}`).reducers = [
+      (item) => {
+        const nextItem = {
+          ...item,
+        };
+        const amount = item.cart.items
+          .reduce(
+            (summaryAmount, { amount }) => summaryAmount + amount, 0
+          );
+        nextItem.cart.amount = amount;
+        return nextItem;
+      },
+    ];
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
@@ -254,7 +274,20 @@ onMounted(() => {
 });
 
 
-const dummyScriptText = `document.querySelector("#my-template").eventHandlers = {
+const dummyScriptText = `document.querySelector("#my-template").reducers = [
+  (item) => {
+    const nextItem = {
+      ...item,
+    };
+    const amount = item.cart.items
+      .reduce(
+        (summaryAmount, { amount }) => summaryAmount + amount, 0
+      );
+    nextItem.cart.amount = amount;
+    return nextItem;
+  },
+];
+document.querySelector("#my-template").eventHandlers = {
   filterFruits (e, item, wholeItem) {
     const keyword = e.target.querySelector("input")?.value ?? "";
     const regExps = keyword.split(/\s+/)
