@@ -143,6 +143,19 @@ export function ensureTemplateView(customTagName?: string) {
             }
           }
 
+          if (node instanceof HTMLElement && node.hasAttribute(":if")) {
+            const propName = node.getAttribute(":if");
+            if (propName == null) {
+              return;
+            }
+            const embeddingValue = item[propName];
+            // truthy check
+            if (!embeddingValue) {
+              node.remove();
+              return;
+            }
+          }
+
           if (node instanceof HTMLElement && node.hasAttribute(":text")) {
             const propName = node.getAttribute(":text");
             if (propName == null) {
