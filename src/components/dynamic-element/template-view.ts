@@ -1,3 +1,4 @@
+import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
 import { deflate } from "@/utils/deflate";
 
@@ -169,19 +170,7 @@ export function ensureTemplateView(customTagName?: string) {
             }
           }
 
-          if (node instanceof HTMLElement && node.hasAttribute(":value")) {
-            const propName = node.getAttribute(":value");
-            if (propName == null) {
-              // should not happen
-            } else if (propName === ".") {
-              (node as HTMLInputElement).value = String(item);
-            } else if (propName in item === false) {
-              (node as HTMLInputElement).value = "";
-            } else {
-              const embeddingValue = item[propName];
-              (node as HTMLInputElement).value = String(embeddingValue);
-            }
-          }
+          embedValue(node, item);
 
           if (node instanceof HTMLElement && node.hasAttribute(":text")) {
             const propName = node.getAttribute(":text");
