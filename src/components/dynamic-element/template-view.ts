@@ -1,10 +1,15 @@
-import { deflate } from "@/utils/deflate";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
+import { deflate } from "@/utils/deflate";
 
 function createEventHandlersProxy(
   handlers: Record<
     string,
-    (e: Event, item?: ReturnType<typeof deflate>, wholeItem?: unknown) => void
+    (
+      e: Event,
+      item?: ReturnType<typeof deflate>,
+      wholeItem?: unknown,
+      reflux?: (nextItem: unknown) => void,
+    ) => void
   >,
   onChanged: (prop: string) => void,
 ) {
@@ -41,6 +46,7 @@ export function ensureTemplateView(customTagName?: string) {
           e: Event,
           item?: ReturnType<typeof deflate>,
           wholeItem?: unknown,
+          reflux?: (nextItem: unknown) => void,
         ) => void
       >;
       _reducers: Array<(value: unknown) => unknown>;
@@ -138,7 +144,14 @@ export function ensureTemplateView(customTagName?: string) {
                 continue;
               }
               node.addEventListener(handledEventName, (e) => {
-                instance.eventHandlers[handlerName](e, item, wholeItem);
+                instance.eventHandlers[handlerName](
+                  e,
+                  item,
+                  wholeItem,
+                  (nextItem) => {
+                    instance.item = nextItem;
+                  },
+                );
               });
             }
           }
