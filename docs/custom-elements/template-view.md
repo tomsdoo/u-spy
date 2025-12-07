@@ -22,7 +22,7 @@ const defaultCodeText = `<div class="wrapper">
     hi, <span :text="login.name"></span>!
   </div>
   <form onsubmit="return false" @submit="filterFruits">
-    <input :value="keyword" @input="onInput" placeholder="keyword.." />
+    <input :value="keyword" @input="consoleLog" placeholder="keyword.." />
   </form>
   <ul class="fruit-list">
     <li :for="filteredFruits" @click="addToCart">
@@ -232,8 +232,8 @@ watch(
         );
         reflux(nextItem);
       },
-      onInput (e, item) {
-        console.log(e.target.value, item);
+      consoleLog (e, item) {
+        console.log(e.target, item);
       },
     };
   },
@@ -339,8 +339,8 @@ document.querySelector("#my-template").eventHandlers = {
     );
     reflux(nextItem);
   },
-  onInput (e, item) {
-    console.log(e.target.value, item);
+  consoleLog (e, item) {
+    console.log(e.target, item);
   },
 };`;
 </script>
