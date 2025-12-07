@@ -1,3 +1,6 @@
+import { applyIf } from "@/components/dynamic-element/apply-if";
+import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
+import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
 import { deflate } from "@/utils/deflate";
 
@@ -156,48 +159,15 @@ export function ensureTemplateView(customTagName?: string) {
             }
           }
 
-          if (node instanceof HTMLElement && node.hasAttribute(":if")) {
-            const propName = node.getAttribute(":if");
-            if (propName == null) {
-              return;
-            }
-            const embeddingValue = item[propName];
-            // truthy check
-            if (!embeddingValue) {
-              node.remove();
-              return;
-            }
+          const isHidden = applyIf(node, item);
+          if (isHidden) {
+            return;
           }
 
-          if (node instanceof HTMLElement && node.hasAttribute(":value")) {
-            const propName = node.getAttribute(":value");
-            if (propName == null) {
-              // should not happen
-            } else if (propName === ".") {
-              (node as HTMLInputElement).value = String(item);
-            } else if (propName in item === false) {
-              (node as HTMLInputElement).value = "";
-            } else {
-              const embeddingValue = item[propName];
-              (node as HTMLInputElement).value = String(embeddingValue);
-            }
-          }
+          embedValue(node, item);
 
-          if (node instanceof HTMLElement && node.hasAttribute(":text")) {
-            const propName = node.getAttribute(":text");
-            if (propName == null) {
-              return;
-            }
-            if (propName === ".") {
-              node.textContent = String(item);
-              return;
-            }
-            if (propName in item === false) {
-              node.textContent = "";
-              return;
-            }
-            const embeddingValue = item[propName];
-            node.textContent = String(embeddingValue);
+          const isProcessedTextContent = embedTextContent(node, item);
+          if (isProcessedTextContent) {
             return;
           }
 
