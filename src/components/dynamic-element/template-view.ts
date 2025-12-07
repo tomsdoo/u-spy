@@ -1,3 +1,4 @@
+import { applyIf } from "@/components/dynamic-element/apply-if";
 import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
@@ -158,17 +159,9 @@ export function ensureTemplateView(customTagName?: string) {
             }
           }
 
-          if (node instanceof HTMLElement && node.hasAttribute(":if")) {
-            const propName = node.getAttribute(":if");
-            if (propName == null) {
-              return;
-            }
-            const embeddingValue = item[propName];
-            // truthy check
-            if (!embeddingValue) {
-              node.remove();
-              return;
-            }
+          const isHidden = applyIf(node, item);
+          if (isHidden) {
+            return;
           }
 
           embedValue(node, item);
