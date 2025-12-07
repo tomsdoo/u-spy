@@ -2,6 +2,7 @@ import { applyIf } from "@/components/dynamic-element/apply-if";
 import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
+import { registerEventHandlers } from "@/components/dynamic-element/register-event-handlers";
 import { deflate } from "@/utils/deflate";
 
 function createEventHandlersProxy(
@@ -133,31 +134,15 @@ export function ensureTemplateView(customTagName?: string) {
             return;
           }
 
-          if (node instanceof HTMLElement) {
-            const handledEventNames = node
-              .getAttributeNames()
-              .filter((attributeName) => /^@/.test(attributeName))
-              .map((attributeName) => attributeName.replace(/^@/, ""));
-            for (const handledEventName of handledEventNames) {
-              const handlerName = node.getAttribute(`@${handledEventName}`);
-              if (
-                handlerName == null ||
-                handlerName in instance.eventHandlers === false
-              ) {
-                continue;
-              }
-              node.addEventListener(handledEventName, (e) => {
-                instance.eventHandlers[handlerName](
-                  e,
-                  item,
-                  wholeItem,
-                  (nextItem) => {
-                    instance.item = nextItem;
-                  },
-                );
-              });
-            }
-          }
+          registerEventHandlers(
+            node,
+            item,
+            instance.eventHandlers,
+            wholeItem,
+            (nextItem) => {
+              instance.item = nextItem;
+            },
+          );
 
           const isHidden = applyIf(node, item);
           if (isHidden) {
