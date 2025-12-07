@@ -1,3 +1,4 @@
+import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
 import { deflate } from "@/utils/deflate";
@@ -172,21 +173,8 @@ export function ensureTemplateView(customTagName?: string) {
 
           embedValue(node, item);
 
-          if (node instanceof HTMLElement && node.hasAttribute(":text")) {
-            const propName = node.getAttribute(":text");
-            if (propName == null) {
-              return;
-            }
-            if (propName === ".") {
-              node.textContent = String(item);
-              return;
-            }
-            if (propName in item === false) {
-              node.textContent = "";
-              return;
-            }
-            const embeddingValue = item[propName];
-            node.textContent = String(embeddingValue);
+          const isProcessedTextContent = embedTextContent(node, item);
+          if (isProcessedTextContent) {
             return;
           }
 
