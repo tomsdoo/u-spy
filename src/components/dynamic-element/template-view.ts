@@ -134,6 +134,11 @@ export function ensureTemplateView(customTagName?: string) {
             return;
           }
 
+          const isRemoved = applyIf(node, item);
+          if (isRemoved) {
+            return;
+          }
+
           registerEventHandlers(
             node,
             item,
@@ -143,11 +148,6 @@ export function ensureTemplateView(customTagName?: string) {
               instance.item = nextItem;
             },
           );
-
-          const isHidden = applyIf(node, item);
-          if (isHidden) {
-            return;
-          }
 
           embedValue(node, item);
 
