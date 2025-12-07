@@ -106,7 +106,7 @@ ${makeTag("style", true)}
 const codeText = ref(defaultCodeText);
 
 const _valueJsonText = ref(JSON.stringify({
-  title: "sample cart page",
+  title: "sample fruit shop",
   login: {
     id: 1,
     name: "alice",
@@ -164,16 +164,18 @@ watch(
     ).item = JSON.parse(valueJsonText.value);
     document.querySelector(`#${templateId.value}`).reducers = [
       (item) => {
-        const nextItem = {
-          ...item,
-        };
         const amount = item.cart.items
           .reduce(
             (summaryAmount, { amount }) => summaryAmount + amount, 0
           );
-        nextItem.cart.amount = amount;
-        nextItem.cart.isAmountVisible = amount > 0;
-        return nextItem;
+        return {
+          ...item,
+          cart: {
+            ...item.cart,
+            amount,
+            isAmountVisible: amount > 0,
+          },
+        };
       },
       (item) => {
         const nextItem = {
@@ -182,13 +184,16 @@ watch(
         const regExps = (item.keyword ?? "").split(/\s+/)
           .filter(Boolean)
           .map(s => new RegExp(s, "i"));
-        nextItem.filteredFruits = item.allFruits
+        const filteredFruits = item.allFruits
           .filter(({ name }) =>
             regExps.length === 0
               ? true
               : regExps.every(regExp => regExp.test(name))
           );
-        return nextItem;
+        return {
+          ...item,
+          filteredFruits,
+        };
       },
     ];
     document.querySelector(
@@ -273,31 +278,33 @@ onMounted(() => {
 
 const dummyScriptText = `document.querySelector("#my-template").reducers = [
   (item) => {
-    const nextItem = {
-      ...item,
-    };
     const amount = item.cart.items
       .reduce(
         (summaryAmount, { amount }) => summaryAmount + amount, 0
       );
-    nextItem.cart.amount = amount;
-    nextItem.cart.isAmountVisible = amount > 0;
-    return nextItem;
+    return {
+      ...item,
+      cart: {
+        ...item.cart,
+        amount,
+        isAmountVisible: amount > 0,
+      },
+    };
   },
   (item) => {
-    const nextItem = {
-      ...item,
-    };
     const regExps = (item.keyword ?? "").split(/\s+/)
       .filter(Boolean)
       .map(s => new RegExp(s, "i"));
-    nextItem.filteredFruits = item.allFruits
+    const filteredFruits = item.allFruits
       .filter(({ name }) =>
         regExps.length === 0
           ? true
           : regExps.every(regExp => regExp.test(name))
       );
-    return nextItem;
+    return {
+      ...item,
+      filteredFruits,
+    };
   },
 ];
 document.querySelector("#my-template").eventHandlers = {
