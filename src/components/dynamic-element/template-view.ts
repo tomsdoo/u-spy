@@ -1,4 +1,5 @@
 import { applyIf } from "@/components/dynamic-element/apply-if";
+import { applyIfNot } from "@/components/dynamic-element/apply-if-not";
 import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
@@ -134,7 +135,7 @@ export function ensureTemplateView(customTagName?: string) {
             return;
           }
 
-          const isRemoved = applyIf(node, item);
+          const isRemoved = applyIf(node, item) || applyIfNot(node, item);
           if (isRemoved) {
             return;
           }

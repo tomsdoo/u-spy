@@ -38,6 +38,7 @@ const defaultCodeText = `<div class="wrapper">
     </li>
   </ul>
   <div :if="cart.isAmountVisible" class="cart-amount" :text="cart.amount"></div>
+  <div :if-not="cart.isAmountVisible" class="cart-amount empty">cart is empty..</div>
 </div>
 ${makeTag("style")}
 :host {
@@ -96,7 +97,7 @@ ul {
   }
   .cart-amount {
     text-align: right;
-    &::before {
+    &:not(.empty)::before {
       content: "amount: ";
     }
   }
