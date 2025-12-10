@@ -1,16 +1,22 @@
+import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
 import type { deflate } from "@/utils/deflate";
 
 export function applyIf(node: Node, item: ReturnType<typeof deflate>) {
-  if (node instanceof HTMLElement === false) {
+  const {
+    isHTMLElement,
+    isHTMLElementNode,
+    hasAttribute,
+    value: propName,
+  } = getHtmlElementAttribute(node, ":if");
+  if (
+    isHTMLElementNode(node) === false ||
+    isHTMLElement === false ||
+    hasAttribute === false ||
+    propName === null
+  ) {
     return false;
   }
-  if (node.hasAttribute(":if") === false) {
-    return false;
-  }
-  const propName = node.getAttribute(":if");
-  if (propName == null) {
-    return false;
-  }
+
   if (propName === ".") {
     const targetValue = item;
     // truthy check
