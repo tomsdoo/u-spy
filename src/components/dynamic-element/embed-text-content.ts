@@ -1,13 +1,16 @@
+import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
 import type { deflate } from "@/utils/deflate";
 
 export function embedTextContent(node: Node, item: ReturnType<typeof deflate>) {
-  if (node instanceof HTMLElement === false) {
+  const {
+    isHTMLElement,
+    hasAttribute,
+    value: propName,
+  } = getHtmlElementAttribute(node, ":text");
+  if (isHTMLElement === false || hasAttribute === false) {
     return false;
   }
-  if (node.hasAttribute(":text") === false) {
-    return false;
-  }
-  const propName = node.getAttribute(":text");
+
   if (propName == null) {
     return true;
   }

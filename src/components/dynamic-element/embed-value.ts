@@ -1,15 +1,13 @@
+import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
 import type { deflate } from "@/utils/deflate";
 
 export function embedValue(node: Node, item: ReturnType<typeof deflate>) {
-  if (node instanceof HTMLElement === false) {
-    return false;
-  }
-
-  if (node.hasAttribute(":value") === false) {
-    return false;
-  }
-  const propName = node.getAttribute(":value");
-  if (propName == null) {
+  const {
+    isHTMLElement,
+    hasAttribute,
+    value: propName,
+  } = getHtmlElementAttribute(node, ":value");
+  if (isHTMLElement === false || hasAttribute === false || propName === null) {
     return false;
   }
 
