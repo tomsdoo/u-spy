@@ -18,94 +18,24 @@ function makeTag(tagName, isEnd) {
 }
 const defaultCodeText = `<div class="wrapper">
   <div class="title" :text="title"></div>
-  <div :if="isLoggedIn" class="user-info">
-    hi, <span :text="login.name"></span>!
+  <div :text="value"></div>
+  <button @click="increment">+</button>
+  <button @click="decrement">-</button>
+  <div :if="isZero" class="state">
+    the value is 0
   </div>
-  <div :if-not="isLoggedIn" class="user-info">
-    <button @click="login">login</button>
+  <div :if-not="isZero" class="state">
+    the value is not 0
   </div>
-  <form onsubmit="return false" @submit="filterFruits">
-    <input :value="keyword" @input="consoleLog" placeholder="keyword.." />
-  </form>
-  <ul class="fruit-list">
-    <li :for="filteredFruits" @click="addToCart">
-      <div :text="name"></div>
-      <div :text="price"></div>
-    </li>
-  </ul>
-  <ul class="cart-item-list">
-    <li :for="cart.items">
-      <div :text="name"></div>
-      <div :text="quantity"></div>
-      <div :text="amount"></div>
-    </li>
-  </ul>
-  <div :if="cart.isAmountVisible" class="cart-amount" :text="cart.amount"></div>
-  <div :if-not="cart.isAmountVisible" class="cart-amount empty">cart is empty..</div>
 </div>
 ${makeTag("style")}
-:host {
-  color: green;
-}
-ul {
-  padding-inline: 0;
-}
 .wrapper {
   .title {
     font-size: 1.2rem;
-    color: red;
     text-align: center;
   }
-  .user-info {
-    text-align: right;
-    button {
-      cursor: pointer;
-    }
-  }
-  form {
-    display: grid;
-    justify-content: end;
-  }
-  .fruit-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-    > li {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      padding: 1em;
-      border-radius: 0.5em;
-      box-shadow: inset 0 0 1px;
-      cursor: pointer;
-      > div:nth-child(2) {
-        font-size: 0.8em;
-      }
-      &:hover {
-        box-shadow: inset 0 0 2px;
-      }
-    }
-  }
-  .cart-item-list {
-    display: grid;
-    > li {
-      display: grid;
-      grid-template-columns: 1fr 3em 5em;
-      gap: 1rem;
-      > div:nth-child(2) {
-        text-align: right;
-      }
-      > div:nth-child(2)::before {
-        content: "x";
-      }
-      > div:nth-child(3) {
-        text-align: right;
-      }
-    }
-  }
-  .cart-amount {
-    text-align: right;
-    &:not(.empty)::before {
-      content: "amount: ";
-    }
+  .state {
+    font-size: 0.8rem;
   }
 }
 ${makeTag("style", true)}
@@ -113,20 +43,8 @@ ${makeTag("style", true)}
 const codeText = ref(defaultCodeText);
 
 const _valueJsonText = ref(JSON.stringify({
-  title: "sample fruit shop",
-  cart: {
-    items: [],
-  },
-  allFruits: [
-    {
-      name: "apple",
-      price: 100,
-    },
-    {
-      name: "banana",
-      price: 50,
-    },
-  ],
+  title: "sample counter",
+  value: 0,
 }, null, 2));
 const valueJsonText = computed({
   get() {
@@ -168,95 +86,23 @@ watch(
     document.querySelector(`#${templateId.value}`).reducers = [
       (item) => ({
         ...item,
-        isLoggedIn: item.login != null,
+        isZero: item.value === 0,
       }),
-      (item) => {
-        const amount = item.cart.items
-          .reduce(
-            (summaryAmount, { amount }) => summaryAmount + amount, 0
-          );
-        return {
-          ...item,
-          cart: {
-            ...item.cart,
-            amount,
-            isAmountVisible: amount > 0,
-          },
-        };
-      },
-      (item) => {
-        const nextItem = {
-          ...item,
-        };
-        const regExps = (item.keyword ?? "").split(/\s+/)
-          .filter(Boolean)
-          .map(s => new RegExp(s, "i"));
-        const filteredFruits = item.allFruits
-          .filter(({ name }) =>
-            regExps.length === 0
-              ? true
-              : regExps.every(regExp => regExp.test(name))
-          );
-        return {
-          ...item,
-          filteredFruits,
-        };
-      },
     ];
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
-      async login (e, item, wholeItem, reflux) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-
+      increment(e, item, wholeItem, reflux) {
         reflux({
           ...wholeItem,
-          login: {
-            id: 1,
-            name: "alice",
-          },
+          value: wholeItem.value + 1,
         });
       },
-      filterFruits (e, item, wholeItem, reflux) {
+      decrement(e, item, wholeItem, reflux) {
         reflux({
           ...wholeItem,
-          keyword: e.target.querySelector("input")?.value ?? "",
+          value: wholeItem.value - 1,
         });
-      },
-      addToCart (_, item, wholeItem, reflux) {
-        const itemName = item.name;
-        const fruit = wholeItem.filteredFruits
-          .find(({ name }) => name === itemName);
-        if (fruit == null) {
-          return;
-        }
-
-        const nextItem = {
-          ...wholeItem,
-        };
-        const cartItem = (() => {
-          const quantity = (
-            wholeItem.cart.items.find(
-              ({ name }) => name === itemName
-            )?.quantity ?? 0
-          ) + 1;
-          return {
-            name: fruit.name,
-            quantity,
-            amount: quantity * fruit.price,
-          };
-        })();
-        nextItem.cart.items = [
-          ...nextItem.cart.items
-            .filter(({ name }) => name !== itemName),
-          cartItem,
-        ].toSorted(
-          (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
-        );
-        reflux(nextItem);
-      },
-      consoleLog (e, item) {
-        console.log(e.target, item);
       },
     };
   },
@@ -295,88 +141,23 @@ onMounted(() => {
 
 
 const dummyScriptText = `document.querySelector("#my-template").reducers = [
-  (item) => {
-    const amount = item.cart.items
-      .reduce(
-        (summaryAmount, { amount }) => summaryAmount + amount, 0
-      );
-    return {
-      ...item,
-      cart: {
-        ...item.cart,
-        amount,
-        isAmountVisible: amount > 0,
-      },
-    };
-  },
-  (item) => {
-    const regExps = (item.keyword ?? "").split(/\s+/)
-      .filter(Boolean)
-      .map(s => new RegExp(s, "i"));
-    const filteredFruits = item.allFruits
-      .filter(({ name }) =>
-        regExps.length === 0
-          ? true
-          : regExps.every(regExp => regExp.test(name))
-      );
-    return {
-      ...item,
-      filteredFruits,
-    };
-  },
+  (item) => ({
+    ...item,
+    isZero: item.value === 0,
+  }),
 ];
 document.querySelector("#my-template").eventHandlers = {
-  async login (e, item, wholeItem, reflux) {
-    await new Promise(resolve => setTimeout(resolve, 500));
-
+  increment(e, item, wholeItem, reflux) {
     reflux({
       ...wholeItem,
-      login: {
-        id: 1,
-        name: "alice",
-      },
+      value: wholeItem.value + 1,
     });
   },
-  filterFruits (e, item, wholeItem, reflux) {
+  decrement(e, item, wholeItem, reflux) {
     reflux({
       ...wholeItem,
-      keyword: e.target.querySelector("input")?.value ?? "",
+      value: wholeItem.value - 1,
     });
-  },
-  addToCart (_, item, wholeItem, reflux) {
-    const itemName = item.name;
-    const fruit = wholeItem.fruits
-      .find(({ name }) => name === itemName);
-    if (fruit == null) {
-      return;
-    }
-
-    const nextItem = {
-      ...wholeItem,
-    };
-    const cartItem = (() => {
-      const quantity = (
-        wholeItem.cart.items.find(
-          ({ name }) => name === itemName
-        )?.quantity ?? 0
-      ) + 1;
-      return {
-        name: fruit.name,
-        quantity,
-        amount: quantity * fruit.price,
-      };
-    })();
-    nextItem.cart.items = [
-      ...nextItem.cart.items
-        .filter(({ name }) => name !== itemName),
-      cartItem,
-    ].toSorted(
-      (a,b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1
-    );
-    reflux(nextItem);
-  },
-  consoleLog (e, item) {
-    console.log(e.target, item);
   },
 };`;
 </script>
