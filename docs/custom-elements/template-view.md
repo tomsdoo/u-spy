@@ -18,8 +18,11 @@ function makeTag(tagName, isEnd) {
 }
 const defaultCodeText = `<div class="wrapper">
   <div class="title" :text="title"></div>
-  <div class="user-info">
+  <div :if="isLoggedIn" class="user-info">
     hi, <span :text="login.name"></span>!
+  </div>
+  <div :if-not="isLoggedIn" class="user-info">
+    <button @click="login">login</button>
   </div>
   <form onsubmit="return false" @submit="filterFruits">
     <input :value="keyword" @input="consoleLog" placeholder="keyword.." />
@@ -55,6 +58,9 @@ ul {
   }
   .user-info {
     text-align: right;
+    button {
+      cursor: pointer;
+    }
   }
   form {
     display: grid;
@@ -108,10 +114,6 @@ const codeText = ref(defaultCodeText);
 
 const _valueJsonText = ref(JSON.stringify({
   title: "sample fruit shop",
-  login: {
-    id: 1,
-    name: "alice",
-  },
   cart: {
     items: [],
   },
@@ -164,6 +166,10 @@ watch(
       `#${templateId.value}`
     ).item = JSON.parse(valueJsonText.value);
     document.querySelector(`#${templateId.value}`).reducers = [
+      (item) => ({
+        ...item,
+        isLoggedIn: item.login != null,
+      }),
       (item) => {
         const amount = item.cart.items
           .reduce(
@@ -200,6 +206,17 @@ watch(
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
+      async login (e, item, wholeItem, reflux) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        reflux({
+          ...wholeItem,
+          login: {
+            id: 1,
+            name: "alice",
+          },
+        });
+      },
       filterFruits (e, item, wholeItem, reflux) {
         reflux({
           ...wholeItem,
@@ -309,6 +326,17 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
   },
 ];
 document.querySelector("#my-template").eventHandlers = {
+  async login (e, item, wholeItem, reflux) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    reflux({
+      ...wholeItem,
+      login: {
+        id: 1,
+        name: "alice",
+      },
+    });
+  },
   filterFruits (e, item, wholeItem, reflux) {
     reflux({
       ...wholeItem,
