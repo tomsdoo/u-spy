@@ -23,6 +23,7 @@ const defaultCodeText = `<div class="wrapper">
     <button type="button" @click="increment">+</button>
     <button type="button" @click="decrement">-</button>
   </form>
+  <div :if-equal="value" :equal-value="3">it's 3</div>
   <div :if="isZero" class="state">
     the value is 0
   </div>
