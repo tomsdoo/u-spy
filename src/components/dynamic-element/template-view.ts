@@ -1,4 +1,5 @@
 import { applyIf } from "@/components/dynamic-element/apply-if";
+import { applyIfEqual } from "@/components/dynamic-element/apply-if-equal";
 import { applyIfNot } from "@/components/dynamic-element/apply-if-not";
 import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
@@ -135,7 +136,10 @@ export function ensureTemplateView(customTagName?: string) {
             return;
           }
 
-          const isRemoved = applyIf(node, item) || applyIfNot(node, item);
+          const isRemoved =
+            applyIf(node, item) ||
+            applyIfNot(node, item) ||
+            applyIfEqual(node, item);
           if (isRemoved) {
             return;
           }
