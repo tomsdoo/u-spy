@@ -18,9 +18,11 @@ function makeTag(tagName, isEnd) {
 }
 const defaultCodeText = `<div class="wrapper">
   <div class="title" :text="title"></div>
-  <div :text="value"></div>
-  <button @click="increment">+</button>
-  <button @click="decrement">-</button>
+  <form>
+    <div :text="value"></div>
+    <button type="button" @click="increment">+</button>
+    <button type="button" @click="decrement">-</button>
+  </form>
   <div :if="isZero" class="state">
     the value is 0
   </div>
@@ -33,6 +35,14 @@ ${makeTag("style")}
   .title {
     font-size: 1.2rem;
     text-align: center;
+  }
+  form {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.5em;
+    button {
+      cursor: pointer;
+    }
   }
   .state {
     font-size: 0.8rem;
