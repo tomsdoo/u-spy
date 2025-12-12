@@ -1,3 +1,4 @@
+import { applyIfNotEqual } from "@/components/dynamic-element//apply-if-not-equal";
 import { applyIf } from "@/components/dynamic-element/apply-if";
 import { applyIfEqual } from "@/components/dynamic-element/apply-if-equal";
 import { applyIfNot } from "@/components/dynamic-element/apply-if-not";
@@ -139,7 +140,8 @@ export function ensureTemplateView(customTagName?: string) {
           const isRemoved =
             applyIf(node, item) ||
             applyIfNot(node, item) ||
-            applyIfEqual(node, item);
+            applyIfEqual(node, item) ||
+            applyIfNotEqual(node, item);
           if (isRemoved) {
             return;
           }

@@ -27,9 +27,16 @@ const defaultCodeText = `<div class="wrapper">
   <div :if="isZero" class="state">
     the value is 0
   </div>
-  <div :if-not="isZero" class="state">
-    the value is not 0
-  </div>
+  <div :if-equal="valueState" :equal-value="positive">positive</div>
+  <div :if-equal="valueState" :equal-value="negative">negative</div>
+  <ul class="log-list">
+    <li :for="logRecords">
+      <div :text="time"></div>
+      <div :text="previous"></div>
+      ->
+      <div :text="current"></div>
+    </li>
+  </ul>
 </div>
 ${makeTag("style")}
 .wrapper {
@@ -47,6 +54,13 @@ ${makeTag("style")}
   }
   .state {
     font-size: 0.8rem;
+  }
+  .log-list {
+    li {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 1em;
+    }
   }
 }
 ${makeTag("style", true)}
@@ -99,20 +113,52 @@ watch(
         ...item,
         isZero: item.value === 0,
       }),
+      (item) => {
+        const valueState = item.isZero
+          ? "zero"
+          : item.value > 0
+            ? "positive"
+            : "negative";
+        return {
+          ...item,
+          valueState,
+        };
+      },
+      (item) => {
+        const { logRecord, ...rest } = item;
+        return {
+          ...rest,
+          logRecords: [
+            ...(item.logRecords ?? []),
+            ...(logRecord ? [logRecord] : []),
+          ],
+        };
+      },
     ];
+    function makeLogRecord(previous, current) {
+      return {
+        time: new Date(),
+        previous,
+        current,
+      };
+    }
     document.querySelector(
       `#${templateId.value}`
     ).eventHandlers = {
       increment(e, item, wholeItem, reflux) {
+        const nextValue = wholeItem.value + 1;
         reflux({
           ...wholeItem,
-          value: wholeItem.value + 1,
+          value: nextValue,
+          logRecord: makeLogRecord(wholeItem.value, nextValue),
         });
       },
       decrement(e, item, wholeItem, reflux) {
+        const nextValue = wholeItem.value - 1;
         reflux({
           ...wholeItem,
-          value: wholeItem.value - 1,
+          value: nextValue,
+          logRecord: makeLogRecord(wholeItem.value, nextValue),
         });
       },
     };
@@ -156,18 +202,51 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
     ...item,
     isZero: item.value === 0,
   }),
+  (item) => {
+    const valueState = isZero
+      ? "zero"
+      : item.value > 0
+        ? "positive"
+        : "negative";
+    return {
+      ...item,
+      valueState,
+    };
+  },
+  (item) => {
+    const { logRecord, ...rest } = item;
+    return {
+      ...rest,
+      logRecords: [
+        ...(item.logRecords ?? []),
+        ...(logRecord ? [logRecord] : []),
+      ],
+    };
+  },
 ];
+function makeLogRecord(previous, current) {
+  return {
+    time: new Date(),
+    previous,
+    current,
+  };
+}
 document.querySelector("#my-template").eventHandlers = {
   increment(e, item, wholeItem, reflux) {
+    const nextValue = wholeItem.value + 1;
     reflux({
       ...wholeItem,
-      value: wholeItem.value + 1,
+      value: nextValue,
+      logRecord: makeLogRecord(wholeItem.value, nextValue),
+      ],
     });
   },
   decrement(e, item, wholeItem, reflux) {
+    const nextValue = wholeItem.value - 1;
     reflux({
       ...wholeItem,
-      value: wholeItem.value - 1,
+      value: nextValue,
+      logRecord: makeLogRecord(wholeItem.value, nextValue),
     });
   },
 };`;
@@ -198,6 +277,23 @@ _spy.customElement.ensureTemplateView();
     };
 </script>
 ```
+
+### directives
+
+the available directives are below.
+
+| |example|description|
+|:--|:--|:--|
+:if|`<div :if="name">`|renders if the value of property is truthy|
+:if-not|`<div :if-not="name">`|renders if the value of property is falsy|
+:if-equal|`<div :if="name" :equal-value="Alice">`|renders if the value of property is equal to expected value|
+:if-not-equal|`<div :if-not-equal="name" :equal-value="Alice">`|renders if the value of property is not equal to expected value|
+:text|`<div :text="name">`|renders the value of property as textContent|
+:value|`<input :value="name">`|sets the value of property as value|
+:for|`<li :for="items"><div :text="name"></div></li>`|renders the items of the array|
+@[event]|`<button @click="onClick"></button>`|registers the event handler in eventHandlers of template-view|
+
+
 
 <template v-if="canPlay">
   <h3>Playground</h3>
