@@ -1,6 +1,6 @@
 {
   "name": "u-spy",
-  "version": "0.31.12",
+  "version": "0.31.13",
   "type": "module",
   "bin": {
     "u-spy": "bin/u-spy.js"
