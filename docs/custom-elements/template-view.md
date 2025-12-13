@@ -17,7 +17,10 @@ function makeTag(tagName, isEnd) {
   return `<${isEnd ? "/" : ""}${tagName}>`;
 }
 const defaultCodeText = `<div class="wrapper">
-  <div class="title" :text="title"></div>
+  <header>
+    <img :src="image" />
+    <div class="title" :text="title"></div>
+  </header>
   <form>
     <div :text="value" class="value" :class="{ negative: isNegative }"></div>
     <button type="button" @click="increment">+</button>
@@ -40,9 +43,21 @@ const defaultCodeText = `<div class="wrapper">
 </div>
 ${makeTag("style")}
 .wrapper {
-  .title {
-    font-size: 1.2rem;
-    text-align: center;
+  header {
+    position: relative;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: opacity(0.2) blur(5px);
+    }
+    .title {
+      font-size: 1.2rem;
+      text-align: center;
+    }
   }
   form {
     display: grid;
@@ -76,6 +91,7 @@ const codeText = ref(defaultCodeText);
 const _valueJsonText = ref(JSON.stringify({
   title: "sample counter",
   value: 0,
+  image: "https://picsum.photos/600",
 }, null, 2));
 const valueJsonText = computed({
   get() {
@@ -316,6 +332,7 @@ the available directives are below.
 :if-not-equal|`<div :if-not-equal="name" :equal-value="Alice">`|renders if the value of property is not equal to expected value|
 :text|`<div :text="name">`|renders the value of property as textContent|
 :value|`<input :value="name">`|sets the value of property as value|
+:src|`<img :src="imageUrl" />`|sets the value of property as src|
 :for|`<li :for="items"><div :text="name"></div></li>`|renders the items of the array|
 @[event]|`<button @click="onClick"></button>`|registers the event handler in eventHandlers of template-view|
 :class|`<div :class="{ red: isRed, blue: isBlue }">`|adds some classes|
