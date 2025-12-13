@@ -12,6 +12,11 @@
       "browser": "./dist/index.global.js",
       "import": "./dist/index.global.js",
       "require": "./dist/index.global.js"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.js"
     }
   },
   "files": [
