@@ -274,6 +274,18 @@ We can add a template-view with `_spy.customElement.ensureTemplateView()`.
 _spy.customElement.ensureTemplateView();
 ```
 
+::: info or, execute from CDN
+
+js file for just template-view will be delivered too, since v0.32.0.  
+loading script from CDN will automatically execute `ensureTemplateView()`.  
+and it's only for template-view so that window will not have `_spy` for that case.
+
+``` html
+<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/template-view.global.js"></script>
+```
+:::
+
+
 ``` html
 <template-view id="my-template-view">
   <div class="my-element" :text="name"></div>
