@@ -1,4 +1,5 @@
 import { applyIfNotEqual } from "@/components/dynamic-element//apply-if-not-equal";
+import { addClasses } from "@/components/dynamic-element/add-classes";
 import { applyIf } from "@/components/dynamic-element/apply-if";
 import { applyIfEqual } from "@/components/dynamic-element/apply-if-equal";
 import { applyIfNot } from "@/components/dynamic-element/apply-if-not";
@@ -155,6 +156,8 @@ export function ensureTemplateView(customTagName?: string) {
               instance.item = nextItem;
             },
           );
+
+          addClasses(node, item);
 
           embedValue(node, item);
 

@@ -19,7 +19,7 @@ function makeTag(tagName, isEnd) {
 const defaultCodeText = `<div class="wrapper">
   <div class="title" :text="title"></div>
   <form>
-    <div :text="value"></div>
+    <div :text="value" class="value" :class="{ negative: isNegative }"></div>
     <button type="button" @click="increment">+</button>
     <button type="button" @click="decrement">-</button>
   </form>
@@ -48,6 +48,12 @@ ${makeTag("style")}
     display: grid;
     grid-template-columns: 1fr auto auto;
     gap: 0.5em;
+    .value {
+      color: green;
+    }
+    .value.negative {
+      color: red;
+    }
     button {
       cursor: pointer;
     }
@@ -124,6 +130,10 @@ watch(
           valueState,
         };
       },
+      (item) => ({
+        ...item,
+        isNegative: item.valueState === "negative",
+      }),
       (item) => {
         const { logRecord, ...rest } = item;
         return {
@@ -213,6 +223,10 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
       valueState,
     };
   },
+  (item) => ({
+    ...item,
+    isNegative: item.valueState === "negative",
+  }),
   (item) => {
     const { logRecord, ...rest } = item;
     return {
@@ -292,6 +306,7 @@ the available directives are below.
 :value|`<input :value="name">`|sets the value of property as value|
 :for|`<li :for="items"><div :text="name"></div></li>`|renders the items of the array|
 @[event]|`<button @click="onClick"></button>`|registers the event handler in eventHandlers of template-view|
+:class|`<div :class="{ red: isRed, blue: isBlue }">`|adds some classes|
 
 
 
