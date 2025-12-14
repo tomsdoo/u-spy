@@ -1,5 +1,5 @@
 import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
-import type { deflate } from "@/utils/deflate";
+import { type deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 export function applyIfNotEqual(node: Node, item: ReturnType<typeof deflate>) {
   const {
@@ -22,7 +22,7 @@ export function applyIfNotEqual(node: Node, item: ReturnType<typeof deflate>) {
     return false;
   }
 
-  const targetValue = propName === "." ? item : item[propName];
+  const targetValue = pickPropertyFromDeflatedItem(item, propName);
   if (String(targetValue) === String(expectedValue)) {
     node.remove();
     return true;

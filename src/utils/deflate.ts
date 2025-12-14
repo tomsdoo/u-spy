@@ -27,6 +27,10 @@ function isPrimitive(value: unknown): value is PrimitiveValue {
 }
 
 export function deflate(value: unknown) {
+  if (isPrimitive(value) || value instanceof Date || value instanceof RegExp) {
+    return value;
+  }
+
   if (
     typeof value !== "object" ||
     value === null ||
@@ -95,4 +99,21 @@ export function deflate(value: unknown) {
     }
   })(value);
   return record;
+}
+
+export function pickPropertyFromDeflatedItem(
+  deflatedItem: ReturnType<typeof deflate>,
+  propName: string,
+) {
+  if (propName === ".") {
+    return deflatedItem;
+  }
+  if (
+    isPrimitive(deflatedItem) ||
+    deflatedItem instanceof Date ||
+    deflatedItem instanceof RegExp
+  ) {
+    return deflatedItem;
+  }
+  return deflatedItem[propName] ?? null;
 }

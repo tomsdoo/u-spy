@@ -1,5 +1,5 @@
 import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
-import type { deflate } from "@/utils/deflate";
+import { type deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 export function applyIfNot(node: Node, item: ReturnType<typeof deflate>) {
   const {
@@ -17,16 +17,7 @@ export function applyIfNot(node: Node, item: ReturnType<typeof deflate>) {
     return false;
   }
 
-  if (propName === ".") {
-    const targetValue = item;
-    // falsy check
-    if (targetValue) {
-      node.remove();
-      return true;
-    }
-    return false;
-  }
-  const targetValue = item[propName];
+  const targetValue = pickPropertyFromDeflatedItem(item, propName);
   // falsy check
   if (targetValue) {
     node.remove();
