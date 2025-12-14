@@ -127,10 +127,14 @@ watch(
           }</template-view>`
         )
     );
-    document.querySelector(
+    const templateView = document.querySelector(
       `#${templateId.value}`
-    ).item = JSON.parse(valueJsonText.value);
-    document.querySelector(`#${templateId.value}`).reducers = [
+    );
+    templateView.item = JSON.parse(valueJsonText.value);
+    templateView.onRendered(({ shadowRoot, item }) => {
+      console.log("rendered!");
+    });
+    templateView.reducers = [
       (item) => ({
         ...item,
         isZero: item.value === 0,
@@ -168,9 +172,7 @@ watch(
         current,
       };
     }
-    document.querySelector(
-      `#${templateId.value}`
-    ).eventHandlers = {
+    templateView.eventHandlers = {
       increment(e, item, wholeItem, reflux) {
         const nextValue = wholeItem.value + 1;
         reflux({
@@ -254,6 +256,9 @@ const dummyScriptText = `document.querySelector("#my-template").reducers = [
     };
   },
 ];
+document.querySelector("#my-template").onRendered(() => {
+  console.log("rendered");
+});
 function makeLogRecord(previous, current) {
   return {
     time: new Date(),

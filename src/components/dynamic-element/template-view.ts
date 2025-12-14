@@ -59,6 +59,9 @@ export function ensureTemplateView(customTagName?: string) {
         ) => void
       >;
       _reducers: Array<(value: unknown) => unknown>;
+      _onRenderedCallback:
+        | ((p: { shadowRoot: ShadowRoot | null; item: unknown }) => void)
+        | null = null;
       constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -196,6 +199,13 @@ export function ensureTemplateView(customTagName?: string) {
           }
         })(this.shadowRoot, deflatedItem);
         this.isRefreshRequired = false;
+
+        if (this._onRenderedCallback != null) {
+          this._onRenderedCallback({
+            shadowRoot: this.shadowRoot,
+            item: this.item,
+          });
+        }
       }
       connectedCallback() {
         this.render();
@@ -215,6 +225,13 @@ export function ensureTemplateView(customTagName?: string) {
             return {};
           }
         })();
+        this.render();
+      }
+      onRendered(
+        callback: (p: { shadowRoot: ShadowRoot | null; item: unknown }) => void,
+      ) {
+        this._onRenderedCallback = callback;
+        this.isRefreshRequired = true;
         this.render();
       }
     },
