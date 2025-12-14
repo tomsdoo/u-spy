@@ -20,6 +20,11 @@ const defaultCodeText = `<div class="wrapper">
   <header>
     <img :src="image" />
     <div class="title" :text="title"></div>
+    <a
+      class="doc-link"
+      :href="link"
+      target="_blank"
+    >docs</a>
   </header>
   <form>
     <div :text="value" class="value" :class="{ negative: isNegative }"></div>
@@ -43,6 +48,8 @@ const defaultCodeText = `<div class="wrapper">
 </div>
 ${makeTag("style")}
 .wrapper {
+  display: grid;
+  gap: 1rem;
   header {
     position: relative;
     img {
@@ -53,10 +60,15 @@ ${makeTag("style")}
       height: 100%;
       object-fit: cover;
       filter: opacity(0.2) blur(5px);
+      z-index: -1;
     }
     .title {
       font-size: 1.2rem;
       text-align: center;
+    }
+    .doc-link {
+      display: block;
+      text-align: right;
     }
   }
   form {
@@ -92,6 +104,7 @@ const _valueJsonText = ref(JSON.stringify({
   title: "sample counter",
   value: 0,
   image: "https://picsum.photos/600",
+  link: "https://tomsdoo.github.io/u-spy/",
 }, null, 2));
 const valueJsonText = computed({
   get() {
