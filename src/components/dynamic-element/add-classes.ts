@@ -1,6 +1,6 @@
 import { decodeToRecord } from "@/components/dynamic-element/decode-to-record";
 import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
-import type { deflate } from "@/utils/deflate";
+import { type deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 export function addClasses(node: Node, item: ReturnType<typeof deflate>) {
   const {
@@ -32,8 +32,7 @@ export function addClasses(node: Node, item: ReturnType<typeof deflate>) {
   }
   let isAdded = false;
   for (const [className, propName] of Object.entries(classObject)) {
-    const targetValue = propName === "." ? item : item[propName];
-    // truthy check
+    const targetValue = pickPropertyFromDeflatedItem(item, propName);
     if (targetValue) {
       node.classList.add(className);
       isAdded = true;

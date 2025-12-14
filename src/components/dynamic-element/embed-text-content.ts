@@ -1,5 +1,5 @@
 import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
-import type { deflate } from "@/utils/deflate";
+import { type deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 export function embedTextContent(node: Node, item: ReturnType<typeof deflate>) {
   const {
@@ -14,15 +14,11 @@ export function embedTextContent(node: Node, item: ReturnType<typeof deflate>) {
   if (propName == null) {
     return true;
   }
-  if (propName === ".") {
-    node.textContent = String(item);
-    return true;
-  }
-  if (propName in item === false) {
+  const embeddingText = pickPropertyFromDeflatedItem(item, propName);
+  if (embeddingText == null) {
     node.textContent = "";
     return true;
   }
-  const embeddingValue = item[propName];
-  node.textContent = String(embeddingValue);
+  node.textContent = String(embeddingText);
   return true;
 }

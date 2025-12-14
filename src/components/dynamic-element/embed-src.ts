@@ -1,5 +1,5 @@
 import { getHtmlElementAttribute } from "@/components/dynamic-element/get-html-element-attribute";
-import type { deflate } from "@/utils/deflate";
+import { type deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 export function embedSrc(node: Node, item: ReturnType<typeof deflate>) {
   const {
@@ -13,15 +13,12 @@ export function embedSrc(node: Node, item: ReturnType<typeof deflate>) {
   if (propName == null) {
     return true;
   }
-  if (propName === ".") {
-    (node as HTMLElement).setAttribute("src", String(item));
-    return true;
-  }
-  if (propName in item === false) {
+  const embeddingValue = pickPropertyFromDeflatedItem(item, propName);
+  if (embeddingValue == null) {
     (node as HTMLElement).removeAttribute("src");
     return true;
   }
-  const embeddingValue = item[propName];
+
   (node as HTMLElement).setAttribute("src", String(embeddingValue));
   return true;
 }

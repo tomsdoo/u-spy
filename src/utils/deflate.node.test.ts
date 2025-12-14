@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deflate } from "@/utils/deflate";
+import { deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 describe("deflate", () => {
   describe("success", () => {
@@ -56,27 +56,38 @@ describe("deflate", () => {
           "d[1].f.g[0]": 2,
         },
       },
+      {
+        value: 1,
+        expectedValue: 1,
+      },
+      {
+        value: "a",
+        expectedValue: "a",
+      },
+      {
+        value: null,
+        expectedValue: null,
+      },
+      {
+        value: undefined,
+        expectedValue: undefined,
+      },
+      {
+        value: new Date("2000-01-23T01:23:45Z"),
+        expectedValue: new Date("2000-01-23T01:23:45Z"),
+      },
+      {
+        value: /abc/,
+        expectedValue: /abc/,
+      },
+      { value: true, expectedValue: true },
+      { value: false, expectedValue: false },
     ])("$value", ({ value, expectedValue }) => {
       expect(deflate(value)).toEqual(expectedValue);
     });
   });
   describe("error", () => {
     it.each([
-      {
-        value: "a",
-      },
-      {
-        value: 1,
-      },
-      {
-        value: null,
-      },
-      {
-        value: new Date(),
-      },
-      {
-        value: /abc/,
-      },
       {
         value: Math,
       },
@@ -101,5 +112,63 @@ describe("deflate", () => {
     ])("$value", ({ value }) => {
       expect(() => deflate(value)).toThrowError();
     });
+  });
+});
+
+describe("pickPropertyFromDeflatedItem", () => {
+  it.each([
+    {
+      deflatedItem: { a: 1, b: 2 },
+      propName: ".",
+      expectedValue: { a: 1, b: 2 },
+    },
+    {
+      deflatedItem: { a: 1, b: 2 },
+      propName: "a",
+      expectedValue: 1,
+    },
+    {
+      deflatedItem: { a: 1, b: 2 },
+      propName: "b",
+      expectedValue: 2,
+    },
+    {
+      deflatedItem: { a: 1, b: 2 },
+      propName: "c",
+      expectedValue: null,
+    },
+    {
+      deflatedItem: 1,
+      propName: "a",
+      expectedValue: 1,
+    },
+    {
+      deflatedItem: new Date("2000-01-23T01:23:45Z"),
+      propName: "a",
+      expectedValue: new Date("2000-01-23T01:23:45Z"),
+    },
+    {
+      deflatedItem: /abc/,
+      propName: "a",
+      expectedValue: /abc/,
+    },
+    {
+      deflatedItem: null,
+      propName: "a",
+      expectedValue: null,
+    },
+    {
+      deflatedItem: undefined,
+      propName: "a",
+      expectedValue: undefined,
+    },
+  ])("$deflatedItem, $propName", ({
+    deflatedItem,
+    propName,
+    expectedValue,
+  }) => {
+    expect(pickPropertyFromDeflatedItem(deflatedItem, propName)).toEqual(
+      expectedValue,
+    );
   });
 });

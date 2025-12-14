@@ -8,7 +8,7 @@ import { embedTextContent } from "@/components/dynamic-element/embed-text-conten
 import { embedValue } from "@/components/dynamic-element/embed-value";
 import { combineSimpleReducers } from "@/components/dynamic-element/reducers";
 import { registerEventHandlers } from "@/components/dynamic-element/register-event-handlers";
-import { deflate } from "@/utils/deflate";
+import { deflate, pickPropertyFromDeflatedItem } from "@/utils/deflate";
 
 function createEventHandlersProxy(
   handlers: Record<
@@ -180,11 +180,12 @@ export function ensureTemplateView(customTagName?: string) {
               if (propName == null) {
                 continue;
               }
-              if (Array.isArray(item[propName]) === false) {
+              const childItems = pickPropertyFromDeflatedItem(item, propName);
+              if (Array.isArray(childItems) === false) {
                 childNode.remove();
                 continue;
               }
-              for (const childItem of item[propName]) {
+              for (const childItem of childItems) {
                 const addedNode = childNode.parentNode?.insertBefore(
                   childNode.cloneNode(true),
                   childNode,
