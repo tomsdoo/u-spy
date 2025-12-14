@@ -17,7 +17,6 @@ describe("embedSrc", () => {
     const img = document.createElement("img");
     img.setAttribute(":src", ".");
     const item = imageUrl;
-    // @ts-expect-error Testing with direct string value
     const result = embedSrc(img, item);
     expect(result).toBe(true);
     expect(img.src).toBe(imageUrl);

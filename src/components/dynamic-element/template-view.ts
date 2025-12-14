@@ -3,6 +3,7 @@ import { addClasses } from "@/components/dynamic-element/add-classes";
 import { applyIf } from "@/components/dynamic-element/apply-if";
 import { applyIfEqual } from "@/components/dynamic-element/apply-if-equal";
 import { applyIfNot } from "@/components/dynamic-element/apply-if-not";
+import { embedHref } from "@/components/dynamic-element/embed-href";
 import { embedSrc } from "@/components/dynamic-element/embed-src";
 import { embedTextContent } from "@/components/dynamic-element/embed-text-content";
 import { embedValue } from "@/components/dynamic-element/embed-value";
@@ -165,6 +166,7 @@ export function ensureTemplateView(customTagName?: string) {
 
           embedValue(node, item);
           embedSrc(node, item);
+          embedHref(node, item);
 
           const isProcessedTextContent = embedTextContent(node, item);
           if (isProcessedTextContent) {
