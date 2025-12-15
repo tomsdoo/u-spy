@@ -286,7 +286,6 @@ document.querySelector("#my-template").eventHandlers = {
       ...wholeItem,
       value: nextValue,
       logRecord: makeLogRecord(wholeItem.value, nextValue),
-      ],
     });
   },
   decrement(e, item, wholeItem, reflux) {
