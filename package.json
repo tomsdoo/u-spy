@@ -48,7 +48,7 @@
   },
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.10",
     "@tsconfig/node22": "22.0.5",
     "@types/node": "25.0.2",
     "@vitest/browser": "4.0.15",
