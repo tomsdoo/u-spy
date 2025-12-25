@@ -111,132 +111,118 @@ receiver.on(receiver.events.BEACON, (data) => {
   addGaLog(interpretGaLog(data.url, data.data));
 });
 
-const keyMap = new Map();
-function createClickTrackingIdEventName() {
-  const clickTrackingIdEventName =
-    `click_tracking_id_${crypto.randomUUID()}`;
-  keyMap.set("click-tracking-id-event", clickTrackingIdEventName);
-  return clickTrackingIdEventName;
-}
-function getClickTrackingIdEventName() {
-  return keyMap.get("click-tracking-id-event");
-}
+_spy.customElement.ensureTemplateView();
 _spy.stroke.register("galog", () => {
-  _spy.customElement.ensureIterator();
-  _spy.customElement.ensure("ga-log-item", {
-    templateHtml: `
-    <div class="log-item">
-      <div :value="formattedTime"></div>
-      <div :value="logStr" @click="onClick"></div>
-    </div>
-    <style>
-    .log-item {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 16px;
-      div:nth-of-type(2) {
-        word-break: break-all;
-        text-align: left;
-      }
-    }
-    :host(.copied) {
-      .log-item {
-        div:nth-of-type(2) {
-          position: relative;
-          &::before {
-            position: absolute;
-            top: 0;
-            right: 0;
-            content: "copied";
-            color: yellow;
-          }
-        }
-      }
-    }
-    </style>
-    `,
-    eventHandlers: {
-      async onClick(e, { logStr }) {
-        await navigator.clipboard.writeText(logStr);
-        e.target.classList.add("copied");
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        e.target.classList.remove("copied");
-      },
-    },
-  });
-  _spy.customElement.ensure("ga-tracking-id-button", {
-    templateHtml: `
-    <button
-      class="tracking-id-button"
-      type="button"
-      @click="onClick"
-      :value="trackingId"
-    ></button>
-    <style>
-    .tracking-id-button {
-      background: transparent;
-      padding: 0.5em 1em;
-      border: 0;
-      display: grid;
-      justify-content: center;
-      align-items: center;
-      box-shadow: inset 0 0 1px;
-      border-radius: 0.5em;
-      color: inherit;
-      cursor: pointer;
-    }
-    </style>
-    `,
-    eventHandlers: {
-      onClick(e, item) {
-        e.stopPropagation();
-        _spy.eventBus.emit(getClickTrackingIdEventName(), item);
-      },
-    },
-  });
   _spy.dialog.display((dialogElement) => {
     dialogElement.appendChild(
       document.createRange().createContextualFragment(`
-        <div class="wrapper">
-          <custom-iterator class="tracking-id-buttons" items="[]">
-            <ga-tracking-id-button></ga-tracking-id-button>
-          </custom-iterator>
-          <p class="title"></p>
-          <custom-iterator class="log-list">
-            <ga-log-item />
-          </custom-iteratpr>
-          <div class="log-list-area"></div>
+        <template-view>
+          <div class="wrapper">
+            <ul class="tracking-id-list">
+              <li :for="trackingIds">
+                <button
+                  type="button"
+                  @click="selectTrackingId"
+                  :text="."
+                ></button>
+              </li>
+            </ul>
+            <p class="title" :text="currentTrackingId"></p>
+            <ul class="log-list">
+              <li :for="currentTrackingLogRecords">
+                <div class="log-item">
+                  <div class="time" :text="formattedTime"></div>
+                  <div class="log" :text="logStr" @click="copyLogToClipboard"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
           <style>
+          ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
           .wrapper {
             display: grid;
             gap: 16px;
 
             .title {
               text-align: center;
+              margin: 0;
             }
-            .tracking-id-buttons {
+            .tracking-id-list {
               display: flex;
               flex-direction: row;
               gap: 16px;
+
+              button {
+                cursor: pointer;
+                padding: 8px 16px;
+                border: none;
+                box-shadow: 0 0 1px;
+                color: inherit;
+                background: transparent;
+              }
+            }
+            .log-item {
+              display: grid;
+              grid-template-columns: auto 1fr;
+              gap: 16px;
+              .time {
+                white-space: nowrap;
+              }
+              .log {
+                word-break: break-all;
+                text-align: left;
+                cursor: pointer;
+                position: relative;
+              }
+              .log.copied::after {
+                content: "copied";
+                position: absolute;
+                top: 0;
+                right: 0;
+                color: yellow;
+              }
             }
           }
           </style>
-        </div>
+        </template-view>
       `)
     );
-    dialogElement.querySelector(".wrapper .tracking-id-buttons").items =
-      gaLogReader.trackingIds.map(trackingId => ({ trackingId }));
-
-    _spy.eventBus.on(
-      getClickTrackingIdEventName(),
-      async ({ trackingId }) => {
-        await new Promise(resolve => setTimeout(resolve, 1));
-        dialogElement.querySelector(".wrapper .title").textContent =
-          trackingId;
-        dialogElement.querySelector(".wrapper .log-list").items =
-          gaLogReader[trackingId];
-      }
-    );
+    const tvItem ={
+      trackingIds: gaLogReader.trackingIds,
+      currentTrackingId: "",
+      currentTrackingLogRecords: [],
+    };
+    const tvElement = dialogElement.querySelector("template-view");
+    tvElement.item = tvItem;
+    tvElement.reducers = [
+      (item) => {
+        const currentTrackingId = item.currentTrackingId || item.trackingIds[0] || "";
+        return {
+          ...item,
+          currentTrackingId,
+          currentTrackingLogRecords: gaLogReader[currentTrackingId] ?? [],
+        };
+      },
+    ];
+    tvElement.eventHandlers = {
+      selectTrackingId(e, item, wholeItem, reflux) {
+        reflux({
+          ...wholeItem,
+          currentTrackingId: item,
+        });
+      },
+      async copyLogToClipboard(e, item) {
+        const target = e.target;
+        await navigator.clipboard.writeText(item.logStr);
+        target.classList.add("copied");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        target.classList.remove("copied");
+      },
+    };
   }, { title: "ga log" });
 });
 
