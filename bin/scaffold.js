@@ -91,7 +91,7 @@ export async function scaffold(packageVersion) {
 
   await logWithStatus(`📦 Installing dependencies... `, async () => {
     await exec("npm install -E u-spy");
-    await exec("npm install -D -E typescript tsup @tsconfig/node22");
+    await exec("npm install -D -E typescript tsup @tsconfig/node24");
   });
 
   logBlankLine();
