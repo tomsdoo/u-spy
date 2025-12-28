@@ -1,17 +1,10 @@
+import {
+  createSVGElement,
+  Direction,
+  getEndPointFromDirection,
+  SVG_NAMESPACE,
+} from "@/components/wander-game/utils";
 import { EventType } from "@/constants/event-type";
-
-const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-
-function createSVGElement<K extends keyof SVGElementTagNameMap>(
-  tagName: K,
-  attributes: Record<string, string> = {},
-): SVGElementTagNameMap[K] {
-  const svgElement = document.createElementNS(SVG_NAMESPACE, tagName);
-  for (const [key, value] of Object.entries(attributes)) {
-    svgElement.setAttribute(key, value);
-  }
-  return svgElement;
-}
 
 export function resetHandlers(instance: { id: string }) {
   (instance as unknown as HTMLElement).addEventListener(EventType.CLICK, () => {
@@ -26,13 +19,6 @@ export function resetHandlers(instance: { id: string }) {
 
   const viewBoxSize = 1000;
 
-  enum Direction {
-    UP = "up",
-    DOWN = "down",
-    LEFT = "left",
-    RIGHT = "right",
-  }
-
   const allDirections = [
     Direction.UP,
     Direction.DOWN,
@@ -45,34 +31,6 @@ export function resetHandlers(instance: { id: string }) {
     length: 0,
     direction: allDirections[Math.floor(Math.random() * allDirections.length)],
   };
-
-  function getEndPointFromDirection({
-    start,
-    length,
-    direction,
-  }: {
-    start: { x: number; y: number };
-    length: number;
-    direction: Direction;
-  }) {
-    let x = start.x;
-    let y = start.y;
-    switch (direction) {
-      case Direction.UP:
-        y -= length;
-        break;
-      case Direction.DOWN:
-        y += length;
-        break;
-      case Direction.LEFT:
-        x -= length;
-        break;
-      case Direction.RIGHT:
-        x += length;
-        break;
-    }
-    return { x, y };
-  }
 
   const currentPathId = `${instance.id}-current-path`;
   const lineColor = `hsl(${Math.floor(Math.random() * 360)} 80% 40%)`;
