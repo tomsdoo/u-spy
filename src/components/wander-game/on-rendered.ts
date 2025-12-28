@@ -12,12 +12,6 @@ export function resetHandlers(instance: { id: string }) {
     (instance as unknown as HTMLElement).remove();
   });
 
-  function getSvg() {
-    return (
-      instance as unknown as HTMLElement
-    ).shadowRoot?.querySelector<SVGSVGElement>(`#${instance.id} svg`);
-  }
-
   const viewBoxSize = 1000;
 
   const allDirections = [
@@ -26,6 +20,23 @@ export function resetHandlers(instance: { id: string }) {
     Direction.LEFT,
     Direction.RIGHT,
   ];
+
+  function ensureSvg() {
+    const existingSvg = (
+      instance as unknown as HTMLElement
+    ).shadowRoot?.querySelector<SVGSVGElement>(`#${instance.id} svg`);
+    if (existingSvg != null) {
+      return existingSvg;
+    }
+    const svg = createSVGElement("svg", {
+      viewBox: `0 0 ${viewBoxSize} ${viewBoxSize}`,
+      xmlns: SVG_NAMESPACE,
+    });
+    (instance as unknown as HTMLElement).shadowRoot
+      ?.querySelector<HTMLElement>(`#${instance.id}`)
+      ?.appendChild(svg);
+    return svg;
+  }
 
   const currentLine = {
     start: { x: viewBoxSize / 2, y: viewBoxSize / 2 },
@@ -46,20 +57,13 @@ export function resetHandlers(instance: { id: string }) {
   }
 
   (function initializeSvg() {
-    const svg = getSvg();
-    if (svg == null) {
-      return;
-    }
-    svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
-    svg.setAttribute("xmlns", SVG_NAMESPACE);
+    const svg = ensureSvg();
 
     svg.appendChild(createCurrentPathElement());
   })();
+
   async function makePoint(x: number, y: number) {
-    const svg = getSvg();
-    if (svg == null) {
-      return;
-    }
+    const svg = ensureSvg();
     const circle = createSVGElement("circle", {
       cx: x.toString(),
       cy: y.toString(),
@@ -75,10 +79,7 @@ export function resetHandlers(instance: { id: string }) {
   }
 
   function makeNextPath(nextDirection: Direction) {
-    const svg = getSvg();
-    if (svg == null) {
-      return;
-    }
+    const svg = ensureSvg();
     const currentPath = svg.querySelector<SVGPathElement>(`#${currentPathId}`);
     if (currentPath != null) {
       currentPath.removeAttribute("id");
@@ -95,10 +96,7 @@ export function resetHandlers(instance: { id: string }) {
     svg.appendChild(createCurrentPathElement());
   }
   function updateCurrentPath(changeDirection: boolean) {
-    const svg = getSvg();
-    if (svg == null) {
-      return false;
-    }
+    const svg = ensureSvg();
     if (changeDirection) {
       const nextDirectionCandidates = allDirections.filter(
         (nextDirection) => nextDirection !== currentLine.direction,
