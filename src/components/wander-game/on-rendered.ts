@@ -36,6 +36,15 @@ export function resetHandlers(instance: { id: string }) {
   const currentPathId = `${instance.id}-current-path`;
   const lineColor = `hsl(${Math.floor(Math.random() * 360)} 80% 40%)`;
 
+  function createCurrentPathElement() {
+    return createSVGElement("path", {
+      id: currentPathId,
+      fill: "none",
+      stroke: lineColor,
+      "stroke-width": "2",
+    });
+  }
+
   (function initializeSvg() {
     const svg = getSvg();
     if (svg == null) {
@@ -44,13 +53,7 @@ export function resetHandlers(instance: { id: string }) {
     svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
     svg.setAttribute("xmlns", SVG_NAMESPACE);
 
-    const path = createSVGElement("path", {
-      id: currentPathId,
-      fill: "none",
-      stroke: lineColor,
-      "stroke-width": "2",
-    });
-    svg.appendChild(path);
+    svg.appendChild(createCurrentPathElement());
   })();
   async function makePoint(x: number, y: number) {
     const svg = getSvg();
@@ -89,13 +92,7 @@ export function resetHandlers(instance: { id: string }) {
       makePoint(currentLine.start.x, currentLine.start.y);
     }
 
-    const path = createSVGElement("path", {
-      id: currentPathId,
-      fill: "none",
-      stroke: lineColor,
-      "stroke-width": "2",
-    });
-    svg?.appendChild(path);
+    svg.appendChild(createCurrentPathElement());
   }
   function updateCurrentPath(changeDirection: boolean) {
     const svg = getSvg();
