@@ -4,8 +4,13 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 function createSVGElement<K extends keyof SVGElementTagNameMap>(
   tagName: K,
+  attributes: Record<string, string> = {},
 ): SVGElementTagNameMap[K] {
-  return document.createElementNS(SVG_NAMESPACE, tagName);
+  const svgElement = document.createElementNS(SVG_NAMESPACE, tagName);
+  for (const [key, value] of Object.entries(attributes)) {
+    svgElement.setAttribute(key, value);
+  }
+  return svgElement;
 }
 
 export function resetHandlers(instance: { id: string }) {
@@ -28,10 +33,17 @@ export function resetHandlers(instance: { id: string }) {
     RIGHT = "right",
   }
 
+  const allDirections = [
+    Direction.UP,
+    Direction.DOWN,
+    Direction.LEFT,
+    Direction.RIGHT,
+  ];
+
   const currentLine = {
     start: { x: viewBoxSize / 2, y: viewBoxSize / 2 },
     length: 0,
-    direction: Direction.UP,
+    direction: allDirections[Math.floor(Math.random() * allDirections.length)],
   };
 
   function getEndPointFromDirection({
@@ -73,11 +85,12 @@ export function resetHandlers(instance: { id: string }) {
     svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
     svg.setAttribute("xmlns", SVG_NAMESPACE);
 
-    const path = createSVGElement("path");
-    path.id = currentPathId;
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", lineColor);
-    path.setAttribute("stroke-width", "2");
+    const path = createSVGElement("path", {
+      id: currentPathId,
+      fill: "none",
+      stroke: lineColor,
+      "stroke-width": "2",
+    });
     svg.appendChild(path);
   })();
   async function makePoint(x: number, y: number) {
@@ -85,11 +98,12 @@ export function resetHandlers(instance: { id: string }) {
     if (svg == null) {
       return;
     }
-    const circle = document.createElementNS(SVG_NAMESPACE, "circle");
-    circle.setAttribute("cx", x.toString());
-    circle.setAttribute("cy", y.toString());
-    circle.setAttribute("r", "3");
-    circle.setAttribute("fill", lineColor);
+    const circle = createSVGElement("circle", {
+      cx: x.toString(),
+      cy: y.toString(),
+      r: "3",
+      fill: lineColor,
+    });
     circle.classList.add("circle");
     svg.appendChild(circle);
     await new Promise((resolve) => setTimeout(resolve, 10));
@@ -116,11 +130,12 @@ export function resetHandlers(instance: { id: string }) {
       makePoint(currentLine.start.x, currentLine.start.y);
     }
 
-    const path = createSVGElement("path");
-    path.id = currentPathId;
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", lineColor);
-    path.setAttribute("stroke-width", "2");
+    const path = createSVGElement("path", {
+      id: currentPathId,
+      fill: "none",
+      stroke: lineColor,
+      "stroke-width": "2",
+    });
     svg?.appendChild(path);
   }
   function updateCurrentPath(changeDirection: boolean) {
