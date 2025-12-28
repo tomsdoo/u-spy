@@ -5,6 +5,7 @@ import {
   SVG_NAMESPACE,
 } from "@/components/wander-game/utils";
 import { EventType } from "@/constants/event-type";
+import { chooseRandomlyFromArray } from "@/utils/random";
 
 export function resetHandlers(instance: { id: string }) {
   (instance as unknown as HTMLElement).addEventListener(EventType.CLICK, () => {
@@ -29,7 +30,7 @@ export function resetHandlers(instance: { id: string }) {
   const currentLine = {
     start: { x: viewBoxSize / 2, y: viewBoxSize / 2 },
     length: 0,
-    direction: allDirections[Math.floor(Math.random() * allDirections.length)],
+    direction: chooseRandomlyFromArray(allDirections),
   };
 
   const currentPathId = `${instance.id}-current-path`;
@@ -102,16 +103,10 @@ export function resetHandlers(instance: { id: string }) {
       return false;
     }
     if (changeDirection) {
-      const nextDirectionCandidates = [
-        Direction.UP,
-        Direction.DOWN,
-        Direction.LEFT,
-        Direction.RIGHT,
-      ].filter((nextDirection) => nextDirection !== currentLine.direction);
-      const randIndex = Math.floor(
-        Math.random() * nextDirectionCandidates.length,
+      const nextDirectionCandidates = allDirections.filter(
+        (nextDirection) => nextDirection !== currentLine.direction,
       );
-      const nextDirection = nextDirectionCandidates[randIndex];
+      const nextDirection = chooseRandomlyFromArray(nextDirectionCandidates);
       makeNextPath(nextDirection);
     }
     const currentPath = svg.querySelector<SVGPathElement>(`#${currentPathId}`);
