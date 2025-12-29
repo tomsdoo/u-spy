@@ -51,6 +51,14 @@ export function resetHandlers(instance: { id: string }) {
   const currentPathId = `${instance.id}-current-path`;
   const lineColor = `hsl(${Math.floor(Math.random() * 360)} 80% 40%)`;
 
+  function getCurrentPathElement() {
+    const svg = getSvg();
+    if (svg == null) {
+      return null;
+    }
+    return svg.querySelector<SVGPathElement>(`#${currentPathId}`);
+  }
+
   function createCurrentPathElement() {
     return createSVGElement("path", {
       id: currentPathId,
@@ -66,7 +74,7 @@ export function resetHandlers(instance: { id: string }) {
     svg.appendChild(createCurrentPathElement());
   })();
 
-  async function makePoint(x: number, y: number) {
+  async function drawTurningPoint(x: number, y: number) {
     const svg = ensureSvg();
     const circle = createSVGElement("circle", {
       cx: x,
@@ -82,36 +90,33 @@ export function resetHandlers(instance: { id: string }) {
     circle.remove();
   }
 
-  function makeNextPath(nextDirection: Direction) {
+  function rotateCurrentPath() {
     const svg = ensureSvg();
-    const currentPath = svg.querySelector<SVGPathElement>(`#${currentPathId}`);
+    const currentPath = getCurrentPathElement();
     if (currentPath != null) {
       currentPath.removeAttribute("id");
-      currentLine.start = getEndPointFromDirection({
-        start: currentLine.start,
-        length: currentLine.length,
-        direction: currentLine.direction,
-      });
-      currentLine.length = 0;
-      currentLine.direction = nextDirection;
-      makePoint(currentLine.start.x, currentLine.start.y);
     }
-
     svg.appendChild(createCurrentPathElement());
   }
-  function updateCurrentPath(changeDirection: boolean) {
-    const svg = getSvg();
-    if (svg == null) {
-      return false;
-    }
-    if (changeDirection) {
-      const nextDirectionCandidates = allDirections.filter(
-        (nextDirection) => nextDirection !== currentLine.direction,
-      );
-      const nextDirection = chooseRandomlyFromArray(nextDirectionCandidates);
-      makeNextPath(nextDirection);
-    }
-    const currentPath = svg.querySelector<SVGPathElement>(`#${currentPathId}`);
+
+  function makeRandomTurn() {
+    const nextDirectionCandidates = allDirections.filter(
+      (nextDirection) => nextDirection !== currentLine.direction,
+    );
+    const nextDirection = chooseRandomlyFromArray(nextDirectionCandidates);
+    const nextStartPoint = getEndPointFromDirection({
+      start: currentLine.start,
+      length: currentLine.length,
+      direction: currentLine.direction,
+    });
+    return {
+      start: nextStartPoint,
+      direction: nextDirection,
+    };
+  }
+
+  function updateCurrentPath() {
+    const currentPath = getCurrentPathElement();
     if (currentPath == null) {
       return false;
     }
@@ -127,12 +132,27 @@ export function resetHandlers(instance: { id: string }) {
     return true;
   }
 
+  function proceedNextStep(changeDirection: boolean) {
+    const svg = getSvg();
+    if (svg == null) {
+      return false;
+    }
+    if (changeDirection) {
+      const nextLine = makeRandomTurn();
+      rotateCurrentPath();
+      drawTurningPoint(nextLine.start.x, nextLine.start.y);
+      currentLine.start = nextLine.start;
+      currentLine.length = 0;
+      currentLine.direction = nextLine.direction;
+    }
+    return updateCurrentPath();
+  }
+
   function startGame() {
     const timerId = setInterval(() => {
-      // Randomly change direction
       const rand = Math.random();
       const changeDirection = rand < 0.2;
-      const isProceeding = updateCurrentPath(changeDirection);
+      const isProceeding = proceedNextStep(changeDirection);
       if (isProceeding === false) {
         clearInterval(timerId);
       }
