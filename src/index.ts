@@ -10,6 +10,7 @@ import { LifeGameElement } from "@/components/life-game";
 import { MediaModalElement } from "@/components/media-modal";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
+import { WanderGameElement } from "@/components/wander-game";
 import { eventBus } from "@/event-bus";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
 import { freeContainer } from "@/free-container";
@@ -135,6 +136,11 @@ function displayLifeGame() {
   document.body.appendChild(lifeGameElement);
 }
 
+function displayWanderGame() {
+  const wanderGameElement = WanderGameElement.create();
+  document.body.appendChild(wanderGameElement);
+}
+
 function displayReference() {
   const iframeModalElement = IframeModalElement.create();
   iframeModalElement.setAttribute(":src", "https://tomsdoo.github.io/u-spy/");
@@ -175,6 +181,10 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
+  },
+  {
+    stroke: "wander",
+    display: displayWanderGame,
   },
   {
     stroke: "help",
