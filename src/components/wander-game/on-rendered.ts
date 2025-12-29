@@ -21,10 +21,13 @@ export function resetHandlers(instance: { id: string }) {
     Direction.RIGHT,
   ];
 
-  function ensureSvg() {
-    const existingSvg = (
+  function getSvg() {
+    return (
       instance as unknown as HTMLElement
     ).shadowRoot?.querySelector<SVGSVGElement>(`#${instance.id} svg`);
+  }
+  function ensureSvg() {
+    const existingSvg = getSvg();
     if (existingSvg != null) {
       return existingSvg;
     }
@@ -52,7 +55,7 @@ export function resetHandlers(instance: { id: string }) {
       id: currentPathId,
       fill: "none",
       stroke: lineColor,
-      "stroke-width": "2",
+      "stroke-width": 2,
     });
   }
 
@@ -65,9 +68,9 @@ export function resetHandlers(instance: { id: string }) {
   async function makePoint(x: number, y: number) {
     const svg = ensureSvg();
     const circle = createSVGElement("circle", {
-      cx: x.toString(),
-      cy: y.toString(),
-      r: "3",
+      cx: x,
+      cy: y,
+      r: 3,
       fill: lineColor,
     });
     circle.classList.add("circle");
@@ -96,7 +99,10 @@ export function resetHandlers(instance: { id: string }) {
     svg.appendChild(createCurrentPathElement());
   }
   function updateCurrentPath(changeDirection: boolean) {
-    const svg = ensureSvg();
+    const svg = getSvg();
+    if (svg == null) {
+      return false;
+    }
     if (changeDirection) {
       const nextDirectionCandidates = allDirections.filter(
         (nextDirection) => nextDirection !== currentLine.direction,

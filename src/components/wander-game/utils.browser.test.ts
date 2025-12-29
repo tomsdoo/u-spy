@@ -8,8 +8,8 @@ import {
 describe("createSVGElement", () => {
   it("creates an SVG element with the correct tag name and attributes", () => {
     const attributes = {
-      width: "100",
-      height: "100",
+      width: 100,
+      height: 100,
       viewBox: "0 0 100 100",
     };
     const svgElement = createSVGElement("svg", attributes);

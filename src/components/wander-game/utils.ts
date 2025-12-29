@@ -9,11 +9,11 @@ export enum Direction {
 
 export function createSVGElement<K extends keyof SVGElementTagNameMap>(
   tagName: K,
-  attributes: Record<string, string> = {},
+  attributes: Record<string, string | number> = {},
 ) {
   const svgElement = document.createElementNS(SVG_NAMESPACE, tagName);
   for (const [key, value] of Object.entries(attributes)) {
-    svgElement.setAttribute(key, value);
+    svgElement.setAttribute(key, `${value}`);
   }
   return svgElement;
 }
