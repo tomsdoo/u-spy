@@ -5,9 +5,7 @@ export async function template({
   id: string;
   shadowHostStyle: string;
 }) {
-  return `<div id="${id}">
-  <svg></svg>
-  </div>
+  return `<div id="${id}"></div>
   <style>
   ${shadowHostStyle}
   @keyframes fade-circle-${id} {
