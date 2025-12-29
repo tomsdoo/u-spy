@@ -23,6 +23,7 @@ const {
 |3|code|shows ad hoc code editor|
 |4|help|shows reference document|
 |5|life|shows life game|
+|6|wander|shows wandering line|
 
 ### How to change the hot strokes
 
