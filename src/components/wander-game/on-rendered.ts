@@ -5,6 +5,7 @@ import {
   SVG_NAMESPACE,
 } from "@/components/wander-game/utils";
 import { EventType } from "@/constants/event-type";
+import { sleep } from "@/utils";
 import { chooseRandomlyFromArray } from "@/utils/random";
 
 export function resetHandlers(instance: { id: string }) {
@@ -75,9 +76,9 @@ export function resetHandlers(instance: { id: string }) {
     });
     circle.classList.add("circle");
     svg.appendChild(circle);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await sleep(10);
     circle.classList.add("fade");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(1000);
     circle.remove();
   }
 
