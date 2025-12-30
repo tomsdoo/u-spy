@@ -1,5 +1,6 @@
 import { EventType } from "@/constants/event-type";
 import { sleep } from "@/utils";
+import { range } from "@/utils/array";
 import { chooseRandomlyFromArray } from "@/utils/random";
 import { createSVGElement, SVG_NAMESPACE } from "@/utils/svg";
 
@@ -106,14 +107,12 @@ export function resetHandlers(instance: {
         startMovement(circle);
       }, INTERVAL);
     }
-    for (const { x, y } of Array.from({ length: canvas.width }, (_, x) => x)
-      .filter(validateXY)
-      .flatMap((x) =>
-        Array.from({ length: canvas.height }, (_, y) => y)
-          .filter(validateXY)
-          .map((y) => ({ x, y })),
-      )
-      .filter(({ x, y }) => isWhite(x, y))) {
+    const xs = range(0, canvas.width - 1).filter(validateXY);
+    const ys = range(0, canvas.height - 1).filter(validateXY);
+    const circlePoints = xs
+      .flatMap((x) => ys.map((y) => ({ x, y })))
+      .filter(({ x, y }) => isWhite(x, y));
+    for (const { x, y } of circlePoints) {
       const circle = createSVGElement("circle", {
         cx: x,
         cy: y,
