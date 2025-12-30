@@ -1,4 +1,5 @@
 import { EventType } from "@/constants/event-type";
+import { sleep } from "@/utils";
 
 export function resetHandlers(instance: {
   id: string;
@@ -106,13 +107,13 @@ export function resetHandlers(instance: {
   }
 
   async function startGame() {
-    while (true) {
+    while (document.contains(instance as unknown as HTMLElement)) {
       const changed = setNextAlive();
       if (changed === false) {
         break;
       }
       reflectAlive();
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await sleep(100);
     }
   }
 
