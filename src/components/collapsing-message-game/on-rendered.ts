@@ -1,10 +1,7 @@
-import {
-  createSVGElement,
-  SVG_NAMESPACE,
-} from "@/components/wander-game/utils";
 import { EventType } from "@/constants/event-type";
 import { sleep } from "@/utils";
 import { chooseRandomlyFromArray } from "@/utils/random";
+import { createSVGElement, SVG_NAMESPACE } from "@/utils/svg";
 
 export function resetHandlers(instance: {
   id: string;
