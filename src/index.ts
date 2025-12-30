@@ -1,4 +1,5 @@
 import { interceptSendBeacon } from "@/beacon";
+import { AvalancheGameElement } from "@/components/avalanche-game";
 import { displayCollapsingMessage } from "@/components/collapsing-message-game";
 import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
@@ -133,6 +134,13 @@ function displayCodeDialog() {
   return displayDialog("code");
 }
 
+function displayAvalancheGame() {
+  const avalancheGameElement = AvalancheGameElement.create();
+  avalancheGameElement.setAttribute(":board-width", "50");
+  avalancheGameElement.setAttribute(":board-height", "50");
+  document.body.appendChild(avalancheGameElement);
+}
+
 function displayLifeGame() {
   const lifeGameElement = LifeGameElement.create();
   lifeGameElement.setAttribute(":board-width", "50");
@@ -185,6 +193,10 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
+  },
+  {
+    stroke: "avalanche",
+    display: displayAvalancheGame,
   },
   {
     stroke: "wander",
