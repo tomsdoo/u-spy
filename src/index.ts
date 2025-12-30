@@ -1,5 +1,5 @@
 import { interceptSendBeacon } from "@/beacon";
-import { CollapsingMessageGameElement } from "@/components/collapsing-message-game";
+import { displayCollapsingMessage } from "@/components/collapsing-message-game";
 import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
@@ -65,6 +65,9 @@ interface Spy {
       imageUrls: string | string[],
       options?: { interval?: number },
     ) => void;
+  };
+  screen: {
+    displayCollapsingMessage: typeof displayCollapsingMessage;
   };
   store: {
     keys: string[];
@@ -137,11 +140,6 @@ function displayLifeGame() {
   document.body.appendChild(lifeGameElement);
 }
 
-function displayCollapsingMessageGame() {
-  const collapsingMessageGameElement = CollapsingMessageGameElement.create();
-  document.body.appendChild(collapsingMessageGameElement);
-}
-
 function displayWanderGame() {
   const wanderGameElement = WanderGameElement.create();
   document.body.appendChild(wanderGameElement);
@@ -187,10 +185,6 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
-  },
-  {
-    stroke: "collapse",
-    display: displayCollapsingMessageGame,
   },
   {
     stroke: "wander",
@@ -266,6 +260,9 @@ const _spy = {
     },
   },
   eventBus,
+  screen: {
+    displayCollapsingMessage,
+  },
   storage,
   store: {
     get keys() {
@@ -320,6 +317,7 @@ Object.freeze(_spy.customElement);
 Object.freeze(_spy.dialog);
 Object.freeze(_spy.iframe);
 Object.freeze(_spy.images);
+Object.freeze(_spy.screen);
 Object.freeze(_spy.store);
 Object.freeze(_spy.stroke);
 Object.freeze(_spy.eventBus);
