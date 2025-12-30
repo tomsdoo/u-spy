@@ -1,4 +1,5 @@
 import { interceptSendBeacon } from "@/beacon";
+import { displayCollapsingMessage } from "@/components/collapsing-message-game";
 import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
@@ -64,6 +65,9 @@ interface Spy {
       imageUrls: string | string[],
       options?: { interval?: number },
     ) => void;
+  };
+  screen: {
+    displayCollapsingMessage: typeof displayCollapsingMessage;
   };
   store: {
     keys: string[];
@@ -256,6 +260,9 @@ const _spy = {
     },
   },
   eventBus,
+  screen: {
+    displayCollapsingMessage,
+  },
   storage,
   store: {
     get keys() {
@@ -310,6 +317,7 @@ Object.freeze(_spy.customElement);
 Object.freeze(_spy.dialog);
 Object.freeze(_spy.iframe);
 Object.freeze(_spy.images);
+Object.freeze(_spy.screen);
 Object.freeze(_spy.store);
 Object.freeze(_spy.stroke);
 Object.freeze(_spy.eventBus);
