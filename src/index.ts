@@ -1,4 +1,5 @@
 import { interceptSendBeacon } from "@/beacon";
+import { CollapsingMessageGameElement } from "@/components/collapsing-message-game";
 import { ControlElement } from "@/components/control-element";
 import { displayDialog } from "@/components/dialog";
 import { ensureCustomElement } from "@/components/dynamic-element";
@@ -136,6 +137,11 @@ function displayLifeGame() {
   document.body.appendChild(lifeGameElement);
 }
 
+function displayCollapsingMessageGame() {
+  const collapsingMessageGameElement = CollapsingMessageGameElement.create();
+  document.body.appendChild(collapsingMessageGameElement);
+}
+
 function displayWanderGame() {
   const wanderGameElement = WanderGameElement.create();
   document.body.appendChild(wanderGameElement);
@@ -181,6 +187,10 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
+  },
+  {
+    stroke: "collapse",
+    display: displayCollapsingMessageGame,
   },
   {
     stroke: "wander",
