@@ -12,6 +12,7 @@ import { LifeGameElement } from "@/components/life-game";
 import { MediaModalElement } from "@/components/media-modal";
 import { showEphemeralMessage } from "@/components/popup";
 import { ensureStore, getStoreIds, StoreElement } from "@/components/store";
+import { TetrisGameElement } from "@/components/tetris-game";
 import { WanderGameElement } from "@/components/wander-game";
 import { eventBus } from "@/event-bus";
 import { interceptFetch, type MockFetchHandler } from "@/fetch";
@@ -153,6 +154,13 @@ function displayWanderGame() {
   document.body.appendChild(wanderGameElement);
 }
 
+function displayTetrisGame() {
+  const tetrisGameElement = TetrisGameElement.create();
+  tetrisGameElement.setAttribute(":board-width", "20");
+  tetrisGameElement.setAttribute(":board-height", "30");
+  document.body.appendChild(tetrisGameElement);
+}
+
 function displayReference() {
   const iframeModalElement = IframeModalElement.create();
   iframeModalElement.setAttribute(":src", "https://tomsdoo.github.io/u-spy/");
@@ -193,6 +201,10 @@ for (const { stroke, display } of [
   {
     stroke: "life",
     display: displayLifeGame,
+  },
+  {
+    stroke: "tetris",
+    display: displayTetrisGame,
   },
   {
     stroke: "avalanche",

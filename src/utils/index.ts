@@ -1,5 +1,6 @@
 export { deflate } from "@/utils/deflate";
 export { download } from "@/utils/download";
+export { forceReflow } from "@/utils/force-reflow";
 export { formatTime } from "@/utils/format-time";
 export { loadScript } from "@/utils/load-script";
 export { prettierFormat } from "@/utils/prettier-format";
