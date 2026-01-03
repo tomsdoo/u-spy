@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { freeContainer } from "@/free-container";
 
 function generateRandomKeyValue() {
@@ -25,14 +25,18 @@ describe("freeContainer", () => {
       freeContainer.set(key, value);
       expect(freeContainer[key]).toBe(value);
     });
-    it.each(["new", "set", "delete", "keys"])(
-      "throws if key is reserved, key: %s",
-      (key) => {
-        expect(() => freeContainer.set(key, "dummyValue")).throws(
-          `${key} is reserved`,
-        );
-      },
-    );
+    it.each([
+      "new",
+      "set",
+      "delete",
+      "keys",
+      "subscribe",
+      "unsubscribe",
+    ])("throws if key is reserved, key: %s", (key) => {
+      expect(() => freeContainer.set(key, "dummyValue")).throws(
+        `${key} is reserved`,
+      );
+    });
     it("throws if key exists", () => {
       const { key, value } = generateRandomKeyValue();
       freeContainer.set(key, value);
@@ -92,6 +96,32 @@ describe("freeContainer", () => {
       function dummyDelete(_key: string, _token: string) {}
       freeContainer.delete = dummyDelete;
       expect(freeContainer.delete).toEqual(originalDelete);
+    });
+  });
+  describe("subscribe() and unsubscribe()", () => {
+    it("callback is called when value is set", () => {
+      const { key, value } = generateRandomKeyValue();
+      const spy = vi.fn();
+      const unsubscribe = freeContainer.subscribe(key, spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      const token = freeContainer.set(key, value);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenNthCalledWith(1, value);
+      unsubscribe();
+      freeContainer.set(key, value, token);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+    it("container.unsubscribe() works correctly", () => {
+      const { key, value } = generateRandomKeyValue();
+      const spy = vi.fn();
+      freeContainer.subscribe(key, spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      const token = freeContainer.set(key, value);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenNthCalledWith(1, value);
+      freeContainer.unsubscribe(key, spy);
+      freeContainer.set(key, value, token);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
   describe("keys", () => {
