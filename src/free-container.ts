@@ -3,13 +3,24 @@ export function createFreeContainer() {
 
   const keyTokenMap = new Map<string, string>();
 
+  const subscriptionMap = new Map<string, Set<(value: unknown) => void>>();
+
   type Container = Record<string, unknown> & {
     new: () => ReturnType<typeof createFreeContainer>;
     set: (key: string, value: unknown, token?: string) => string;
+    subscribe: (key: string, callback: (value: unknown) => void) => () => void;
+    unsubscribe: (key: string, callback: (value: unknown) => void) => void;
     delete: (key: string, token: string) => void;
   };
 
-  const reservedProps = ["new", "set", "delete", "keys"];
+  const reservedProps = [
+    "new",
+    "set",
+    "delete",
+    "keys",
+    "subscribe",
+    "unsubscribe",
+  ];
 
   return new Proxy(
     {
@@ -29,13 +40,28 @@ export function createFreeContainer() {
           if (keyTokenMap.get(key) !== token) {
             throw new Error(`token:${token} for key:${key} is invalid`);
           }
-          containerMap.set(key, value);
-          return token;
         }
-        const newToken = crypto.randomUUID();
-        keyTokenMap.set(key, newToken);
         containerMap.set(key, value);
-        return newToken;
+        for (const callback of subscriptionMap.get(key) ?? []) {
+          callback(value);
+        }
+        const nextToken = token ?? crypto.randomUUID();
+        if (token !== nextToken) {
+          keyTokenMap.set(key, nextToken);
+        }
+        return nextToken;
+      },
+      subscribe(key: string, callback: (value: unknown) => void) {
+        if (subscriptionMap.has(key) === false) {
+          subscriptionMap.set(key, new Set());
+        }
+        subscriptionMap.get(key)?.add(callback);
+        return () => {
+          subscriptionMap.get(key)?.delete(callback);
+        };
+      },
+      unsubscribe(key: string, callback: (value: unknown) => void) {
+        subscriptionMap.get(key)?.delete(callback);
       },
       delete(key: string, changeToken: string) {
         if (!containerMap.has(key)) {

@@ -67,6 +67,20 @@ const token = _spy.c.set("willBeRemoved", "dummy");
 _spy.c.delete("willBeRemoved", token);
 ```
 
+## subscribing items
+
+``` js
+function consoleLog(value) {
+  console.log(value);
+}
+const unsubscribe = _spy.c.subscribe("target", consoleLog);
+const token = _spy.c.set("target", "value"); // callback would be called
+_spy.c.set("target", "newValue", token); // callback would be called
+unsubscribe();
+_spy.c.set("target", "anotherValue", token); // callback would not be called
+
+```
+
 ## getting keys
 
 We can get the keys registered with `container.keys`.
