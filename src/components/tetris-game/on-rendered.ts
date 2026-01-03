@@ -101,16 +101,20 @@ export function resetHandlers(instance: {
       forceReflow();
       await sleep(10);
     }
-    let interval = 25;
-    setTimeout(() => {
-      interval = 10;
-    }, 300);
-    setTimeout(() => {
-      interval = 5;
-    }, 800);
-    setTimeout(() => {
-      interval = 2;
-    }, 1000);
+    const getInterval = (() => {
+      const started = Date.now();
+      return () => {
+        const elapsed = Date.now() - started;
+        if (elapsed < 300) {
+          return 25;
+        } else if (elapsed < 800) {
+          return 10;
+        } else if (elapsed < 1000) {
+          return 5;
+        }
+        return 2;
+      };
+    })();
     while (document.contains(instance as unknown as HTMLElement)) {
       const remainingCells = Array.from(board.cellMap.values()).filter(
         (cell) =>
@@ -127,7 +131,7 @@ export function resetHandlers(instance: {
         }
       }
       forceReflow();
-      await sleep(interval);
+      await sleep(getInterval());
     }
     await sleep(1000);
     (instance as unknown as HTMLElement).remove();
