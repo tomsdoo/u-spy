@@ -3,7 +3,7 @@ import { ControlElement } from "@/components/control-element";
 export type MockFetchHandler = (
   input: RequestInfo | URL,
   init?: RequestInit,
-  originalFetch?: (typeof global)["fetch"],
+  originalFetch?: typeof globalThis.fetch,
 ) => Promise<Response | null | undefined>;
 
 export function interceptFetch(id: string, mockHandlers?: MockFetchHandler[]) {

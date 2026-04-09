@@ -6,7 +6,7 @@ export default defineConfig([
   {
     entry: ["src/index.ts", "src/template-view.ts"],
     clean: true,
-    dts: true,
+    dts: false,
     splitting: false,
     minify: true,
     format: "iife",
@@ -16,7 +16,7 @@ export default defineConfig([
   {
     entry: ["src/lib/index.ts"],
     clean: true,
-    dts: true,
+    dts: false,
     splitting: false,
     minify: true,
     format: ["esm"],
