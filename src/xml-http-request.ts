@@ -9,7 +9,7 @@ export type MockXHRHandler = (
     password?: string | null;
     body?: Document | XMLHttpRequestBodyInit | null;
   },
-  originalXMLHttpRequest: (typeof global)["XMLHttpRequest"],
+  originalXMLHttpRequest: typeof globalThis.XMLHttpRequest,
 ) => Promise<{
   // biome-ignore lint/suspicious/noExplicitAny: accept any
   response: any;
@@ -75,7 +75,7 @@ class SpiedXMLHttpRequestBase extends XMLHttpRequest {
 function getXMLHttpRequestClassDefinition(
   id: string,
   handlers: MockXHRHandler[],
-  originalXmlHttpRequest: (typeof global)["XMLHttpRequest"],
+  originalXmlHttpRequest: typeof globalThis.XMLHttpRequest,
 ) {
   return class SpiedXMLHttpRequest extends SpiedXMLHttpRequestBase {
     open(

@@ -25,7 +25,9 @@
   ],
   "scripts": {
     "pre-build": "tsx pre-build",
-    "build-only": "tsup",
+    "build-js": "tsup",
+    "build-dts": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build-only": "run-s build-js build-dts",
     "build": "run-s pre-build build-only",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
@@ -56,9 +58,10 @@
     "@vitest/coverage-v8": "4.1.2",
     "npm-run-all2": "8.0.4",
     "playwright": "1.59.1",
+    "tsc-alias": "1.8.16",
     "tsup": "8.5.1",
     "tsx": "4.21.0",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "vitepress": "1.6.4",
     "vitest": "4.1.2"
   }

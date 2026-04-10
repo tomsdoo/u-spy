@@ -17,7 +17,13 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '24.x'
+        node-version: '24.12.0'
+
+    - name: Use npm 11.6.2
+      run: npm i -g npm@11.6.2
+
+    - name: Show runtime versions
+      run: node -v && npm -v
 
     - name: cache npm
       uses: actions/cache@v4
