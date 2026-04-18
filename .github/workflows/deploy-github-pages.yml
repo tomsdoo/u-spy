@@ -40,8 +40,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24.x
+          node-version: 24.12.0
           cache: npm # or pnpm / yarn
+
+      - name: Use npm 11.6.2
+        run: npm i -g npm@11.6.2
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Install dependencies
