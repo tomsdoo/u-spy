@@ -314,7 +314,7 @@ loading script from CDN will automatically execute `ensureTemplateView()`.
 and it's only for template-view so that window will not have `_spy` for that case.
 
 ``` html
-<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/template-view.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/u-spy/dist/template-view.iife.js"></script>
 ```
 :::
 

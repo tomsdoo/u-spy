@@ -1,30 +1,12 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { templateMinify } from "./template-minify";
-import { readFile } from "fs/promises";
-
-vi.mock("fs/promises", async () => {
-  const originalModule = await vi.importActual("fs/promises");
-  return {
-    ...originalModule,
-    readFile: vi.fn(),
-  };
-});
 
 describe("templateMinify()", () => {
-  let transform: (args: any) => Promise<
-    { contents: string; loader: string; } | null
-  >;
-  beforeEach(() => {
-    const { setup } = templateMinify();
-    setup({
-      onLoad(options, innerTransform) {
-        transform = innerTransform;
-      },
-    });
-  });
+  const plugin = templateMinify();
+
   it.each([
     {
-      path: "template.ts",
+      path: "src/components/any/template.ts",
       content: `
       \tthis is
        a test 
@@ -34,13 +16,13 @@ describe("templateMinify()", () => {
   ])(
     "file: $path, content: $content",
     async ({ path, content, expectedOutputContent }) => {
-      vi.mocked(readFile).mockResolvedValue(content);
-      await expect(transform({
-        path,
-      })).resolves.toEqual({
-        contents: expectedOutputContent,
-        loader: "ts",
+      expect(plugin.transform?.(content, path)).toEqual({
+        code: expectedOutputContent,
       });
     },
   );
+
+  it("resolves as null if not a target", async () => {
+    expect(plugin.transform?.("const a = 1", "src/index.ts")).toBeNull();
+  });
 });
