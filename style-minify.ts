@@ -1,27 +1,20 @@
-import { readFile } from "fs/promises";
-
 export function styleMinify() {
+  const targetTemplatePattern = /src\/components\/(log\/list|dialog)\/template\.ts$/;
+
   return {
     name: "style-minify",
-    setup(build) {
-      build.onLoad({
-        filter: /\.ts$/,
-      },
-        async (args) => {
-          const isTargetTemplate = /src\/components\/(log\/list|dialog)\/template\.ts/.test(args.path);
-          if (isTargetTemplate === false) {
-            return null;
-          }
-          const fileContent = await readFile(args.path, { encoding: "utf8" });
-          return {
-            contents: fileContent.replace(
-              /((?:\n|.)*)(<style>(?:\n|.)*<\/style>)((?:\n|.)*)/,
-              ($0, $1, $2, $3) => `${$1}${$2.replace(/\s+/g, ' ')}${$3}`,
-            ),
-            loader: "ts",
-          };
-        },
-      )
+    transform(code: string, id: string) {
+      const normalizedId = id.split("?", 1)[0] ?? id;
+      if (targetTemplatePattern.test(normalizedId) === false) {
+        return null;
+      }
+
+      return {
+        code: code.replace(
+          /((?:\n|.)*)(<style>(?:\n|.)*<\/style>)((?:\n|.)*)/,
+          (_match: string, before: string, styleBlock: string, after: string) => `${before}${styleBlock.replace(/\s+/g, " ")}${after}`,
+        ),
+      };
     },
   };
 }

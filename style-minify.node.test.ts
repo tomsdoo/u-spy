@@ -1,27 +1,9 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { styleMinify } from "./style-minify";
-import { readFile } from "fs/promises";
-
-vi.mock("fs/promises", async () => {
-  const originalModule = await vi.importActual("fs/promises");
-  return {
-    ...originalModule,
-    readFile: vi.fn(),
-  };
-});
 
 describe("styleMinify()", () => {
-  let transform: (args: any) => Promise<
-    { contents: string; loader: string; } | null
-  >;
-  beforeEach(() => {
-    const { setup } = styleMinify();
-    setup({
-      onLoad(options, innerTransform) {
-        transform = innerTransform;
-      },
-    });
-  });
+  const plugin = styleMinify();
+
   it.each([
     {
       path: "src/components/log/list/template.ts",
@@ -56,19 +38,12 @@ describe("styleMinify()", () => {
   ])(
     "file: $path, content: $content",
     async ({ path, content, expectedOutputContent }) => {
-      vi.mocked(readFile).mockResolvedValue(content);
-      await expect(transform({
-        path,
-      })).resolves.toEqual({
-        contents: expectedOutputContent,
-        loader: "ts",
+      expect(plugin.transform?.(content, path)).toEqual({
+        code: expectedOutputContent,
       });
     },
   );
   it("resolves as null if not a target", async () => {
-    vi.mocked(readFile).mockResolvedValue("test");
-    await expect(transform({
-      path: "notATargetFilePath",
-    })).resolves.toBeNull();
+    expect(plugin.transform?.("test", "notATargetFilePath")).toBeNull();
   });
 });

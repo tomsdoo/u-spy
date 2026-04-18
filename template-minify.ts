@@ -1,21 +1,20 @@
-import { readFile } from "fs/promises";
-
 export function templateMinify() {
+  const templateFilePattern = /\/template\.ts$/;
+
   return {
     name: "template-minify",
-    setup(build) {
-      build.onLoad({
-        filter: /\/template\.ts$/,
-      }, async (args) => {
-        const fileContent = await readFile(args.path, { encoding: "utf8" });
-        return {
-          contents: fileContent.replace(
-            /\s+/g,
-            " ",
-          ),
-          loader: "ts",
-        };
-      });
+    transform(code: string, id: string) {
+      const normalizedId = id.split("?", 1)[0] ?? id;
+      if (templateFilePattern.test(normalizedId) === false) {
+        return null;
+      }
+
+      return {
+        code: code.replace(
+          /\s+/g,
+          " ",
+        ),
+      };
     },
   };
 }
