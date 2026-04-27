@@ -50,12 +50,12 @@
   },
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
-    "@biomejs/biome": "2.4.12",
+    "@biomejs/biome": "2.4.13",
     "@tsconfig/node24": "24.0.4",
     "@types/node": "25.6.0",
-    "@vitest/browser": "4.1.4",
-    "@vitest/browser-playwright": "4.1.4",
-    "@vitest/coverage-v8": "4.1.4",
+    "@vitest/browser": "4.1.5",
+    "@vitest/browser-playwright": "4.1.5",
+    "@vitest/coverage-v8": "4.1.5",
     "npm-run-all2": "8.0.4",
     "playwright": "1.59.1",
     "tsc-alias": "1.8.16",
@@ -63,6 +63,6 @@
     "tsx": "4.21.0",
     "typescript": "6.0.3",
     "vitepress": "1.6.4",
-    "vitest": "4.1.4"
+    "vitest": "4.1.5"
   }
 }
