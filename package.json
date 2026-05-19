@@ -52,7 +52,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
     "@tsconfig/node24": "24.0.4",
-    "@types/node": "25.7.0",
+    "@types/node": "25.9.0",
     "@vitest/browser": "4.1.6",
     "@vitest/browser-playwright": "4.1.6",
     "@vitest/coverage-v8": "4.1.6",
@@ -60,7 +60,7 @@
     "playwright": "1.60.0",
     "tsc-alias": "1.8.17",
     "tsdown": "^0.22.0",
-    "tsx": "4.21.0",
+    "tsx": "4.22.2",
     "typescript": "6.0.3",
     "vitepress": "1.6.4",
     "vitest": "4.1.6"
