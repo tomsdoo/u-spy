@@ -56,7 +56,7 @@
     "@vitest/browser": "4.1.7",
     "@vitest/browser-playwright": "4.1.7",
     "@vitest/coverage-v8": "4.1.7",
-    "npm-run-all2": "8.0.4",
+    "npm-run-all2": "9.0.1",
     "playwright": "1.60.0",
     "tsc-alias": "1.8.17",
     "tsdown": "^0.22.0",
