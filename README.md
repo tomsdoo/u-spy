@@ -6,7 +6,6 @@
 ![ci](https://img.shields.io/github/actions/workflow/status/tomsdoo/u-spy/ci.yml?style=social&logo=github)
 ![checks](https://img.shields.io/github/check-runs/tomsdoo/u-spy/main?style=social&logo=github)
 ![top language](https://img.shields.io/github/languages/top/tomsdoo/u-spy?style=social&logo=typescript)
-![Maintenance](https://img.shields.io/maintenance/yes/2025?style=social&logo=github)
 
 ## installation
 
