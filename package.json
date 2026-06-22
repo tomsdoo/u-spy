@@ -52,7 +52,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
     "@tsconfig/node24": "24.0.4",
-    "@types/node": "25.9.3",
+    "@types/node": "26.0.0",
     "@vitest/browser": "4.1.9",
     "@vitest/browser-playwright": "4.1.9",
     "@vitest/coverage-v8": "4.1.9",
