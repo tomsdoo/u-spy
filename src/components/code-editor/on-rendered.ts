@@ -5,6 +5,10 @@ import type { createStorageProxy } from "@/storage";
 import { createTrustedHtml } from "@/trusted-policy";
 import { prettierFormat, sleep } from "@/utils";
 
+function getEventValue(event: Event) {
+  return (event as CustomEvent<{ value: string }>).detail.value;
+}
+
 export function resetHandlers(instance: {
   id: string;
   codeText: string;
@@ -65,8 +69,7 @@ export function resetHandlers(instance: {
   });
   saveButton.addEventListener(EventType.CLICK, () => {
     function clearAndHide() {
-      // @ts-expect-error handler type will be resolved
-      saveForm.removeEventListener(
+      saveForm!.removeEventListener(
         InputFormElement.FINISH_INPUT_EVENT,
         saveHandler,
       );
@@ -77,16 +80,16 @@ export function resetHandlers(instance: {
       saveForm?.classList.add("hidden");
       textarea?.focus();
     }
-    function saveHandler(e: { detail: { value: string } }) {
+    function saveHandler(event: Event) {
+      const value = getEventValue(event);
       const nextData = {
         ...instance.storageData,
         // biome-ignore lint/style/noNonNullAssertion: textarea exists
-        [e.detail.value]: textarea!.value,
+        [value]: textarea!.value,
       };
       instance._storage.data = JSON.stringify(nextData);
       clearAndHide();
     }
-    // @ts-expect-error handler type will be resolved
     saveForm.addEventListener(InputFormElement.FINISH_INPUT_EVENT, saveHandler);
     saveForm.addEventListener(InputFormElement.CANCEL_EVENT, clearAndHide);
     saveForm.classList.remove("hidden");
@@ -96,13 +99,11 @@ export function resetHandlers(instance: {
     const options = Array.from(Object.keys(instance.storageData));
     function clearAndHide() {
       selectForm?.classList.add("hidden");
-      // @ts-expect-error handler type will be resolved
-      selectForm.removeEventListener(
+      selectForm!.removeEventListener(
         SelectFormElement.CHOOSE_EVENT,
         chooseHandler,
       );
-      // @ts-expect-error handler type will be resolved
-      selectForm.removeEventListener(
+      selectForm!.removeEventListener(
         SelectFormElement.REMOVE_EVENT,
         removeHandler,
       );
@@ -112,25 +113,25 @@ export function resetHandlers(instance: {
       );
       textarea?.focus();
     }
-    function chooseHandler(e: { detail: { value: string } }) {
+    function chooseHandler(event: Event) {
+      const value = getEventValue(event);
       // biome-ignore lint/style/noNonNullAssertion: textarea exists
-      textarea!.value = instance.storageData[e.detail.value];
-      instance.codeText = instance.storageData[e.detail.value];
+      textarea!.value = instance.storageData[value];
+      instance.codeText = instance.storageData[value];
       clearAndHide();
     }
-    function removeHandler(e: { detail: { value: string } }) {
+    function removeHandler(event: Event) {
+      const value = getEventValue(event);
       const nextData = Object.fromEntries(
         Object.entries(instance.storageData).filter(
-          ([key]) => key !== e.detail.value,
+          ([key]) => key !== value,
         ),
       );
       instance._storage.data = JSON.stringify(nextData);
       clearAndHide();
     }
     selectForm.setAttribute(":options", options.join(","));
-    // @ts-expect-error handler type will be resolved
     selectForm.addEventListener(SelectFormElement.CHOOSE_EVENT, chooseHandler);
-    // @ts-expect-error handler type will be resolved
     selectForm.addEventListener(SelectFormElement.REMOVE_EVENT, removeHandler);
     selectForm.addEventListener(SelectFormElement.CANCEL_EVENT, clearAndHide);
     selectForm.classList.remove("hidden");
