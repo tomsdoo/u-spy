@@ -15,8 +15,8 @@
     },
     "./lib": {
       "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/index.js",
-      "require": "./dist/lib/index.js"
+      "import": "./dist/lib/index.mjs",
+      "require": "./dist/lib/index.mjs"
     }
   },
   "files": [
