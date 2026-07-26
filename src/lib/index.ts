@@ -4,6 +4,8 @@ import {
   registerHotStroke,
 } from "@/key-event";
 
+export { createFreeContainer } from "@/free-container";
+export { replaceContent } from "@/utils/replace-content";
 export { ensureTemplateView } from "@/components/dynamic-element/template-view";
 export const hotStroke = {
     register: registerHotStroke,
