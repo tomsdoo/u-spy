@@ -4,7 +4,7 @@ type RegisteredEvent = {
   once?: boolean;
 };
 
-function createEventBus() {
+export function createEventBus() {
   const handlersMap = new Map<string | symbol, RegisteredEvent[]>();
 
   const eventBus = {
