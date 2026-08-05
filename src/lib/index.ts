@@ -6,6 +6,7 @@ import {
 
 export { createEventBus } from "@/event-bus";
 export { createFreeContainer } from "@/free-container";
+export { download } from "@/utils/download";
 export { replaceContent } from "@/utils/replace-content";
 export { ensureTemplateView } from "@/components/dynamic-element/template-view";
 export const hotStroke = {
