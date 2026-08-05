@@ -18,4 +18,5 @@ export function download({
   anc.setAttribute("href", url);
   anc.click();
   anc.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
