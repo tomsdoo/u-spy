@@ -76,6 +76,7 @@ function getXMLHttpRequestClassDefinition(
   id: string,
   handlers: MockXHRHandler[],
   originalXmlHttpRequest: typeof globalThis.XMLHttpRequest,
+  justHandlers: boolean = false,
 ) {
   return class SpiedXMLHttpRequest extends SpiedXMLHttpRequestBase {
     open(
@@ -86,6 +87,9 @@ function getXMLHttpRequestClassDefinition(
       password?: string,
     ): void {
       super.open(method, url, async ?? true, user, password);
+      if (justHandlers) {
+        return;
+      }
       super.addEventListener("load", (e: any) => {
         if (e.target == null) {
           return;
@@ -192,6 +196,21 @@ export function interceptXMLHttpRequest(
     id,
     handlers ?? [],
     originalXMLHttpRequest,
+  );
+  return {
+    restoreXMLHttpRequest() {
+      globalThis.XMLHttpRequest = originalXMLHttpRequest;
+    },
+  };
+}
+
+export function interceptXMLHttpRequestWithoutControlElement(handlers: MockXHRHandler[]) {
+  const originalXMLHttpRequest = globalThis.XMLHttpRequest;
+  globalThis.XMLHttpRequest = getXMLHttpRequestClassDefinition(
+    "ignored-id",
+    handlers,
+    originalXMLHttpRequest,
+    true,
   );
   return {
     restoreXMLHttpRequest() {

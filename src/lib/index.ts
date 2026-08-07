@@ -3,6 +3,8 @@ import {
   getRegisteredHotStrokes,
   registerHotStroke,
 } from "@/key-event";
+import { interceptXMLHttpRequestWithoutControlElement } from "@/xml-http-request";
+import { interceptFetch } from "@/fetch";
 
 export { createEventBus } from "@/event-bus";
 export { createFreeContainer } from "@/free-container";
@@ -27,3 +29,25 @@ export const hotStroke = {
       }
     },
 };
+
+export function interceptNetworkRequests({
+  fetchHandlers,
+  XHRHandlers,
+}: {
+  fetchHandlers?: Parameters<typeof interceptFetch>[1],
+  XHRHandlers?: Parameters<typeof interceptXMLHttpRequestWithoutControlElement>[0],
+}) {
+  const nop = () => {};
+  const fetchInterceptor = fetchHandlers ? interceptFetch("ignored-id", fetchHandlers, true) : {
+    restoreFetch: nop,
+  };
+  const xhrInterceptor = XHRHandlers ? interceptXMLHttpRequestWithoutControlElement(XHRHandlers) : {
+    restoreXMLHttpRequest: nop,
+  };
+  return {
+    restore() {
+      fetchInterceptor.restoreFetch();
+      xhrInterceptor.restoreXMLHttpRequest();
+    },
+  };
+}

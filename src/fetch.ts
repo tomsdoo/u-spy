@@ -6,7 +6,11 @@ export type MockFetchHandler = (
   originalFetch?: typeof globalThis.fetch,
 ) => Promise<Response | null | undefined>;
 
-export function interceptFetch(id: string, mockHandlers?: MockFetchHandler[]) {
+export function interceptFetch(
+  id: string,
+  mockHandlers?: MockFetchHandler[],
+  justHandlers: boolean = false,
+) {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (
     input: RequestInfo | URL,
@@ -21,6 +25,9 @@ export function interceptFetch(id: string, mockHandlers?: MockFetchHandler[]) {
       }
       return await originalFetch(input, init);
     })();
+    if (justHandlers) {
+      return response;
+    }
     const alternativeResponse = response.clone();
     ControlElement.ensure(id).dispatchFetch({
       input,
