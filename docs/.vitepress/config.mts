@@ -49,6 +49,7 @@ export default defineConfig({
               { text: "loadScript", link: '/utils/load-script' },
               { text: "prettierFormat", link: '/utils/prettier-format' },
               { text: "sleep", link: '/utils/sleep' },
+              { text: "withRetry", link: '/utils/with-retry' },
             ],
           },
         ]

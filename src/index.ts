@@ -32,6 +32,7 @@ import {
   type Replacer,
   replaceContent,
   sleep,
+  withRetry,
 } from "@/utils";
 import { interceptWindowMessage } from "@/window-message";
 import {
@@ -93,6 +94,7 @@ interface Spy {
     loadScript: typeof loadScript;
     prettierFormat: typeof prettierFormat;
     sleep: typeof sleep;
+    withRetry: typeof withRetry;
   };
 }
 
@@ -329,6 +331,7 @@ const _spy = {
     loadScript,
     prettierFormat,
     sleep,
+    withRetry,
   },
   showEphemeralMessage,
   replaceText(replacers: Replacer | Replacer[], selector?: string) {
