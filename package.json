@@ -50,7 +50,7 @@
   },
   "homepage": "https://tomsdoo.github.io/u-spy/",
   "devDependencies": {
-    "@biomejs/biome": "2.5.6",
+    "@biomejs/biome": "2.5.7",
     "@tsconfig/node24": "24.0.4",
     "@types/node": "26.1.2",
     "@vitest/browser": "4.1.10",
@@ -60,7 +60,7 @@
     "playwright": "1.62.1",
     "tsc-alias": "1.9.1",
     "tsdown": "^0.22.0",
-    "tsx": "4.23.1",
+    "tsx": "4.23.11",
     "typescript": "7.0.2",
     "vitepress": "1.6.4",
     "vitest": "4.1.10"
