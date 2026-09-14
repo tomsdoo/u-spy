@@ -55,7 +55,7 @@
     "@types/node": "26.5.1",
     "@vitest/browser": "4.1.11",
     "@vitest/browser-playwright": "4.1.11",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "5.0.0",
     "npm-run-all2": "9.0.3",
     "playwright": "1.63.0",
     "tsc-alias": "1.9.4",
