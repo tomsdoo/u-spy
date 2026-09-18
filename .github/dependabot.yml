@@ -5,6 +5,17 @@ updates:
     schedule:
       interval: "weekly"
     groups:
+      vitest:
+        applies-to: version-updates
+        patterns:
+          - "vitest"
+          - "@vitest/browser"
+          - "@vitest/browser-playwright"
+          - "@vitest/coverage-v8"
+        update-types:
+          - major
+          - minor
+          - patch
       dev-dependencies:
         applies-to: version-updates
         dependency-type: development
