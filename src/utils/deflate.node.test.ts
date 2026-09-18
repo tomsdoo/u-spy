@@ -110,7 +110,7 @@ describe("deflate", () => {
         value: new WeakMap(),
       },
     ])("$value", ({ value }) => {
-      expect(() => deflate(value)).toThrowError();
+      expect(() => deflate(value)).toThrow();
     });
   });
 });

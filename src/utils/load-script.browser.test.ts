@@ -28,7 +28,7 @@ describe("loadScript()", () => {
         scriptTag.dispatchEvent(new Event("error"));
         return scriptTag;
       });
-    expect(loadScript(jsUrl)).rejects.toThrowError();
+    await expect(loadScript(jsUrl)).rejects.toThrow();
     expect(spy).toHaveBeenCalledTimes(1);
   });
   describe.for([
