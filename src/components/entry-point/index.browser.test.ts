@@ -1,15 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { EntryPointElement } from "@/components/entry-point";
-
-const { dummyName, dummyVersion } = vi.hoisted(() => ({
-  dummyName: "dummyName",
-  dummyVersion: "dummyVersion",
-}));
-
-vi.mock("@@/package.json", () => ({
-  name: dummyName,
-  version: dummyVersion,
-}));
+import { name, version } from "@@/package.json";
 
 describe("EntryPointElement", () => {
   beforeEach(() => {
@@ -20,7 +11,7 @@ describe("EntryPointElement", () => {
       document.createElement(EntryPointElement.TAG_NAME),
     );
     expect(entryPointElement.shadowRoot).toSatisfy(({ innerHTML }) => {
-      const matched = innerHTML.match(/dummyName@dummyVersion/);
+      const matched = innerHTML.match(new RegExp(`${name}@${version}`));
       return matched != null;
     });
   });
